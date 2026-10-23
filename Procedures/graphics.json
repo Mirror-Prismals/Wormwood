@@ -1,0 +1,9 @@
+{
+  "backends": [
+    "OpenGL",
+    "Vulkan",
+    "WebGPU"
+  ],
+  "policy": "Explicit selection; no silent backend fallback.",
+  "verification_report": "output/graphics-verification.json"
+}

@@ -1,0 +1,21 @@
+{
+  "system": "PlanetNavigationSystem",
+  "layer": 5,
+  "functions": {
+    "Step": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AppearanceSystem.View"
+      ]
+    },
+    "Stop": {
+      "calls": [
+        "AudicleSystem.Finish"
+      ]
+    }
+  },
+  "init_steps": []
+}

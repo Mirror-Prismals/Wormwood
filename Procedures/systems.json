@@ -1,0 +1,17 @@
+{
+  "systems_order": [
+    "NativeInventorySystem.json",
+    "JackConnectionSystem.json",
+    "IOSAudioConnectionSystem.json",
+    "DiagnosticsSystem.json",
+    "EntitySystem.json",
+    "AudicleSystem.json",
+    "AppearanceSystem.json",
+    "GraphicsConnectionSystem.json",
+    "CueProcedureSystem.json",
+    "CueSystem.json",
+    "ApplicationSystem.json",
+    "FlightSystem.json",
+    "PlanetNavigationSystem.json"
+  ]
+}

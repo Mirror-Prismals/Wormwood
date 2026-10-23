@@ -1,0 +1,36 @@
+{
+  "system": "AppearanceSystem",
+  "layer": 4,
+  "functions": {
+    "Prepare": {
+      "calls": [
+        "EntitySystem.Get",
+        "GraphicsConnectionSystem.Prepare"
+      ]
+    },
+    "Present": {
+      "calls": [
+        "EntitySystem.Get",
+        "GraphicsConnectionSystem.Present"
+      ]
+    },
+    "Release": {
+      "calls": [
+        "GraphicsConnectionSystem.Release"
+      ]
+    },
+    "Pump": {
+      "calls": [
+        "EntitySystem.Get",
+        "GraphicsConnectionSystem.Pump"
+      ]
+    },
+    "View": {
+      "calls": [
+        "EntitySystem.Get",
+        "GraphicsConnectionSystem.SetView"
+      ]
+    }
+  },
+  "init_steps": []
+}

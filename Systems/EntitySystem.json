@@ -1,0 +1,16 @@
+{
+  "system": "EntitySystem",
+  "layer": 2,
+  "functions": {
+    "Create": {
+      "calls": []
+    },
+    "Get": {
+      "calls": []
+    },
+    "Remove": {
+      "calls": []
+    }
+  },
+  "init_steps": []
+}

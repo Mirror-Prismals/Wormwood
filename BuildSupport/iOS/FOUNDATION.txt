@@ -1,0 +1,47 @@
+iOS foundation work
+
+The iOS port must execute the same registered Entity and Audicle operations,
+with the same observable preparation, Ready, Go, completion, and cleanup.
+A native app window alone is not evidence that this cue has been ported.
+
+Device preflight on October 22, 2026 found a paired, available iPhone 16 Pro Max,
+an iOS 26.0 SDK, and the aarch64-apple-ios Rust target. An Apple Development
+certificate was created in the existing Personal Team with explicit user approval
+and verified as one valid code-signing identity. The phone's wired connection,
+Developer Mode, and developer services are available. A fresh Wormwood provisioning
+profile still needs generation when the native app target exists. These observations are machine-specific;
+output/ios-preflight.json contains the detailed local results.
+
+The desktop runtime currently owns a finite GLFW window loop and dynamically
+loads desktop libraries. The iOS host needs app lifecycle, a native view/surface,
+bundle resource lookup, writable output paths, and a Rust entry interface.
+The current CARGO_MANIFEST_DIR root and desktop frame loop cannot be carried
+over unchanged. Native callbacks must preserve attribution and pass through the
+registered interfaces; introducing a native host must not introduce a second,
+untracked Entity or event implementation.
+
+WebGPU should use its Metal backend and an iOS CAMetalLayer surface. Its native
+library must be built and packaged for the device target; the Homebrew macOS
+binary is not an iOS dependency. Vulkan needs an iOS MoltenVK package and native
+Metal surface creation. The OpenGL path needs a deliberate iOS-compatible
+context and shader path; the current desktop OpenGL context is not sufficient.
+Each backend remains independently selected and independently verified.
+
+The audio connection must fit the iOS audio session and render callback model.
+Desktop jackd process startup is not an established phone integration. Native
+audio output and any JACK interoperability need an explicit platform decision.
+The prepared sample processing, bounded callback, and off-thread telemetry
+requirements still apply. An alternate connection must identify its actual API
+and must not report JACK success when JACK did not perform the work.
+
+The native app/Rust host boundary and separate bundle/writable resource paths
+are implemented and verified on the phone. The signed app returned its matching
+source-fingerprinted Host validation and registered operation trace. The next
+implementation work is graphics surface attachment and audio connection. Backgrounding,
+interruption, foreground recovery, and safe resource release need verification
+on the phone. Signing and device deployment are separate from unsigned builds.
+No device rendering, audio output, or lifecycle recovery is yet verified.
+
+Primary platform references
+https://github.com/gfx-rs/wgpu#supported-platforms
+https://github.com/KhronosGroup/MoltenVK#introduction

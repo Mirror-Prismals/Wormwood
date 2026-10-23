@@ -1,0 +1,19 @@
+{
+  "system": "IOSAudioConnectionSystem",
+  "layer": 1,
+  "functions": {
+    "Prepare": {
+      "calls": []
+    },
+    "Start": {
+      "calls": []
+    },
+    "Stop": {
+      "calls": []
+    },
+    "Release": {
+      "calls": []
+    }
+  },
+  "init_steps": []
+}

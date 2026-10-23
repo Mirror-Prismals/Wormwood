@@ -1,0 +1,79 @@
+{
+  "system": "CueSystem",
+  "layer": 5,
+  "functions": {
+    "Run": {
+      "calls": [
+        "CueProcedureSystem.Load",
+        "EntitySystem.Create",
+        "EntitySystem.Remove",
+        "AppearanceSystem.Prepare",
+        "AppearanceSystem.Present",
+        "AppearanceSystem.Release",
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "EntitySystem.Get",
+        "JackConnectionSystem.Prepare",
+        "JackConnectionSystem.Start",
+        "JackConnectionSystem.Stop",
+        "JackConnectionSystem.Release",
+        "IOSAudioConnectionSystem.Prepare",
+        "IOSAudioConnectionSystem.Start",
+        "IOSAudioConnectionSystem.Stop",
+        "IOSAudioConnectionSystem.Release"
+      ]
+    },
+    "Begin": {
+      "calls": [
+        "AudicleSystem.Create",
+        "CueProcedureSystem.Load",
+        "EntitySystem.Create",
+        "EntitySystem.Get",
+        "AppearanceSystem.Prepare",
+        "JackConnectionSystem.Prepare",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "JackConnectionSystem.Start",
+        "JackConnectionSystem.Release",
+        "EntitySystem.Remove",
+        "AudicleSystem.Cancel"
+      ]
+    },
+    "Advance": {
+      "calls": [
+        "JackConnectionSystem.Complete",
+        "JackConnectionSystem.Stop",
+        "JackConnectionSystem.Release",
+        "EntitySystem.Remove",
+        "AudicleSystem.Finish",
+        "JackConnectionSystem.RouteChanged",
+        "AudicleSystem.Cancel"
+      ]
+    },
+    "Cancel": {
+      "calls": [
+        "JackConnectionSystem.Release",
+        "EntitySystem.Remove",
+        "AudicleSystem.Cancel"
+      ]
+    },
+    "Close": {
+      "calls": [
+        "JackConnectionSystem.Release",
+        "EntitySystem.Remove",
+        "AudicleSystem.Cancel",
+        "AppearanceSystem.Release"
+      ]
+    },
+    "Status": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "entry_steps": [
+    "Run"
+  ]
+}

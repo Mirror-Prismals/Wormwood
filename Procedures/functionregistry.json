@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "systems": {
+    "NativeInventorySystem": {
+      "layer": 1,
+      "functions": {
+        "Probe": {
+          "input": "Unit",
+          "output": "NativeInventory"
+        }
+      }
+    },
+    "DiagnosticsSystem": {
+      "layer": 2,
+      "functions": {
+        "Report": {
+          "input": "Unit",
+          "output": "NativeInventory"
+        },
+        "CheckAudio": {
+          "input": "Unit",
+          "output": "JackDiagnostic"
+        },
+        "ValidateRuntime": {
+          "input": "Unit",
+          "output": "RuntimeValidation"
+        }
+      }
+    },
+    "JackConnectionSystem": {
+      "layer": 1,
+      "functions": {
+        "CheckConnection": {
+          "input": "Unit",
+          "output": "JackDiagnostic"
+        },
+        "Prepare": {
+          "input": "EntityData",
+          "output": "Unit"
+        },
+        "Start": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Stop": {
+          "input": "EntityRef",
+          "output": "AudioReport"
+        },
+        "Release": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Complete": {
+          "input": "EntityRef",
+          "output": "Boolean"
+        },
+        "RouteChanged": {
+          "input": "EntityRef",
+          "output": "Boolean"
+        }
+      }
+    },
+    "EntitySystem": {
+      "layer": 2,
+      "functions": {
+        "Create": {
+          "input": "EntitySpec",
+          "output": "EntityRef"
+        },
+        "Get": {
+          "input": "EntityRef",
+          "output": "EntityData"
+        },
+        "Remove": {
+          "input": "EntityRef",
+          "output": "Unit"
+        }
+      }
+    },
+    "AudicleSystem": {
+      "layer": 5,
+      "functions": {
+        "Create": {
+          "input": "Unit",
+          "output": "AudicleRef"
+        },
+        "Ready": {
+          "input": "AudicleRef",
+          "output": "Unit"
+        },
+        "Go": {
+          "input": "AudicleRef",
+          "output": "Unit"
+        },
+        "Finish": {
+          "input": "AudicleRef",
+          "output": "Unit"
+        },
+        "Cancel": {
+          "input": "AudicleRef",
+          "output": "Unit"
+        }
+      }
+    },
+    "AppearanceSystem": {
+      "layer": 4,
+      "functions": {
+        "Prepare": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Present": {
+          "input": "EntityRef",
+          "output": "Presentation"
+        },
+        "Release": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Pump": {
+          "input": "EntityRef",
+          "output": "WindowFrame"
+        },
+        "View": {
+          "input": "ViewRequest",
+          "output": "Unit"
+        }
+      }
+    },
+    "GraphicsConnectionSystem": {
+      "layer": 1,
+      "functions": {
+        "Prepare": {
+          "input": "EntityData",
+          "output": "Unit"
+        },
+        "Present": {
+          "input": "EntityRef",
+          "output": "Presentation"
+        },
+        "Release": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Pump": {
+          "input": "EntityRef",
+          "output": "WindowFrame"
+        },
+        "SetView": {
+          "input": "TriangleBatch",
+          "output": "Unit"
+        }
+      }
+    },
+    "CueSystem": {
+      "layer": 5,
+      "functions": {
+        "Run": {
+          "input": "ProcedureRef",
+          "output": "CueResult"
+        },
+        "Begin": {
+          "input": "ProcedureRef",
+          "output": "Unit"
+        },
+        "Advance": {
+          "input": "Unit",
+          "output": "CueStatus"
+        },
+        "Cancel": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Close": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Status": {
+          "input": "Unit",
+          "output": "CueStatus"
+        }
+      }
+    },
+    "IOSAudioConnectionSystem": {
+      "layer": 1,
+      "functions": {
+        "Prepare": {
+          "input": "EntityData",
+          "output": "Unit"
+        },
+        "Start": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Stop": {
+          "input": "EntityRef",
+          "output": "IOSAudioReport"
+        },
+        "Release": {
+          "input": "EntityRef",
+          "output": "Unit"
+        }
+      }
+    },
+    "CueProcedureSystem": {
+      "layer": 2,
+      "functions": {
+        "Load": {
+          "input": "ProcedureRef",
+          "output": "CueDefinition"
+        }
+      }
+    },
+    "ApplicationSystem": {
+      "layer": 5,
+      "functions": {
+        "Run": {
+          "input": "ProcedureRef",
+          "output": "SessionReport"
+        }
+      }
+    },
+    "FlightSystem": {
+      "layer": 5,
+      "functions": {
+        "Step": {
+          "input": "FlightInput",
+          "output": "FlightState"
+        },
+        "Stop": {
+          "input": "Unit",
+          "output": "Unit"
+        }
+      }
+    },
+    "PlanetNavigationSystem": {
+      "layer": 5,
+      "functions": {
+        "Step": {
+          "input": "EnvironmentInput",
+          "output": "FlightState"
+        },
+        "Stop": {
+          "input": "Unit",
+          "output": "Unit"
+        }
+      }
+    }
+  }
+}

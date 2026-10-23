@@ -1,0 +1,6 @@
+Mirror (Prismals!)
+Engine: Wormwood
+
+The game takes place on a very large destructible planet. Ground appears locally flat; curvature becomes apparent at altitude. The world is not made of blocks. Realistic building is planned later.
+
+Offset Geometric Contact will supply contact handling as part of future, separately tested simulations. Ground deformation, excavation, loose material and compaction require additional models and solvers; contact alone is not those simulations. No OGC or material simulation is implemented by this environment milestone.

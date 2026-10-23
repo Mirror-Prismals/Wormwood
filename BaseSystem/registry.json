@@ -1,0 +1,15 @@
+{
+  "NativeInventorySystem": true,
+  "DiagnosticsSystem": true,
+  "JackConnectionSystem": true,
+  "EntitySystem": true,
+  "AudicleSystem": true,
+  "AppearanceSystem": true,
+  "GraphicsConnectionSystem": true,
+  "CueSystem": true,
+  "IOSAudioConnectionSystem": true,
+  "CueProcedureSystem": true,
+  "ApplicationSystem": true,
+  "FlightSystem": true,
+  "PlanetNavigationSystem": true
+}

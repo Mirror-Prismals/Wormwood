@@ -1,0 +1,24 @@
+{
+  "system": "DiagnosticsSystem",
+  "layer": 2,
+  "functions": {
+    "Report": {
+      "calls": [
+        "NativeInventorySystem.Probe"
+      ]
+    },
+    "CheckAudio": {
+      "calls": [
+        "JackConnectionSystem.CheckConnection"
+      ]
+    },
+    "ValidateRuntime": {
+      "calls": []
+    }
+  },
+  "init_steps": [
+    "ValidateRuntime",
+    "Report",
+    "CheckAudio"
+  ]
+}

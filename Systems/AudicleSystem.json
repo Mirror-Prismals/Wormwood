@@ -1,0 +1,22 @@
+{
+  "system": "AudicleSystem",
+  "layer": 5,
+  "functions": {
+    "Create": {
+      "calls": []
+    },
+    "Ready": {
+      "calls": []
+    },
+    "Go": {
+      "calls": []
+    },
+    "Finish": {
+      "calls": []
+    },
+    "Cancel": {
+      "calls": []
+    }
+  },
+  "init_steps": []
+}

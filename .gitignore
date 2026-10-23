@@ -1,0 +1,9 @@
+/target/
+/output/*
+!/output/.gitkeep
+/Saves/*
+!/Saves/.gitkeep
+.DS_Store
+
+__pycache__/
+*.pyc

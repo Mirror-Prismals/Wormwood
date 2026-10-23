@@ -1,0 +1,24 @@
+{
+  "system": "ApplicationSystem",
+  "layer": 5,
+  "functions": {
+    "Run": {
+      "calls": [
+        "CueSystem.Begin",
+        "CueSystem.Advance",
+        "CueSystem.Cancel",
+        "CueSystem.Close",
+        "CueSystem.Status",
+        "AppearanceSystem.Pump",
+        "FlightSystem.Step",
+        "FlightSystem.Stop",
+        "PlanetNavigationSystem.Step",
+        "PlanetNavigationSystem.Stop"
+      ]
+    }
+  },
+  "init_steps": [],
+  "entry_steps": [
+    "Run"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "MirrorPrismals",
+  "display_name": "Mirror (Prismals!)",
+  "engine": "Wormwood",
+  "bundle_id": "org.salamander.mirror-prismals.mac",
+  "data_directory": "MirrorPrismals",
+  "default_scene": "planet_surface",
+  "environment_label": "Planet flight",
+  "environment_controls": "WASD \u2014 fly; Space/Shift \u2014 altitude\nHold right mouse \u2014 look; Q/E \u2014 roll\nLeft Control \u2014 boost; R \u2014 reset\nEscape \u2014 close\n\nAnalytic planet ground; material physics is not implemented."
+}

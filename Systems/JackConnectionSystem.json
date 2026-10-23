@@ -1,0 +1,28 @@
+{
+  "system": "JackConnectionSystem",
+  "layer": 1,
+  "functions": {
+    "CheckConnection": {
+      "calls": []
+    },
+    "Prepare": {
+      "calls": []
+    },
+    "Start": {
+      "calls": []
+    },
+    "Stop": {
+      "calls": []
+    },
+    "Release": {
+      "calls": []
+    },
+    "Complete": {
+      "calls": []
+    },
+    "RouteChanged": {
+      "calls": []
+    }
+  },
+  "init_steps": []
+}

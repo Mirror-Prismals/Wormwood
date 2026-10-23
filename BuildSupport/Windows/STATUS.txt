@@ -1,0 +1,51 @@
+Windows verification on October 22, 2026
+
+The combined audio/visual tested source fingerprint is
+e9514cbac4520740256c8855dcaff5e7b1b151f05a97b61b9d27dcc292cdbd24.
+Evidence copied from the retrieved result archive is in output/windows-av-e9514cb.
+Later documentation/comment changes do not change this tested runtime behavior.
+
+Seventeen runtime/contract tests passed. On the logged-in desktop, OpenGL,
+Vulkan, and WebGPU each presented sixty frames on the NVIDIA GTX 1050 Ti,
+passed native GPU readback, and completed the tracked Audicle lifecycle.
+Each cue created and removed both Entities and released its native resources.
+
+The connected physical interface is the Scarlett 18i8 USB. All three cues used
+ASIO::Focusrite USB ASIO through the external JACK2 1.9.22 server at 48 kHz,
+256 frames (5.33 ms per buffer). Each produced all 36,000 prepared samples and
+verified the internal return signal at peak 0.025. Total and active xruns were
+zero on all three paths. This verifies the output/client path and internal
+loopback, not audible speaker output, acoustic latency, or sustained DAW load.
+
+The Windows-owned server now uses synchronous graph scheduling (-S) and realtime
+priority 92. JACK reported realtime mode, client priority 89, maximum 91.
+Asynchronous mode produced 12–16 active xruns even with one graphics frame;
+priority adjustment alone did not fix it. Synchronous mode passed at the same
+device, rate, and buffer size. No callback allocation, blocking, or OS scheduling
+calls were added. The zero-xrun verification assertion remains enforced.
+
+The environment profile selects Focusrite ASIO and 256 frames. Device and period
+can be overridden explicitly. WORMWOOD_JACK_SERVER selects an existing named
+server; otherwise Windows uses a unique process-specific name. Only a server
+spawned by the session is stopped. Windows server shutdown terminates that owned
+process after closing its JACK client. Sustained scheduling, recovery, device
+configuration, and the iOS native graphics/audio cue remain unfinished.
+
+Source transfer preserves timestamps, verifies SHA-256 manifests, uses fresh
+snapshot directories, and cleans only the Wormwood Cargo package before building.
+This prevents stale executables from another CARGO_MANIFEST_DIR being reused.
+Test timeouts target only JACK children of the exact diagnostic invocation.
+
+Latest shared-runtime and paced verification:
+ae076bdbb68b0ef0be076f8b01d6b182e4b36811acc3398aa2ceb5415c0f8013.
+All 21 tests and the normal AV cue passed on OpenGL, Vulkan, and WebGPU.
+Each API then ran two cues in one Host/process with explicit 16,667 us pacing,
+300 frames per cue, and 5.5–5.8 seconds of callbacks per cue. Each produced all
+36,000 tone samples, reported zero active xruns, passed GPU readback, and removed
+its Entities/native resources before the next cue. The retrieved trace independently
+confirms all stages and lifecycle counts. Evidence: output/windows-soak-ae076bd.
+
+The tone lasts 750 ms, followed by silence while the callback continues. These
+finite runs do not establish DAW workload capacity, acoustic latency, general
+memory-leak freedom, or physical disconnection/recovery. The --soak-seconds and
+--soak-repeats flags are optional; default verification remains the short cue.

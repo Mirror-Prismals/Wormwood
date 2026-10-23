@@ -1,0 +1,22 @@
+{
+  "system": "GraphicsConnectionSystem",
+  "layer": 1,
+  "functions": {
+    "Prepare": {
+      "calls": []
+    },
+    "Present": {
+      "calls": []
+    },
+    "Release": {
+      "calls": []
+    },
+    "Pump": {
+      "calls": []
+    },
+    "SetView": {
+      "calls": []
+    }
+  },
+  "init_steps": []
+}

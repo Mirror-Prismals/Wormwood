@@ -1,0 +1,75 @@
+{
+  "source": "https://graphics.cs.utah.edu/research/projects/ogc/Offset_Geometric_Contact-SIGGRAPH2025.pdf",
+  "scope": "Author scenarios; material additions are excluded until these cases are implemented and measured.",
+  "status": "reference_inventory_only",
+  "cases": [
+    {
+      "id": "cloth_stack",
+      "description": "50 cloth layers dropped onto a cylinder",
+      "paper_figure": 10,
+      "implementation_status": "not_implemented"
+    },
+    {
+      "id": "tight_knot",
+      "description": "Tighten a loose cloth knot by pulling both ends",
+      "paper_figure": 11,
+      "implementation_status": "not_implemented"
+    },
+    {
+      "id": "cloth_twist",
+      "description": "Twist opposite ends of a square cloth through eight turns",
+      "paper_figure": 12,
+      "implementation_status": "not_implemented"
+    },
+    {
+      "id": "cloth_on_body",
+      "description": "Stitched garment on an animated body",
+      "paper_figure": 14,
+      "implementation_status": "not_implemented"
+    },
+    {
+      "id": "robot_tshirt",
+      "description": "Robot manipulation of a T-shirt",
+      "paper_figure": 14,
+      "implementation_status": "not_implemented"
+    },
+    {
+      "id": "yarn_stretch",
+      "description": "Stretch yarn-level cloth under tension",
+      "paper_figure": 15,
+      "implementation_status": "not_implemented"
+    },
+    {
+      "id": "yarn_twist",
+      "description": "Twist yarn-level cloth five turns and release it",
+      "paper_figure": 16,
+      "implementation_status": "not_implemented"
+    },
+    {
+      "id": "three_cloth_layers_sphere",
+      "description": "Three cloth layers in contact on a sphere",
+      "paper_figure": 17,
+      "implementation_status": "not_implemented"
+    },
+    {
+      "id": "cloth_sphere",
+      "description": "One cloth layer on a sphere",
+      "paper_figure": 18,
+      "implementation_status": "not_implemented"
+    },
+    {
+      "id": "volumetric_mat",
+      "description": "Twist a volumetric mat with surface self-contact",
+      "paper_figure": 19,
+      "implementation_status": "not_implemented"
+    }
+  ],
+  "validation": [
+    "Penetration/intersection check after every frame; halt on failure",
+    "Average and worst step time",
+    "Actual simulated time per wall-clock second",
+    "Contact-pair buffer demand and overflow",
+    "Friction behavior and thread pull-through",
+    "Declared differences in mesh, solver, hardware and scale"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "system": "NativeInventorySystem",
+  "layer": 1,
+  "functions": {
+    "Probe": {
+      "calls": []
+    }
+  },
+  "init_steps": []
+}

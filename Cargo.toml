@@ -1,0 +1,21 @@
+[package]
+name = "wormwood"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+publish = false
+
+[lib]
+path = "lib.rs"
+crate-type = ["rlib", "staticlib"]
+
+[[bin]]
+name = "wormwood"
+path = "main.rs"
+
+[dependencies]
+serde_json = "=1.0.145"
+libloading = "=0.8.9"
+
+[build-dependencies]
+bindgen = { version = "=0.72.1", default-features = false, features = ["runtime"] }

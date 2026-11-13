@@ -1,0 +1,53 @@
+Private compute-owned ray queues
+
+workgroup_queue.py changes where the existing sixteen pending GemRay records
+live. Each compute invocation still traces its own pixel and runs both original
+primary samples serially. It retains the integrator's exact strongest-first
+selection, branch retention, event/depth limits, microfacet randoms, triangle
+queries, material equations, SSLE and final display operation.
+
+The candidate stores queues in workgroup memory. A 4x4 group has 16 invocations,
+and slot*16+local_invocation_index gives each invocation sixteen disjoint slots.
+No inter-invocation exchange or synchronization is needed. The ordinary variant
+uses 12288 bytes per workgroup. --scalar-priorities additionally keeps the scan
+priorities in a shared scalar array and uses 13312 bytes. This second variant
+still copies the complete original GemRay, including its priority, on every push
+and swap. Slot storage is reused only after each sample resets count to zero.
+
+The purpose is to test whether the large per-invocation queue behind the ray
+tracer's divergent call graph spills expensive private storage. This is a
+hypothesis: shared-memory access, bank layout, initialization and occupancy can
+also make it slower. The October31 controls comparison rejected both shared
+variants for production: canonical4x4 took367.8ms, shared4x4 took609.3ms, and
+shared+priorities took925.2ms. Their maximum RGB float deviation was4.1e-7,
+but neither improved speed. Saved evidence is in
+output/checks/optics-rethink-20261031-061827-752714/report.json.
+The earlier separate private-scalar priority experiment is not evidence for
+this storage change. Keep this generator only as reproducible diagnostic history.
+
+Generate privately, without compiling or rendering:
+  python3 BuildSupport/Workstation/workgroup_queue.py --shader frozen.wgsl
+    --output output/checks/queue-shared --workgroup-size 4
+  python3 BuildSupport/Workstation/workgroup_queue.py --shader frozen.wgsl
+    --output output/checks/queue-priorities --workgroup-size 4 --scalar-priorities
+Join each pair of lines into one command.
+Each command writes only PREFIX.wgsl and PREFIX.json; the frame is unchanged.
+Graphics entry points are removed from this private copy because WGSL forbids
+workgroup storage from being reachable by a fragment entry. The prototype must
+never replace a production fragment shader.
+
+The probe appends its own compute entry and calls
+workstationProbeInvocation(local_invocation_index) before workstationShade.
+Its optional final positional argument must match the sidecar workgroup_size.
+For the examples above:
+  compute-probe PREFIX.wgsl unchanged-frame.bin WIDTH HEIGHT RESULT ITERATIONS 4
+The generator rejects workgroup sizes above 4 because an 8x8 version would
+exceed portable shared-memory limits.
+
+Required comparison: canonical 8x8, canonical 4x4, shared 4x4 and shared+priorities
+4x4 on exactly the same frozen frame and probe. Comparing only against 8x8 would
+confound storage and scheduling. Inspect both float32 output and display pixels;
+the existing compute/native differences must not hide a new candidate error.
+GPU timestamps must bracket the same dispatch, excluding compile/upload/readback.
+Use controls, arrangement and bubble frames as well as motion/fullscreen states.
+Do not promote the candidate solely because its private shader compiles.

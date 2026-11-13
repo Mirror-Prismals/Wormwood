@@ -1,0 +1,470 @@
+{
+  "system": "EnvironmentAudioSystem",
+  "layer": 5,
+  "functions": {
+    "Begin": {
+      "calls": [
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Fail",
+        "BirdSystem.Close",
+        "EntitySystem.Remove",
+        "ChuckConnectionSystem.Release",
+        "RayTracedAudioSystem.Invalidate",
+        "JackConnectionSystem.Release",
+        "IOSAudioConnectionSystem.Release",
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "EntitySystem.Create",
+        "EntitySystem.Get",
+        "ChuckConnectionSystem.Prepare",
+        "JackConnectionSystem.Prepare",
+        "IOSAudioConnectionSystem.Prepare",
+        "JackConnectionSystem.Info",
+        "IOSAudioConnectionSystem.Info",
+        "JackConnectionSystem.Attach",
+        "IOSAudioConnectionSystem.Attach",
+        "JackConnectionSystem.Start",
+        "IOSAudioConnectionSystem.Start",
+        "ChuckConnectionSystem.Telemetry",
+        "WorkstationDataSystem.Snapshot",
+        "PluginConnectionSystem.Command",
+        "AudioWorkstationSystem.PreparePlugins",
+        "ChuckConnectionSystem.Remove"
+      ]
+    },
+    "Frame": {
+      "calls": [
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Fail",
+        "BirdSystem.Close",
+        "EntitySystem.Remove",
+        "ChuckConnectionSystem.Release",
+        "RayTracedAudioSystem.Invalidate",
+        "JackConnectionSystem.Release",
+        "IOSAudioConnectionSystem.Release",
+        "BirdSystem.Step",
+        "TerrainGeometrySystem.Capture",
+        "RayTracedAudioSystem.AdvanceTerrain",
+        "SoundPhysicsSystem.Apply",
+        "ChuckConnectionSystem.SetRoutes",
+        "JackConnectionSystem.RouteChanged",
+        "IOSAudioConnectionSystem.RouteChanged",
+        "AppearanceSystem.View",
+        "JackConnectionSystem.Info",
+        "IOSAudioConnectionSystem.Info",
+        "ChuckConnectionSystem.Telemetry",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.RenderRange",
+        "WorkstationDataSystem.CaptureInput",
+        "ChuckConnectionSystem.Remove",
+        "EntitySystem.Create",
+        "ChuckConnectionSystem.Compile",
+        "ChuckConnectionSystem.Poll",
+        "TerrainSurfaceHydrologySystem.AudioSources",
+        "RayTracedAudioSystem.AdvanceMicrophone",
+        "SoundPhysicsSystem.ApplyMicrophone",
+        "ChuckConnectionSystem.SetMicrophoneRoutes"
+      ]
+    },
+    "Close": {
+      "calls": [
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Fail",
+        "BirdSystem.Close",
+        "EntitySystem.Remove",
+        "ChuckConnectionSystem.Release",
+        "RayTracedAudioSystem.Invalidate",
+        "JackConnectionSystem.Release",
+        "IOSAudioConnectionSystem.Release",
+        "JackConnectionSystem.Info",
+        "IOSAudioConnectionSystem.Info",
+        "ChuckConnectionSystem.Telemetry",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.CaptureInput",
+        "ChuckConnectionSystem.Remove"
+      ]
+    },
+    "Status": {
+      "calls": []
+    },
+    "Transport": {
+      "calls": [
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Fail",
+        "BirdSystem.Close",
+        "EntitySystem.Remove",
+        "ChuckConnectionSystem.Release",
+        "RayTracedAudioSystem.Invalidate",
+        "JackConnectionSystem.Release",
+        "IOSAudioConnectionSystem.Release",
+        "JackConnectionSystem.Info",
+        "IOSAudioConnectionSystem.Info",
+        "ChuckConnectionSystem.Telemetry",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.RenderRange",
+        "WorkstationDataSystem.RebaseTimeline",
+        "WorkstationDataSystem.CaptureInput",
+        "ChuckConnectionSystem.Remove"
+      ]
+    },
+    "Pump": {
+      "calls": [
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Fail",
+        "BirdSystem.Close",
+        "EntitySystem.Remove",
+        "ChuckConnectionSystem.Release",
+        "RayTracedAudioSystem.Invalidate",
+        "JackConnectionSystem.Release",
+        "IOSAudioConnectionSystem.Release",
+        "JackConnectionSystem.Info",
+        "IOSAudioConnectionSystem.Info",
+        "ChuckConnectionSystem.Telemetry",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.RenderRange",
+        "JackConnectionSystem.RouteChanged",
+        "IOSAudioConnectionSystem.RouteChanged",
+        "WorkstationDataSystem.CaptureInput",
+        "ChuckConnectionSystem.Remove"
+      ]
+    },
+    "DrainCapture": {
+      "calls": []
+    },
+    "MidiInput": {
+      "calls": [
+        "WorkstationDataSystem.Snapshot"
+      ]
+    },
+    "MidiKeyboard": {
+      "calls": []
+    },
+    "Retrospective": {
+      "calls": [
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.BeginRetrospectiveAudio",
+        "WorkstationDataSystem.AppendRetrospectiveAudio",
+        "WorkstationDataSystem.CommitRetrospectiveAudio",
+        "WorkstationDataSystem.AbortRetrospectiveAudio",
+        "WorkstationDataSystem.InsertRetrospectiveMidi",
+        "WorkstationDataSystem.UndoRetrospective",
+        "WorkstationDataSystem.RedoRetrospective"
+      ]
+    },
+    "RefreshMix": {
+      "calls": [
+        "AudicleSystem.Resume",
+        "ChuckConnectionSystem.RefreshMix",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Fail",
+        "BirdSystem.Close",
+        "EntitySystem.Remove",
+        "ChuckConnectionSystem.Release",
+        "RayTracedAudioSystem.Invalidate",
+        "JackConnectionSystem.Release",
+        "IOSAudioConnectionSystem.Release",
+        "JackConnectionSystem.Info",
+        "IOSAudioConnectionSystem.Info",
+        "ChuckConnectionSystem.Telemetry",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.CaptureInput",
+        "ChuckConnectionSystem.Remove"
+      ]
+    },
+    "PreviewAudio": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "continuous_native_environment_audio",
+        "description": "Own environment sound preparation, a continuous application Audicle and native callback/VM lifetime. Compose bird sources, accepted continuous terrain acoustics and current listener response through registered interfaces. Native callback consumes one transferred ChucK output after Go. Share that one native output with a bounded four-bus DAW queue and the authored24-cabinet theatre rig. Own a joined non-real-time preparation worker that continuously drains native input and supplies document/plugin PCM independently of UI and graphics. Main controls serialize with that worker; native callback queues remain lock-free.",
+        "retention": "supported",
+        "selection": "Enabled for planet-surface application requests; native and device validation remain separate from source completion.",
+        "implements": [
+          "Begin",
+          "Frame",
+          "Close",
+          "Status",
+          "Transport",
+          "Pump"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs",
+          "Audio/LineArray.rs",
+          "Audio/Transport.rs",
+          "Audio/chuck.rs",
+          "BaseSystem/LayerFive/EnvironmentAudioWorker.rs",
+          "Host/Host.rs",
+          "Workstation/Document.rs",
+          "Host/AudioPreparation.rs",
+          "Workstation/SharedDocument.rs",
+          "Audio/PREPARATION_SAFETY.md",
+          "Host/TimelineBarIntegrationTests.rs",
+          "Audio/WorkerScheduling.rs",
+          "Workstation/RetrospectiveBuffer.rs",
+          "Workstation/RetrospectiveRuntime.rs",
+          "BaseSystem/LayerTwo/TerrainAudio.rs",
+          "BaseSystem/LayerTwo/TerrainGeometrySystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "native_lifetime_and_spatial_sound",
+            "kind": "behavior",
+            "expectation": "Output remains silent before Go. One native callback owns the output after attachment. Close confirms native callback disposal before releasing VM and sound Entity. Bird position, current listener orientation and accepted terrain geometry reach spatial routing.",
+            "procedure": "Exercise native preparation, zeroed callback buffers, exclusive output attachment, audible bird calls, moving listener and source, interruption, partial failure, cleanup retries and scene close/reopen on desktop and iPhone. Validate accepted terrain/wood/soil/debris snapshots and their documented local radius and terrain sampling limits separately."
+          },
+          {
+            "id": "theatre_pcm_and_transport",
+            "kind": "behavior",
+            "expectation": "Actual pre-monitor L/S/FF/R PCM feeds cabinet EQ, three-band polar response, direct visibility,343m/s propagation and20ms delay-head crossfades. Stereo DAW mode uses its monitoring fold. Independent speaker mute leaves birds and playback position intact. Post-EQ peaks drive the visualizer; no callback JSON, allocation or locking. Native-capture play/pause/seek/record transitions apply validated monitor gain and mode before returning; speaker mute remains independent of stereo monitoring.",
+            "procedure": "Run cabinet EQ/polar/delay, SPSC pause/seek, builtin MIDI and project rendering tests. Verify native output, transport underruns, listener motion, computer focus and close/reopen. Generic listener-reflection audio remains distinct from direct-only cabinet DSP. Run capture_transport_applies_master_gain_mode_and_speaker_controls_before_play through registered Host routes and verify exact monitor PCM."
+          },
+          {
+            "id": "cardinal_loop_transport",
+            "kind": "behavior",
+            "expectation": "Loop playback consumes pre-boundary PCM before wrapping at the exact boundary sample, uses monotonic queue sequence separately from project position, and preserves generation through natural wraps. Explicit seeks past the end resume at loop start. Editing disabled endpoints preserves PCM and DSP history. Original continuous effect history and bounded render invocation cost remain requirements before the new UI is released.",
+            "procedure": "Run native-free producer/consumer, source-observation and registered EnvironmentAudioSystem.Transport tests. Test continuous plugin tails, very short loops and audible playback separately; isolated queue tests do not establish those requirements."
+          },
+          {
+            "id": "independent_audio_preparation",
+            "kind": "behavior",
+            "expectation": "Native-sized document and plugin preparation continues while the application thread is idle or blocked in graphics. Exactly one producer owns the transport and input reader. Worker document calls retain EnvironmentAudioSystem.Pump attribution and bounded deferred observations. Stop joins the preparation worker before native callback/VM release and plugin/document destruction; preparation failures stop transport and remain observable. No worker mutex, allocation, JSON, native plugin editor operation or file access is introduced into the native callback. After attachment and Audicle Go, native output activates only after a worker-readiness wait that holds no worker or document lock. Failed activation joins the worker and recovers its input/transport ownership before native cleanup.",
+            "procedure": "Run the preparation-worker main-thread-stall regression, source-observation/capture tests, native transport tests and document/Host integration tests. Separately verify sustained physical-device playback, editor gestures, lightbox shader stalls, shutdown, CPU load, recording and audible latency; preparation tests do not establish hard real-time scheduling guarantees. Run preparation_worker_is_ready_before_native_activation and native_activation_failure_joins_worker_and_preserves_accepted_capture."
+          },
+          {
+            "id": "prepared_retrospective_storage",
+            "kind": "behavior",
+            "expectation": "Begin allocates and initializes the retrospective history ring before native output activation. Same-rate capture epoch resets and rewound capture clocks retain that storage and invalidate old samples without clearing the full ring. First capture timestamps, MIDI reset, missing-frame gaps and recall chronology remain intact.",
+            "procedure": "Run retrospective_storage_tests and the worker capture tests. Verify the native startup trace and queued-frame/underrun counters separately; allocation reuse alone does not establish hardware latency."
+          },
+          {
+            "id": "preparation_worker_priority",
+            "kind": "behavior",
+            "expectation": "On Apple platforms the non-real-time preparation worker requests user-interactive QoS once at thread startup and reports whether the OS accepted it. No native callback operation, PCM queue target, capture-frame dropping or recording-clock behavior changes.",
+            "procedure": "Run native worker/capture tests and inspect the native scheduling telemetry for acceptance or errno. Compare underruns under load separately; QoS is a best-effort priority request, not a hard-real-time guarantee."
+          }
+        ]
+      },
+      {
+        "id": "playback_source_observations",
+        "description": "Publish source measurements from the existing playback render and select only fully consumed audio blocks for spatial visualization. The UI never invokes native plugins again to measure the same range.",
+        "retention": "experimental",
+        "selection": "Normal bounded producer pump requests RenderRange publish_visualization:true. Playback Status exposes transport.visualization or null, gated by playing state, consumed generation, document revision, sample rate and completed monotonic transport sequence, with legacy position fallback. At most 128 metadata packets are retained; no callback analysis or PCM duplication.",
+        "implements": [
+          "Status",
+          "Frame",
+          "Transport",
+          "Pump"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs",
+          "Audio/Transport.rs",
+          "Workstation/SourceAnalysis.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/SPATIAL_AUDIO.txt"
+        ],
+        "checks": [
+          {
+            "id": "consumed_source_observation_cache",
+            "kind": "behavior",
+            "expectation": "Queued future packets cannot reach the spatial display. Selection requires the current consumed generation and matching revision/rate, excludes pre-seek ranges and chooses the newest fully consumed block. Pause yields null; cache pruning remains bounded and preserves the latest usable record. Measurements use the producer render, including plugin PCM, without UI replay.",
+            "procedure": "Run source_observation helper tests and native transport tests. Compare actual playback, seek, pause and plugin behavior separately; deterministic helper tests do not establish device synchronization."
+          },
+          {
+            "id": "source_observation_routes",
+            "kind": "declared_calls",
+            "targets": [
+              "WorkstationDataSystem.RenderRange"
+            ],
+            "expectation": "The existing normal render route owns measurement publication."
+          }
+        ]
+      },
+      {
+        "id": "native_track_input_capture",
+        "description": "Own one native callback input reader. Drain bounded timestamped physical/VM/player-output blocks even while stopped; submit selected track monitoring through the worker renderer and capture armed audio through revision-checked document hooks. Stop commits pending takes. Existing Record starts recording once, Stop holds position, and Rewind returns home.",
+        "retention": "experimental",
+        "selection": "Desktop JACK physical inputs are connected during native preparation. CaptureInput uses native consumed timeline stamps and generation boundaries; stopped monitoring does not advance the playhead. DrainCapture supplies up to eight accepted worker blocks to the bottom-panel retrospective owner and reports dropped observer blocks. VM1 requires an actual world microphone pose/source route; iOS/Windows physical input and MIDI senders are not claimed by this behavior. MidiInput timestamps keyboard/preview note events on the native sample clock; input senders must call it with track/pitch/velocity/source, including note-off velocity0. This provides the adapter but does not install a native MIDI or window-key sender.",
+        "implements": [
+          "Begin",
+          "Frame",
+          "Pump",
+          "Transport",
+          "Status",
+          "DrainCapture",
+          "Close",
+          "MidiInput"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs",
+          "Audio/Transport.rs",
+          "Audio/InputCapture.rs",
+          "Audio/mod.rs",
+          "Audio/chuck.rs",
+          "BaseSystem/LayerOne/JackAudio.rs",
+          "BaseSystem/LayerOne/MacAudioRoute.rs",
+          "BaseSystem/LayerOne/ChuckConnectionSystem.rs",
+          "Workstation/Recording.rs",
+          "Workstation/TrackInputBlock.rs",
+          "Workstation/TransportControls.rs",
+          "BaseSystem/LayerFive/EnvironmentAudioWorker.rs"
+        ],
+        "checks": [
+          {
+            "id": "native_input_recording_worker",
+            "kind": "behavior",
+            "expectation": "One callback writer and one preparation-worker reader preserve distinct physical, VM and player samples. Input queue overflow leaves explicit device-clock gaps. The real document worker monitors while stopped, records only latched armed lanes, and commits replayable audio on stop. Capture recovery reports discarded unaccepted frames.",
+            "procedure": "Run audio::input_capture, audio::chuck::input_capture_tests, audio::transport, workstation::recording and native_capture_worker_monitors_stopped_and_commits_armed_pcm_at_consumed_clock in the private crate. These deterministic tests do not establish hardware latency, device permissions, microphone-world routing or final application integration."
+          }
+        ]
+      },
+      {
+        "id": "computer_keyboard_mic_velocity",
+        "description": "Meter physical input0 for the preserved computer-keyboard attack-velocity algorithm using55ms peak decay, RMS, signal-seen and reset on disable.",
+        "retention": "experimental",
+        "selection": "MidiKeyboard sets enabled; the existing worker capture drain observes actual input0 and Status publishes metrics. No callback allocation or separate device is introduced.",
+        "implements": [
+          "MidiKeyboard",
+          "Pump",
+          "Status"
+        ],
+        "sources": [
+          "Workstation/MidiKeyboard.rs",
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "source_mic_envelope",
+            "kind": "behavior",
+            "expectation": "Disabled/missing input resets counters and levels; real signal sets availability;55ms envelope and keyboard noise-floor/curve defaults match original source formulas.",
+            "procedure": "Run workstation::midi_keyboard::tests and separately compare live velocity with native input hardware after integration."
+          }
+        ]
+      },
+      {
+        "id": "continuous_ambient_layers",
+        "description": "Load the authored wind, flow, ocean, insect and depths ChucK layers once per environment session under the existing environment Audicle. Route insects near the listener and water at accepted water sources. Wind normally follows two metres above each receiver; probe accepted acoustic geometry within 128 metres overhead at five Hz, place wind one metre above its highest cover, hold for half a second at edges and ease its return outdoors. Player and microphone cover state are independent. Reduce above-water layers during submersion and gate depths to submersion. Remove owned requests and sound Entities at close.",
+        "retention": "supported",
+        "selection": "Planet environment Frame; standalone workstation Pump does not start ambient scripts.",
+        "implements": [
+          "Frame",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/EnvironmentAmbience.rs",
+          "BaseSystem/LayerTwo/TerrainAudio.rs",
+          "Water/ambient.rs",
+          "Procedures/chuck/ambient/wind.ck",
+          "Procedures/chuck/ambient/flow.ck",
+          "Procedures/chuck/ambient/ocean.ck",
+          "Procedures/chuck/ambient/crickets.ck",
+          "Procedures/chuck/ambient/depths.ck"
+        ],
+        "checks": [
+          {
+            "id": "ambient_lifetime_and_pcm",
+            "kind": "behavior",
+            "expectation": "All five scripts compile and produce finite nonzero PCM on their dedicated buses; dry land creates no flow, ocean or depths source. Wind clears stacked roofs and underground cover using local up; independent receiver anchors hold briefly at edges and return outdoors. Submersion enables depths. Repeated steps retain requests; close removes owned sound Entities.",
+            "procedure": "Run terrain_audio::wind_cover_tests plus ambient module source-selection and embedded VM tests. Review registered Host calls and intent inspection. Verify audible levels, scene transitions and terrain occlusion in the native app separately."
+          }
+        ]
+      },
+      {
+        "id": "pause_environment_sound_levels",
+        "description": "Apply the saved ambient master and independent wind, bird, insect, water, ocean and underwater gains to prepared environment routes on the control thread. Preserve unscaled routes so repeated refreshes do not compound volume. The pause loop refreshes routes without advancing the game.",
+        "retention": "supported",
+        "selection": "SetRoutes during normal environment playback; RefreshMix while paused. Defaults preserve existing playback levels.",
+        "implements": [
+          "RefreshMix"
+        ],
+        "sources": [
+          "Render/PauseMenu.m",
+          "BaseSystem/LayerOne/ChuckConnectionSystem.rs",
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "saved_environment_mix",
+            "kind": "behavior",
+            "expectation": "Each named slider controls only its environment group, ambient master multiplies all groups, zero mutes, defaults restore the previous mix, saved values survive relaunch, and repeated refreshes do not compound gain. No preferences or UI work occurs in the audio callback.",
+            "procedure": "Run isolated native Cocoa sound-settings controls and persistence checks, inspect the live sound panel, and run embedded-VM mix mute/restore verification. Verify pause/resume input capture separately."
+          }
+        ]
+      },
+      {
+        "id": "independent_virtual_microphone",
+        "description": "A stationary theatre capsule supplies mono VM1 from its own terrain acoustic listener, ambient source positions and cabinet receiver. Microphone PCM never enters player output implicitly.",
+        "retention": "experimental",
+        "selection": "Default theatre microphone",
+        "implements": [
+          "Frame"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs",
+          "BaseSystem/LayerFive/EnvironmentAmbience.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs",
+          "Host/Host.rs",
+          "Audio/chuck.rs",
+          "Audio/Transport.rs",
+          "Art/AudioWorkstation/VirtualMicrophone/make_microphone.py"
+        ],
+        "checks": [
+          {
+            "id": "virtual_microphone_isolation",
+            "kind": "behavior",
+            "expectation": "Moving the player cannot relocate the microphone or its invisible wind source. VM1 can be recorded into an armed audio track. Microphone routing alone produces no device output; cabinet capture follows world speaker enablement.",
+            "procedure": "Run microphone, input_capture, transport, recording, theatre and ambience tests; inspect Blender preview; then record VM1 in the native theatre and listen to the resulting take. Native listening remains required."
+          },
+          {
+            "id": "detached_small_period_capture_drain",
+            "kind": "behavior",
+            "expectation": "After native capture detaches, shutdown drains all queued physical or VM1 samples using a finite input-count bound, commits the take once, and preserves input on error or stalled progress. The former six-pass render-quantum limit is replaced.",
+            "procedure": "Run detached_capture_shutdown_drains_full_queue_and_commits_once with a full 32767-frame queue and 128-frame preparation quantum for both physical and VM1 inputs; verify replay PCM and idempotent repeated close. Run the native embedded DAW check."
+          }
+        ]
+      },
+      {
+        "id": "browser_audio_preview",
+        "description": "Play and pause one selected browser WAV independently of the arrangement transport, using the existing native output.",
+        "retention": "supported",
+        "selection": "Explicit PreviewAudio commands while the native output is active.",
+        "implements": [
+          "PreviewAudio",
+          "Status",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs",
+          "Workstation/AudioPreview.rs",
+          "Workstation/DrumSample.rs",
+          "Audio/Transport.rs"
+        ],
+        "checks": [
+          {
+            "id": "independent_preview_device_queue",
+            "kind": "behavior",
+            "expectation": "Single decoder work remains outside the native callback. The callback consumes bounded prepared stereo frames without allocation or locks. Pause preserves its consumed cursor; resumption continues, a new file discards old frames, and completion silences only the preview. Preview bypasses physical speaker and microphone routing.",
+            "procedure": "Run browser_preview_tests and audio_preview::tests; perform device listening for actual native output."
+          }
+        ]
+      }
+    ]
+  },
+  "entry_steps": [
+    "MidiInput",
+    "DrainCapture",
+    "MidiKeyboard",
+    "Retrospective"
+  ]
+}

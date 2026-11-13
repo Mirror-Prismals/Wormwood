@@ -1,0 +1,1393 @@
+{
+  "system": "AudioWorkstationSystem",
+  "layer": 5,
+  "functions": {
+    "Run": {
+      "calls": [
+        "AudioWorkstationSystem.Begin",
+        "AudioWorkstationSystem.Step",
+        "AudioWorkstationSystem.Status",
+        "AudioWorkstationSystem.Close",
+        "GraphicsConnectionSystem.Pump",
+        "AudioWorkstationSystem.SetPanel",
+        "AudioWorkstationSystem.OpenPianoRoll",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.PutTrack",
+        "WorkstationDataSystem.RemoveTrack",
+        "WorkstationDataSystem.ImportAudio",
+        "WorkstationDataSystem.PutClip",
+        "WorkstationDataSystem.PutSource",
+        "WorkstationDataSystem.SetTrackMix",
+        "WorkstationDataSystem.RenderRange",
+        "WorkstationExportSystem.Pump",
+        "EnvironmentAudioSystem.Begin",
+        "EnvironmentAudioSystem.Pump",
+        "EnvironmentAudioSystem.Transport",
+        "EnvironmentAudioSystem.Status",
+        "ChuckConnectionSystem.Telemetry",
+        "EnvironmentAudioSystem.Close",
+        "AudioWorkstationSystem.Resume",
+        "AudioWorkstationSystem.Suspend",
+        "WorkstationDataSystem.AudioPlaylist",
+        "PlanetNavigationSystem.Step",
+        "PlanetNavigationSystem.Pause",
+        "PluginConnectionSystem.Command",
+        "WorkstationDataSystem.PutBus",
+        "WorkstationDataSystem.SetBus",
+        "WorkstationDataSystem.RemoveBus"
+      ]
+    },
+    "Begin": {
+      "calls": [
+        "PluginConnectionSystem.Command",
+        "AudicleSystem.Create",
+        "WorkstationPanelSystem.Load",
+        "EntitySystem.Create",
+        "AppearanceSystem.Prepare",
+        "GraphicsConnectionSystem.InputMode",
+        "GraphicsConnectionSystem.Caption",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "WorkstationPanelSystem.View",
+        "GraphicsConnectionSystem.PluginSurface",
+        "AppearanceSystem.Release",
+        "EntitySystem.Remove",
+        "WorkstationPanelSystem.Release",
+        "AudicleSystem.Cancel",
+        "WorkstationExportSystem.Close",
+        "WorkstationDataSystem.Snapshot",
+        "EnvironmentAudioSystem.MidiKeyboard",
+        "EnvironmentAudioSystem.MidiInput",
+        "GraphicsConnectionSystem.ParkWorkstation",
+        "WorkstationPanelSystem.Suspend"
+      ]
+    },
+    "Step": {
+      "calls": [
+        "ChuckConnectionSystem.Compile",
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish",
+        "WorkstationPanelSystem.View",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.PutTrack",
+        "WorkstationDataSystem.RemoveTrack",
+        "WorkstationDataSystem.ImportAudio",
+        "WorkstationDataSystem.PutClip",
+        "EnvironmentAudioSystem.Status",
+        "WorkstationDataSystem.SetTrackMix",
+        "WorkstationDataSystem.MoveClip",
+        "WorkstationDataSystem.TrimAudioClip",
+        "WorkstationDataSystem.SetClipGain",
+        "WorkstationDataSystem.SetClipRouting",
+        "WorkstationDataSystem.SplitClip",
+        "WorkstationDataSystem.SetClipFades",
+        "WorkstationDataSystem.RemoveClip",
+        "WorkstationDataSystem.ReorderTracks",
+        "EnvironmentAudioSystem.Transport",
+        "GraphicsConnectionSystem.Caption",
+        "PluginConnectionSystem.Command",
+        "PluginConnectionSystem.Menu",
+        "PluginConnectionSystem.Status",
+        "GraphicsConnectionSystem.CursorLabel",
+        "WorkstationDataSystem.CreateRangeClips",
+        "GraphicsConnectionSystem.SelectionRange",
+        "GraphicsConnectionSystem.PluginSurface",
+        "WorkstationDataSystem.AddSpectralMask",
+        "WorkstationDataSystem.UndoSpectralMask",
+        "WorkstationDataSystem.ClearSpectralMasks",
+        "WorkstationDataSystem.ClipEditorPreview",
+        "WorkstationDataSystem.SetClipWarp",
+        "WorkstationDataSystem.SetWarpMap",
+        "WorkstationDataSystem.PumpWarp",
+        "WorkstationDataSystem.RebaseTimeline",
+        "EnvironmentAudioSystem.MidiKeyboard",
+        "EnvironmentAudioSystem.MidiInput",
+        "GraphicsConnectionSystem.CcParameterPicker",
+        "EnvironmentAudioSystem.Retrospective",
+        "WorkstationDataSystem.BeginRetrospectiveAudio",
+        "WorkstationDataSystem.AppendRetrospectiveAudio",
+        "WorkstationDataSystem.CommitRetrospectiveAudio",
+        "WorkstationDataSystem.AbortRetrospectiveAudio",
+        "WorkstationDataSystem.InsertRetrospectiveMidi",
+        "WorkstationDataSystem.UndoRetrospective",
+        "WorkstationDataSystem.RedoRetrospective",
+        "SecurityCameraSystem.View",
+        "WorkstationDataSystem.DrumRack",
+        "WorkstationDataSystem.AudioPlaylist",
+        "WorkstationDataSystem.TrackFreezeBegin",
+        "WorkstationDataSystem.TrackFreezeStep",
+        "WorkstationDataSystem.TrackFreezeAccept",
+        "WorkstationDataSystem.TrackFreezeCancel",
+        "WorkstationDataSystem.TrackFreezeFlatten",
+        "AudicleSystem.Cancel",
+        "AudicleSystem.Fail",
+        "WorkstationDataSystem.Undo",
+        "WorkstationDataSystem.Redo",
+        "WorkstationDataSystem.PutBus",
+        "WorkstationDataSystem.SetBus",
+        "WorkstationDataSystem.RemoveBus",
+        "WorkstationDataSystem.MixPreview",
+        "EnvironmentAudioSystem.PreviewAudio"
+      ]
+    },
+    "SetPanel": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Resume"
+      ]
+    },
+    "Close": {
+      "calls": [
+        "GraphicsConnectionSystem.PluginSurface",
+        "AppearanceSystem.Release",
+        "EntitySystem.Remove",
+        "WorkstationPanelSystem.Release",
+        "AudicleSystem.Cancel",
+        "WorkstationExportSystem.Close",
+        "PluginConnectionSystem.Command",
+        "PluginConnectionSystem.Menu",
+        "PluginConnectionSystem.Status",
+        "EnvironmentAudioSystem.MidiKeyboard",
+        "EnvironmentAudioSystem.MidiInput",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.DrumRack",
+        "WorkstationDataSystem.TrackFreezeBegin",
+        "WorkstationDataSystem.TrackFreezeStep",
+        "WorkstationDataSystem.TrackFreezeAccept",
+        "WorkstationDataSystem.TrackFreezeCancel",
+        "WorkstationDataSystem.TrackFreezeFlatten",
+        "AudicleSystem.Fail",
+        "GraphicsConnectionSystem.ParkWorkstation",
+        "WorkstationPanelSystem.Suspend",
+        "EnvironmentAudioSystem.PreviewAudio"
+      ]
+    },
+    "Status": {
+      "calls": []
+    },
+    "OpenPianoRoll": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Resume",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.PutTrack",
+        "WorkstationDataSystem.RemoveTrack",
+        "WorkstationDataSystem.PutClip",
+        "WorkstationDataSystem.PutBus",
+        "WorkstationDataSystem.SetBus",
+        "WorkstationDataSystem.RemoveBus"
+      ]
+    },
+    "Suspend": {
+      "calls": [
+        "WorkstationExportSystem.Close",
+        "GraphicsConnectionSystem.PluginSurface",
+        "AppearanceSystem.Release",
+        "EntitySystem.Remove",
+        "WorkstationPanelSystem.Release",
+        "AudicleSystem.Cancel",
+        "PluginConnectionSystem.Command",
+        "PluginConnectionSystem.Menu",
+        "PluginConnectionSystem.Status",
+        "EnvironmentAudioSystem.MidiKeyboard",
+        "EnvironmentAudioSystem.MidiInput",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.DrumRack",
+        "WorkstationDataSystem.TrackFreezeBegin",
+        "WorkstationDataSystem.TrackFreezeStep",
+        "WorkstationDataSystem.TrackFreezeAccept",
+        "WorkstationDataSystem.TrackFreezeCancel",
+        "WorkstationDataSystem.TrackFreezeFlatten",
+        "AudicleSystem.Fail",
+        "GraphicsConnectionSystem.ParkWorkstation",
+        "WorkstationPanelSystem.Suspend",
+        "EnvironmentAudioSystem.PreviewAudio"
+      ]
+    },
+    "Resume": {
+      "calls": [
+        "PluginConnectionSystem.Command",
+        "AudicleSystem.Create",
+        "WorkstationPanelSystem.Load",
+        "EntitySystem.Create",
+        "AppearanceSystem.Prepare",
+        "GraphicsConnectionSystem.InputMode",
+        "GraphicsConnectionSystem.Caption",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "WorkstationPanelSystem.View",
+        "GraphicsConnectionSystem.PluginSurface",
+        "AppearanceSystem.Release",
+        "EntitySystem.Remove",
+        "WorkstationPanelSystem.Release",
+        "AudicleSystem.Cancel",
+        "WorkstationExportSystem.Close",
+        "WorkstationDataSystem.Snapshot",
+        "EnvironmentAudioSystem.MidiKeyboard",
+        "EnvironmentAudioSystem.MidiInput",
+        "GraphicsConnectionSystem.FocusWorkstation",
+        "GraphicsConnectionSystem.ParkWorkstation",
+        "WorkstationPanelSystem.Suspend"
+      ]
+    },
+    "RunEmbedded": {
+      "calls": [
+        "WorkstationExportSystem.Pump",
+        "AudioWorkstationSystem.Begin",
+        "AudioWorkstationSystem.Step",
+        "AudioWorkstationSystem.Status",
+        "AudioWorkstationSystem.Close",
+        "GraphicsConnectionSystem.Pump",
+        "AudioWorkstationSystem.SetPanel",
+        "AudioWorkstationSystem.OpenPianoRoll",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.PutTrack",
+        "WorkstationDataSystem.RemoveTrack",
+        "WorkstationDataSystem.ImportAudio",
+        "WorkstationDataSystem.PutClip",
+        "WorkstationDataSystem.PutSource",
+        "WorkstationDataSystem.SetTrackMix",
+        "WorkstationDataSystem.RenderRange",
+        "EnvironmentAudioSystem.Begin",
+        "EnvironmentAudioSystem.Pump",
+        "EnvironmentAudioSystem.Transport",
+        "EnvironmentAudioSystem.Status",
+        "ChuckConnectionSystem.Telemetry",
+        "EnvironmentAudioSystem.Close",
+        "AudioWorkstationSystem.Resume",
+        "AudioWorkstationSystem.Suspend",
+        "EnvironmentAudioSystem.Frame",
+        "PlanetNavigationSystem.Step",
+        "PlanetNavigationSystem.Pause",
+        "WorkstationDataSystem.PutBus",
+        "WorkstationDataSystem.SetBus",
+        "WorkstationDataSystem.RemoveBus"
+      ]
+    },
+    "ComputerKeyboard": {
+      "calls": [
+        "EnvironmentAudioSystem.MidiKeyboard",
+        "EnvironmentAudioSystem.MidiInput"
+      ]
+    },
+    "PreparePlugins": {
+      "calls": [
+        "PluginConnectionSystem.Command"
+      ]
+    },
+    "Prewarm": {
+      "calls": [
+        "WorkstationPanelSystem.Load",
+        "GraphicsConnectionSystem.PrewarmWorkstation",
+        "AudioWorkstationSystem.Begin",
+        "AudioWorkstationSystem.PreparePlugins",
+        "AudioWorkstationSystem.Step",
+        "AudioWorkstationSystem.Suspend",
+        "AudioWorkstationSystem.Close",
+        "GraphicsConnectionSystem.Pump"
+      ]
+    },
+    "DrumRack": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.DrumRack",
+        "AudicleSystem.Resume"
+      ]
+    },
+    "Background": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish",
+        "WorkstationDataSystem.Snapshot",
+        "EnvironmentAudioSystem.Status",
+        "WorkstationPanelSystem.View",
+        "GraphicsConnectionSystem.Pump"
+      ]
+    },
+    "PrimeWorld": {
+      "calls": [
+        "GraphicsConnectionSystem.Suspend",
+        "GraphicsConnectionSystem.Resume",
+        "GraphicsConnectionSystem.Pump",
+        "AudioWorkstationSystem.Resume",
+        "AudioWorkstationSystem.Suspend"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "user_audio_browser",
+        "description": "Desktop left-panel All and Audio categories list WAV files in USER and USER/USER_SAMPLES. Embedded lettering and input share the complete catalog, including user sample filenames. A sample drag releases onto an existing audio lane or a continuous free position at the elapsed-time pointer position. A stationary click starts or pauses the selected WAV preview; clicking a paused selection resumes it. Selection and drag labels reuse the Cardinal browser surface. Successful import selects the clip and acknowledges the drop. Held browser payloads survive animated panel bounds and presentation refreshes; window resizing or canvas-scale changes still cancel the gesture. Drop hit testing uses current panel geometry. Verify with browser_drags_survive_panel_refresh_but_cancel_on_resize and native interaction review.",
+        "retention": "experimental",
+        "selection": "macOS desktop browser; WORMWOOD_USER_ROOT overrides the local editable USER library. Library refresh is cached for two seconds. Accepted drops use the document importer; preview uses one bounded background decoder and an independent device queue, with sample-rate conversion.",
+        "implements": [
+          "Step"
+        ],
+        "sources": [
+          "Workstation/AudioLibrary.rs",
+          "Workstation/PluginBrowser.rs",
+          "Workstation/PluginBrowserFeedbackTests.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/AudioPreview.rs",
+          "Audio/Transport.rs"
+        ],
+        "checks": [
+          {
+            "id": "audio_browser_drop",
+            "kind": "behavior",
+            "expectation": "Discovery accepts WAV files only, preserves plugin/component categories, and sorts sample names. MIDI lanes, Escape, stale revisions, hidden surfaces and invalid drops do not import. Errors appear in the caption; successful imports refresh the arrangement.",
+            "procedure": "Run workstation::audio_library::tests and workstation::plugin_browser::feedback_tests. Native review: create Audio Track, open Audio, drag the sine WAV to the lane, press Play, then test cancellation and a MIDI-lane drop."
+          },
+          {
+            "id": "audio_import_route",
+            "kind": "declared_calls",
+            "expectation": "The UI invokes the registered atomic document importer.",
+            "targets": [
+              "WorkstationDataSystem.ImportAudio"
+            ]
+          },
+          {
+            "id": "browser_preview_pause_resume",
+            "kind": "behavior",
+            "expectation": "A click without drag toggles the selected WAV preview. Switching selection replaces it, end-of-file stops it, and suspend/close stops it. Preview does not change document content, transport position or recording input. Decode errors appear in the browser caption.",
+            "procedure": "Run audio::transport::browser_preview_tests, workstation::audio_preview::tests and workstation::plugin_browser::feedback_tests::audio_click_previews_but_drag_only_imports; verify native listening separately."
+          }
+        ]
+      },
+      {
+        "id": "blank_workstation_panel_motion",
+        "description": "Animate four Origami gem panels with decorative authored transport controls above and faders/meters below, preserving source opening-order ownership, slide/tap behavior and left/bottom expansion. The left gem carries the component browser actions; the SETTINGS label opens simple workstation preferences on macOS. All labels follow the same physical panel transforms. Live mixer levels illuminate the authored spectra behind their protective glass: visible meter apertures refresh through direct optical transport while surrounding panel imagery remains retained. When panel expansion leaves no timeline body, timeline bars are hidden rather than raising an empty-rectangle error.",
+        "retention": "experimental",
+        "selection": "AudioWorkstationSystem entries or desktop --daw-only BACKEND (--workstation remains an alias). Arrows toggle physical edges, Option/Alt plus any arrow cycles its physical panel through normal, three-quarter extended and fullscreen at native zoom; Escape restores the previous panel layout. The bottom full view selects its existing Mixer page. Top transport uses the same three-size cycle. The right panel uses three small numbered ruby page selectors with a desaturated selected gem, matching bottom-panel navigation; the previous/next arrows are retired. Page one starts I/O rows near the top. Drum Rack, Rays and optional speaker/headset controls join LEARN and LOOP on page two, above KEYBOARD. LOOP is a managed ruby control below LEARN on right-panel page two, retaining the shared transport loop latch; its former top-panel face and input target are retired. The former modest left/bottom keyboard expansion is retired in favor of the three-size cycle; explicit SetPanel expanded requests retain that independent size preference, Shift+scroll down enters persistent 0.61 overview and Shift+scroll up restores native size; Shift alone does not change the view. A normal edge arrow shrinks an expanded/full-view panel before closing it, Space plays or pauses the shared transport. On iOS, one full-screen gem panel or the full-screen timeline is shown. A quick dominant swipe anywhere selects top/down, bottom/up, left/right or right/left; only the opposite direction closes the active panel back to Timeline. Other directions are ignored until Timeline is reached. The panel slides from its physical edge with a 280ms smoothstep transition; per-frame advancement is capped at 50ms so a slow optical frame cannot skip the entire animation. Moving controls do not accept edits. Desktop timing is unchanged. The previous mobile edge/rim-only navigation and two-finger expansion/overview are retired by the user-requested mobile workflow. Hold 180ms before dragging a control, clip or component; quick taps preserve down/up across frames. Two fingers scroll; pinch supplies editor zoom; two-finger double tap exits. A held left-browser component dragged past screen center reveals Timeline for the existing row insertion/drop. Modal settings retain input ownership until Apply/Cancel. Ordinary desktop layout, gestures and optical materials are preserved outside the requested full-view expansion. While a piano roll owns focus, arrows and Shift belong to note editing; Escape returns those shortcuts to panels. Finite --frames captures may explicitly set WORMWOOD_WORKSTATION_CAPTURE_DT to >0 and <=1 seconds for repeatable motion with editing input suppressed; interactive sessions and benchmarks retain their own clocks. --check-workstation-controls BACKEND is a standalone four-frame mixer-page capture with one-second motion steps, suppressed editing input and restoration of the prior page. The macOS default display cadence (override WORMWOOD_WORKSTATION_DISPLAY_CADENCE) on the standalone WebGPU prerender path replaces the fixed60Hz active sleep budget with the current window display mode or reported variable-refresh ceiling. Unknown, quiet or suspended windows retain60Hz service; elapsed-time motion and audio callback scheduling are unchanged. The macOS default shared snapshot (override WORMWOOD_WORKSTATION_SHARED_SNAPSHOT) reuses the document owner revision-owned part of typed Snapshot in Step, with fresh live metadata returned alongside it. Fresh native playback visualization is passed separately to the spatial consumer; browser actions and other mutations still re-read through existing routes.",
+        "implements": [
+          "Run",
+          "Begin",
+          "Step",
+          "SetPanel",
+          "Close",
+          "Status",
+          "Resume",
+          "Suspend",
+          "RunEmbedded"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/PanelMotion.rs",
+          "Workstation/MixerMeters.rs",
+          "Workstation/FaderComponents.rs",
+          "Render/WorkstationPrerender.wgsl",
+          "Render/WorkstationPrerenderSource.rs",
+          "Platform/Desktop.rs",
+          "Render/window.rs",
+          "BuildSupport/macOS/Launcher.m",
+          "Workstation/PanelLayout.rs",
+          "Platform/iOS/App.m",
+          "Platform/iOS/Touch.rs",
+          "Host/Host.rs",
+          "Workstation/PluginInserts.rs",
+          "Workstation/FrameCadence.rs",
+          "Workstation/Document.rs",
+          "Workstation/SpatialMix.rs",
+          "Workstation/RenderDefaults.rs",
+          "Workstation/TransportControls.rs",
+          "Workstation/OrigamiControl.rs",
+          "Workstation/Settings.rs",
+          "Workstation/RoutingEditor.rs",
+          "Workstation/Lightbox.rs",
+          "Theatre/Cameras.rs",
+          "Workstation/MobileWorkstationInput.rs",
+          "Workstation/MobileWorkflowIntegrationTests.rs",
+          "Workstation/PianoRollScene.rs",
+          "Platform/iOS/WorkstationOverlay.m",
+          "Render/ios.rs",
+          "Workstation/FullscreenPanelIntegrationTests.rs",
+          "Render/WorkstationPrerender.rs",
+          "Render/WorkstationPanelSample.wgsl",
+          "Render/WorkstationPanelDetail.wgsl",
+          "Render/WorkstationRetainedContent.rs",
+          "Render/WorkstationIncrementalBake.rs",
+          "Render/WorkstationBakeTiles.rs",
+          "Workstation/DeferredFloor.rs",
+          "Procedures/Shaders/workstation_abi.txt"
+        ],
+        "checks": [
+          {
+            "id": "source_motion",
+            "kind": "behavior",
+            "expectation": "Each slide advances by (target-state)*dt*4 with source clamping. Toggle retraction peaks at ten percent after 0.25 seconds and ends at 0.5 seconds. Held keys do not repeatedly toggle; mid-slide reversals preserve current progress. No rotation or new elastic motion is substituted. Origami assigns simultaneous openings left/right/top/bottom priority and retains ownership during closure. Left/bottom expansion follows the original 1-to-1.5 easing. Author-corrected overview alignment: left and right panels retain their ordinary scaled widths and translate to the physical screen edges in both open and retracted slide states. Retracted panels remain fully visible in overview until explicitly hidden with overview-hide. Overview must not widen panels, enable three-quarter expansion, or leave open panels spilling offscreen. Normal-scale layout is unchanged. Those desktop panel-motion rules are retained; the mobile full-screen page workflow is checked separately.",
+            "procedure": "Run focused panel motion/layout cases, including opening order and quick reversals. Compare native animation and resizing against Cardinal Origami. Verify reachable desktop and phone gestures; source tests alone do not establish rendered behavior. Use --check-workstation-controls to capture the real mixer page and verify all six meter/fader poses remain visible; review engraving appearance separately from the completion report."
+          },
+          {
+            "id": "panel_lifecycle",
+            "kind": "behavior",
+            "expectation": "Only layer five originates the panel Audicle. Motion and resize submissions run in Go; settled panels retain geometry after Finish. Closing or failed preparation releases the native session before Entity removal and retains handles on cleanup failure. Standalone launch prepares the shared stereo native audio/VM but does not start playback or recording. Embedded focus reuses the world audio lifetime; its presentation suspension preserves document and panel state. On iOS workstation launch does not request the game pause input mode, and gameplay pause callbacks do not open an overlay on the workstation.",
+            "procedure": "Exercise open/close cycles, failed assets/preparation, cleanup retry and closure during animation. Confirm no leaked resources/Audicles. On iOS confirm full-screen page navigation, held edits, two-finger scroll/zoom, exit and reopen reset without gameplay pause overlay. Exercise embedded return/reopen, Space and ruby transport buttons, and MIDI notes through the explicit Cardinal sine adapter."
+          },
+          {
+            "id": "workstation_display_cadence",
+            "kind": "behavior",
+            "expectation": "Active optimized workstation frames can follow high-refresh metadata without catch-up spinning. Fixed modes win over hardware maxima; unknown metadata falls back safely. Quiet windows keep invalidation-driven drawing and60Hz polling. Other scenes remain unchanged.",
+            "procedure": "Run cadence unit tests and native interactive stop-file flow. Compare explicit paced audio benchmark with flag off/on, verify sleep separated from acquisition, pixel/settle checks and audio counters. WORMWOOD_WORKSTATION_BENCHMARK_PACED=1 opts a finite benchmark into this same sleep path; default benchmark remains unpaced."
+          },
+          {
+            "id": "panel_input_diagnostic_delivery",
+            "kind": "behavior",
+            "expectation": "Opt-in WORMWOOD_WORKSTATION_INPUT_VALIDATION records applied panel state from the owning Run or RunEmbedded driver without causing accepted arrow/button input to abort the workstation. Other callers cannot forge this diagnostic event.",
+            "procedure": "Run Host panel_input_diagnostic_is_allowed_only_for_workstation_driver and verify an actual native arrow or toolbar action continues through subsequent frames, records panel_input_applied, and exits normally."
+          },
+          {
+            "id": "cardinal_top_transport_controls",
+            "kind": "behavior",
+            "expectation": "Existing top transport models use Cardinal managed-button capture: press inside, activate on release inside, cancel outside, and hold pointer ownership through release. Pressure ramps to 0.5 in 150ms; successful Play and Stop remain latched. Play always plays, Stop preserves position, Rewind stops and returns transport and timeline viewport to zero. Record does not falsely claim capture: the missing recording backend is reported explicitly. Existing audio callback, layouts and other panels are unchanged.",
+            "procedure": "Reference Salamander137/BaseSystem/ButtonSystem.cpp updateButtonState, DawTransportSystem.cpp UpdateDawTransport, DawUiSystem.cpp updateTransportButtonVisuals and DawGemMaterialSystem.cpp materialFor before changing behavior. Run transport_controls, native callback buffering and registered DAW Step tests against real in-memory transport; verify final uploaded poses move inward and retained shader depth uses the captured/current pose. The overwritten row13 pressure/lateral-tint simulation is retired. Compile normal macOS app, then manually check press visibility, drag-out/release, Play/Stop/Rewind and state latches. No automated GUI or benchmark gate."
+          },
+          {
+            "id": "cardinal_origami_control",
+            "kind": "behavior",
+            "expectation": "The existing right-panel ORIGAMI label activates on release inside and cycles Cardinal Off -> On -> Fixed Top -> Off. Initial Fixed Top preserves the approved layout. Layout, hit targets and panel-mounted content share the selected mode; the window caption reports the original Cardinal mode text after activation. Captured note/clip/plugin/transport gestures, focus loss and release outside do not activate it. LOAD, SAVE and SETTINGS placeholders gain no invented action.",
+            "procedure": "Compare Salamander137/BaseSystem/DawTransportSystem.cpp DawOrigamiPanels toggle and DawUiSystem.cpp updateOrigamiPanelButtonVisuals, run origami_control and existing panel/layout tests, compile/package, then manually click all three modes and exercise open/close order. No GUI automation or benchmark."
+          },
+          {
+            "id": "cardinal_settings_lightbox",
+            "kind": "behavior",
+            "expectation": "The user retired the Theme / Lightbox settings editor. SETTINGS opens a simple rectangular Workspace / Controls / Audio Routing dialog. Workspace changes backdrop and left/right or top/bottom panel placement, with saved Apply, Cancel/Escape and reset. AR backdrop stays locked. Existing version-one lighting data remains readable and preserved; production artwork never relights. Controls provides navigation help. Placement takes effect after Apply; Cancel leaves it unchanged. Audio Routing displays document matrix buses and the real physical-output catalog as ports joined by cables. Drag or click a matrix output then a device channel to connect; X disconnects. Routing edits use SetBus immediately and content Undo, independently of preference Apply/Cancel. Matrix ARRAY/OFF and CH selectors on right-panel page one are retired; input and mute remain. Mix monitoring controls are unchanged.",
+            "procedure": "Run focused settings tests and intent inspection. Review native open, tabs, placement, Apply/relaunch, Cancel, Escape and focus loss. Run routing-editor gesture and bus PCM/Undo tests; review native cable connections, disconnect, matrix-list scrolling, modal input capture and first-page control removal. Verify legacy settings migration and retained lighting data. Native review and packaging are separate obligations."
+          },
+          {
+            "id": "mobile_fullscreen_shared_controls",
+            "kind": "behavior",
+            "expectation": "Exactly one selected full-screen panel or Timeline owns mobile presentation. Shared desktop controllers receive ordered, bounded touch samples. Hidden editors do not block visible transport or I/O; changing pages cancels captured actions. Hidden solids/controls are disabled in the actual optical packet. Overflow, cancel, focus and size changes cannot synthesize a release action. Desktop layout and input stay unchanged.",
+            "procedure": "Run mobile_workflow_ Host integration tests, mobile_workstation_input tests, mobile layout/canvas tests, desktop transport/I/O regressions and signed iOS compile/asset/export checks. On a phone verify gestures, labels, safe-area reachability and controls before claiming interactive parity. Native desktop plugin hosting and physical iOS input capture remain separate unsupported backends."
+          },
+          {
+            "id": "desktop_full_gem_views",
+            "kind": "behavior",
+            "expectation": "Option/Alt plus each arrow cycles its panel (including top) through normal, three-quarter extended and fullscreen. The extended view fills 75 percent of the viewport on its growth axis and the full view fills the viewport, with neighboring panels parked outside. Escape returns directly to normal. Reversal and switching retain continuous poses; return preserves panel open and size preferences. Bottom entry selects the shared Mixer page. Mobile full-view requests are excluded. Moving full views cancel pointer editing; the covered timeline has no hit region or visible instances. Plugin GUI embedding is deferred. The author-requested quality correction holds normal cut thickness and safe-face margins during expansion. Full views remain on the retained renderer despite capture padding. A finite300ms smoothstep replaces the initial first-order full-view easing; ordinary slide/tap timing is unchanged. Retained RGB interpolates within depth-consistent surfaces and preserves bevel bands during size changes; this is moving-image composition, with true optical geometry refreshed at rest. Parked controls do not force synchronous rebakes. Full-view editor cover is a presentation field, not a studio-light change. Pose-only differences against the captured layout continue through incremental refresh after motion stops. Large full-detail captures use bounded128x16 pixel jobs; other captures and the original synchronous startup/content routes remain separate.",
+            "procedure": "Run fullscreen_tests (including registered Host shortcut/admission/Escape routes) and workstation::panel_ regressions. For each top/left/bottom/right native view, set WORMWOOD_WORKSTATION_CAPTURE_PANEL to that edge and WORMWOOD_WORKSTATION_CAPTURE_DT=1 with --daw-only BACKEND --frames 4 in a separate output directory. The fixture rejects interactive, embedded, unbounded and benchmark use. Inspect resulting native captures. Device audio needs separate evidence."
+          }
+        ]
+      },
+      {
+        "id": "workstation_repeatable_performance",
+        "description": "Opt-in performance measurement and a bounded fixed-input Origami replay preserve normal rendering quality while measuring real rendered frames separately from idle input ticks.",
+        "retention": "experimental",
+        "selection": "Desktop --performance --workstation BACKEND, --benchmark-workstation BACKEND [--frames 8..600], or launcher Performance controls. Benchmark defaults to four warmup frames and32 measured frames; a120-second deadline produces an incomplete report. Diagnostic WORMWOOD_WORKSTATION_BENCHMARK_PROFILE=0 suppresses automatic profiling; explicit performance requests still win. WORMWOOD_WORKSTATION_FRAME_ATTRIBUTION=1 independently records bounded adjacent host-wall intervals.",
+        "implements": [
+          "Run"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/Benchmark.rs",
+          "Host/PerformanceTelemetry.rs",
+          "Platform/Desktop.rs",
+          "BuildSupport/macOS/Launcher.m",
+          "Render/Performance.rs",
+          "Render/webgpu.rs"
+        ],
+        "checks": [
+          {
+            "id": "repeatable_rendered_frames",
+            "kind": "behavior",
+            "expectation": "Warmup is excluded, replay uses fixed simulation steps and defined panel targets, every counted frame is actually drawn, resolution changes or early closure produce incomplete status, and render quality matches ordinary sessions. Frame wall time and GPU timestamps remain distinct. Interrupted draws retain the final window status and cannot count as measured frames. Any harness recovery starts a fresh bounded session with full warmup and never pools partial attempts. Audio starvation is reported as checked lifetime-counter differences around the measured loop, retaining both totals and snapshot bounds without resetting real-time counters.",
+            "procedure": "Run focused benchmark cases and native bounded replays on each selected graphics API. Verify recorded dimensions, frame indices, warmup exclusion and clean closure. Compare image fidelity independently of timing."
+          },
+          {
+            "id": "honest_performance_counters",
+            "kind": "behavior",
+            "expectation": "CPU measures instrumented thread CPU with exclusive nested attribution, not sleeps or GPU waits. GPU durations come from backend queries; unavailable/incomplete observations remain explicit. Audio callback counters are bounded and lock-free; reporting and file writes stay on the control thread. Optional adjacent wall-clock stages include blocking waits and are labelled separately from thread CPU and GPU queries; their nested scopes must not be summed. Profiling-disabled diagnostics must observe absent query instrumentation before drawing conclusions.",
+            "procedure": "Run telemetry scope/epoch/counter cases and backend query validation. Check supported and incomplete fields plus audio capability reporting. Inspect native callback source for allocations, locks and file operations."
+          }
+        ]
+      },
+      {
+        "id": "floating_bubble_piano_roll",
+        "description": "Edit clip-local MIDI notes as authored floating soap-film meshes in a separate full-window piano room. A beveled three-dimensional piano keyboard replaces the timeline furniture. Each clip owns its BPM, meter, EDO and scale; no project tempo is introduced.",
+        "retention": "experimental",
+        "selection": "Option/Alt-double-click a MIDI clip or call OpenPianoRoll with its existing ID. Escape or the Timeline button returns to the arrangement. Tab advances to the full-screen drum rack, then to the arrangement. The room uses independent projection and excludes all four panels, timeline tape lanes and camera passthrough. Draw/paint, move/resize, erase, velocity, undo and pan/zoom retain the editor interaction paths. Toolbar BPM, meter, snap, EDO, scale and root controls apply locally. Plain double-click on an audio clip selects it and opens the bottom Waveform editor. Lane, MIDI/CC clip and track-handle double-click selects the track and reveals the bottom Plugins page (Edison inserts). Option/Alt-double-click retains MIDI piano-roll opening. The former plain MIDI double-click action is retired by this request. ARP in the second toolbar row selects a one-click MIDI stamp. Direction cycles Up/Down/Up Down; Notes ranges 1\u201332; extension cycles Triad/Maj7/Dom7/Min7/9th/11th/13th; Arpeggio toggles block Chord. Shift-click reverses setting cycles. Triads and numbered extensions stack scale thirds (chromatic uses major); named seventh qualities override scale. Extra voices repeat in higher octaves. Grid sets onset spacing and current note length sets duration. A stamp is atomic and undoable; insufficient clip space, pitch range, capacity or collisions reject it.",
+        "implements": [
+          "Step",
+          "OpenPianoRoll",
+          "Status",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/PianoRoll.rs",
+          "Workstation/PianoRollScene.rs",
+          "Render/window.rs",
+          "Host/Host.rs",
+          "Workstation/BUBBLE_PIANO_ROLL.txt",
+          "Workstation/PianoWorkspace.rs",
+          "Workstation/PianoScene.rs",
+          "Workstation/PianoTuning.rs",
+          "Workstation/NoteBend.rs",
+          "Workstation/PianoHitKernel.glsl",
+          "Workstation/PianoOverlayKernel.glsl",
+          "BuildSupport/Blender/make_piano_keyboard.py",
+          "Workstation/PianoKeyLayout.rs",
+          "Theatre/Cameras.rs"
+        ],
+        "checks": [
+          {
+            "id": "smooth_note_pitch_bends",
+            "kind": "behavior",
+            "expectation": "Option/Alt-drag a bubble vertically to edit its smooth ending pitch within +/-2 semitones. Option/Alt+Shift-click clears the bend. Commit on release; cancellation, revision rejection and undo preserve existing editor rules. Curved picking and baked-film image deformation share the curve without live optical work. Native plugin playback uses channel-wide bends; overlapping bent notes select the latest onset. The built-in sine instrument supports independent note bends. Native MIDI plugin wheel range must match +/-2 semitones; third-party response requires device/plugin validation.",
+            "procedure": "Run bend, piano editor, document/PCM and baked shader tests. Inspect native positive/negative bend captures. Verify held-note wheel changes and recentering with real MIDI plugins separately."
+          },
+          {
+            "id": "revision_safe_note_edits",
+            "kind": "behavior",
+            "expectation": "Editor commits are complete validated MIDI clips with the authoritative revision, stable note IDs, unchanged clip-local BPM/meter and no global musical clock. Rejected or conflicting edits revert the preview. Undo is local, bounded, and invalidated by external clip edits.",
+            "procedure": "Run the focused piano_roll tests and a Host integration scenario with stale external edits, draw/move/resize/erase, undo/redo, independent clip tempo, and close/reopen."
+          },
+          {
+            "id": "invisible_optional_snap",
+            "kind": "behavior",
+            "expectation": "Free placement is the default. Local snapping changes coordinates, never draws grid lines or quantizes the arrangement. Drawing/moving floors to the selected step; resizing rounds. Bubble animation never moves onset or end coordinates. Empty clips initially show one octave around middle C; existing clips frame their pitch range with padding within12..84 rows. Wider ranges keep an actual note visible and can be panned; the initial keyboard cursor stays in the framed register. Subsequent sync preserves manual pan and zoom.",
+            "procedure": "Exercise free and G-snapped edits, all note boundaries, arbitrary zoom, keyboard gestures and selection; inspect a native capture for no background/grid planes. Verify backend note values separately from appearance."
+          },
+          {
+            "id": "editor_lifetime",
+            "kind": "behavior",
+            "expectation": "Only layer five originates an Audicle for editing/presentation. Pointer gestures preview locally, commit on release and preserve editor ownership through pointer departure. No renderer or audio callback mutates document state. Settled bubbles allow retained-image idle rendering. Native Enter note presses retain event-time modifiers in an ordered queue of at most8; one command is consumed per frame and focus loss clears pending commands. Double-click opening consumes its pointer release; subsequent Enter can insert a note. No native N opening is produced.",
+            "procedure": "Exercise focus loss, Escape, concurrent document revision, resize/overview, failure cleanup and explicit opening from the arrangement and no blank-canvas lazy creation. Verify actual desktop input/rendering; phone input remains separately unverified."
+          },
+          {
+            "id": "document_routes",
+            "kind": "declared_calls",
+            "expectation": "Piano-roll edits use registered document operations.",
+            "targets": [
+              "WorkstationDataSystem.Snapshot",
+              "WorkstationDataSystem.PutTrack",
+              "WorkstationDataSystem.RemoveTrack",
+              "WorkstationDataSystem.PutClip"
+            ]
+          },
+          {
+            "id": "separate_room_and_physical_tuning",
+            "kind": "behavior",
+            "expectation": "No timeline panels appear or receive piano-room input. Physical white keys become tuning-degree rainbow colors for non-12 EDO; raised accidentals stay black and sound the proper tuned pitch. C4 is the physical-key tuning reference. Canonical anchors plus cents survive note edits, rendering and frozen export. Native instruments without declared tuning support reject rather than silently round notes.",
+            "procedure": "Run piano workspace, scene, tuning, editor and production PCM tests. Capture native normal and microtone scenes, visually inspect full keyboard and absence of panels, then check keyboard audition and interaction using native input separately."
+          },
+          {
+            "id": "soap_film_readability",
+            "kind": "behavior",
+            "expectation": "Bubble note bodies and iridescent rims remain visible against the plain piano-room background through broad studio reflections. Existing membrane geometry, thin-film Fresnel reflection and transparent transmission remain unchanged; no opaque fill or emission is introduced. Timeline lighting is unaffected.",
+            "procedure": "Validate generated shader frontends and compare fresh native four-note captures with the prior piano-room capture. Review short and sustained notes for visibility and transparent appearance."
+          },
+          {
+            "id": "physical_key_height_alignment",
+            "kind": "behavior",
+            "expectation": "Equal white-key fronts and narrower raised accidentals use the physical keyboard layout. Each bubble has its corresponding key face height and center; drawing, picking, pitch zoom and keyboard audition share that projection. MIDI pitch, local quarter timing and document values are unchanged by presentation.",
+            "procedure": "Run physical layout, projection, keyboard/bubble packet alignment and editor interaction checks. Inspect native plain and camera captures separately."
+          },
+          {
+            "id": "independent_piano_camera",
+            "kind": "behavior",
+            "expectation": "Piano roll and timeline retain independent in-session camera selection and pan. Initial views are mountain and riverbank respectively. Plain mode uses the workstation plain backdrop; camera mode composes the scene behind the film without the former gray backing. Camera film source-over is a bounded SDR approximation.",
+            "procedure": "Run page-specific camera restoration and scene packet tests, validate generated shaders, then inspect the embedded piano camera and return-to-timeline workflow natively."
+          },
+          {
+            "id": "retained_native_pointer_clicks",
+            "kind": "behavior",
+            "expectation": "Complete native left-button press/release batches between rendered frames place notes in both DAW-only Begin and embedded Resume. Callback coordinates and order are retained, each commit is acknowledged before the next event, and final held state/keyboard/wheel input applies once. Cancellation, blur, malformed batches and other input owners cannot commit a note or replay the MIDI-opening activation.",
+            "procedure": "Run retained_piano and existing bubble editor regressions. Verify queued clicks in the real Play Mirror workstation and inspect committed note geometry separately from device audio."
+          }
+        ]
+      },
+      {
+        "id": "source_audio_spheres",
+        "description": "Present each observed audio track as a glossy metallic sphere on the existing plain workstation background. Source loudness and effective fader gain jointly control apparent distance; measured source stereo balance controls horizontal position, stereo width controls ellipsoid spread and spectral centroid controls height. Dragging up/back attenuates the actual manual track gain; down/near raises it. Frequency and stereo placement remain measured, not manual EQ or panning.",
+        "retention": "experimental",
+        "selection": "Alt-Tab selects the spatial view; plain Tab cycles timeline, piano roll and drum rack. Layer-five Step consumes EnvironmentAudioSystem.Status.transport.visualization, selecting already rendered, fully consumed source PCM blocks by generation/revision/rate. Explicit RenderRange publish_visualization:true can supply observations when no native transport exists. Up/down sphere drag or wheel edits SetTrackMix gain; active CC automation blocks manual edits. --check-audio-spheres BACKEND is a finite real-PCM optical diagnostic, never normal launch content.",
+        "implements": [
+          "Run",
+          "Step",
+          "Status",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/SpatialMix.rs",
+          "Workstation/SphereDiagnostic.rs",
+          "Workstation/SourceAnalysis.rs",
+          "Platform/Desktop.rs",
+          "Host/Host.rs",
+          "Workstation/SPATIAL_AUDIO.txt",
+          "Audio/Transport.rs",
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "measured_depth_and_stereo",
+            "kind": "behavior",
+            "expectation": "Distance responds to changing PCM level and gain independently. Mono stays round, stereo spreads horizontally, high-frequency content sits above low. Silence retains selectable quiet handles without fabricated activity. Source image is pre-LSFFR and pre-master, not a claim about downstream speaker processing. MIDI without synthesis is explicitly unavailable. Old observations age out and settle after playback stops.",
+            "procedure": "Run source analysis and spatial_mix tests with PCM amplitude/gain changes, independent and anti-phase stereo, frequency tones, silence, mute/solo, automation and unavailable MIDI. Compare live playback, pause, seek and source changes against native clock; inspect a native sphere capture separately."
+          },
+          {
+            "id": "sphere_gain_capture",
+            "kind": "behavior",
+            "expectation": "Only actual sphere hits consume input. Capture survives leaving its bounds and cannot open or edit MIDI notes. Relative gain dragging remains stable under changing signal amplitude. Changes use revision-checked SetTrackMix, preserve routes and honor active automation; rejection, Escape, lost focus and external edits cancel safely.",
+            "procedure": "Run spatial controller tests plus Host integration for gain change and stale rejection. Manually drag, scroll, overlap, lose focus and cancel in the DAW; confirm real output gain and piano-roll independence."
+          },
+          {
+            "id": "sphere_routes",
+            "kind": "declared_calls",
+            "expectation": "Visualization observes playback and edits gain through declared System interfaces.",
+            "targets": [
+              "EnvironmentAudioSystem.Status",
+              "WorkstationDataSystem.Snapshot",
+              "WorkstationDataSystem.RenderRange",
+              "WorkstationDataSystem.SetTrackMix"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "free_time_arrangement",
+        "retention": "experimental",
+        "description": "Make the left component browser create ordered audio, MIDI and CC tracks, and present their arrangement as gem handles and authored tape clips. Use elapsed seconds for placement, revision-checked track mixing and clip movement, and explicit access to the independent local-clock piano roll. Fixed input-monitor examples are absent from the working timeline. Author revision November 12, 2026: dragging unassigned audio onto a writable audio track attaches it; dragging in free space retains continuous placement. Double-click unassigned audio opens its waveform editor. Clicking empty free canvas seeks transport. This retires the earlier always-unassigned drag behavior.",
+        "selection": "Default workstation view. Browser Audio Track/Midi Track/CC Track selects on press and creates one track on release inside the visible timeline body, at its ordered insertion slot; release elsewhere cancels. Variable-height rows support packed-order insertion. The right I/O footer switches Top, Bottom and session-local Free vertical placement; track handles and clips use the same row coordinates. Selection and drop-row feedback appear in the window title. Drag empty lane body to retain an inclusive time-and-track range. Normal drag uses Cardinal free-time 1/2/5 seconds grid; Command anchors at playhead and bypasses snapping. Command-Shift-M creates empty MIDI/CC clips from that range with per-kind overlap preflight; no fixed-duration fallback. Existing tape/handle/ruler actions win. Escape clears the range. A second unmoved release on the same MIDI clip within0.35 seconds opens that clip. Audio tape top and bottom 12-point lips move clips; the center selects the clip and drags a time range without moving it. Audio tracks default to 96 logical points; MIDI and CC rows retain 64. Command-E splits the selected audio clip at the range anchor or playhead. Fade handles retain priority at the upper edge. Selected timeline handles and clips carry Cardinal blue display tint while retaining baked facet brightness; unselected normal and comp handles retain ruby and ivory artwork. The general native pointer can move beyond viewport edges without a held button. Horizontal resizing consumes those real deltas, never synthetic edge velocity; reversal responds immediately at size limits. Drag MIDI tapes in time, drag unlabelled vertical handles vertically to reorder tracks or horizontally to resize their lanes (32\u2013256 logical points); sizes follow stable track IDs for this session, and Escape, pointer loss, meaningful layout changes and document changes cancel a resize; panel settling within 0.25 logical points does not; mute/solo remain in Track IO page one and gain in the bottom panel or enabled track faders, Delete removes the selected clip, wheel pans and Command-wheel zooms down to a 10-microsecond view, and ruler click seeks the native transport. At views of 100 milliseconds or less, visible audio tapes use signed stereo source ranges resampled for the visible interval in the existing bounded GPU packet; the former full-clip absolute-peak overview remains for wider views. Tab switches to the retained spatial mixer. Audio file import, recording and input monitoring remain unconnected.",
+        "implements": [
+          "Begin",
+          "Resume",
+          "Step",
+          "Status",
+          "Close",
+          "Suspend"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/Arrangement.rs",
+          "Workstation/TimelineEngravingKernel.glsl",
+          "Host/TimelineBarIntegrationTests.rs",
+          "Workstation/Browser.rs",
+          "Workstation/PianoRollIntegrationTests.rs",
+          "Workstation/ARRANGEMENT.txt",
+          "Platform/Desktop.rs",
+          "Host/Host.rs",
+          "BuildSupport/Workstation/validate_arrangement.py",
+          "Render/WorkstationControls.m"
+        ],
+        "checks": [
+          {
+            "id": "revision_safe_arrangement",
+            "kind": "behavior",
+            "expectation": "Clips preserve source offsets and local MIDI clocks when moved; a drag commits once on release. External document changes, Escape, pointer loss and rejection restore authoritative state. Track reordering preserves stable identities and all tracks. Mute and solo use existing document semantics. Browser presses cannot draw through into the note editor or arrangement. CC tapes support click-to-add, drag-to-move and Option-click-to-remove points below a top strip reserved for clip movement. Preview never mutates the document; release commits one revision-checked PutClip. Point time/value clamp to clip duration and 0..1. Cancellation discards preview. Curves and handles use unlit overlay content without optical rebaking. The legacy CC clear-clips control and action are explicitly retired by author request on November 9, 2026; arm and target selectors remain.",
+            "procedure": "Run arrangement/browser tests and Host integration cases with stale revisions, held/crossing presses, selection, track ordering, mixing, clip movement and explicit MIDI opening. These tests do not establish native input, sound or visual appearance. Run arrangement::cc_editor_tests and document::cc_row_tests; verify native curve visibility and gestures separately."
+          },
+          {
+            "id": "arrangement_geometry_and_clock",
+            "kind": "behavior",
+            "expectation": "The free-time timeline uses real document order/durations and the same row/time transform for hits and models. Pan and zoom preserve the pointed elapsed time. The playhead reads the native consumed-sample clock; a ruler seek uses the native sample rate. No global BPM or invented audio waveform is introduced.",
+            "procedure": "Run geometry/controller cases; inspect a bounded native arrangement capture and exercise browser, tape dragging, MIDI drawing and transport by hand. Verify audio independently; source tests and a captured frame are insufficient."
+          },
+          {
+            "id": "arrangement_routes",
+            "kind": "declared_calls",
+            "expectation": "Application actions use registered revision-checked document operations and shared native transport.",
+            "targets": [
+              "WorkstationDataSystem.Snapshot",
+              "WorkstationDataSystem.PutTrack",
+              "WorkstationDataSystem.RemoveTrack",
+              "WorkstationDataSystem.PutClip",
+              "WorkstationDataSystem.MoveClip",
+              "WorkstationDataSystem.RemoveClip",
+              "WorkstationDataSystem.ReorderTracks",
+              "WorkstationDataSystem.SetTrackMix",
+              "EnvironmentAudioSystem.Status",
+              "EnvironmentAudioSystem.Transport"
+            ]
+          },
+          {
+            "id": "cardinal_component_drop",
+            "kind": "behavior",
+            "expectation": "Audio/MIDI/CC and other component entries select on press and create on valid drop, consuming the entire gesture and preserving selection after invalid release. Two unmoved clicks on the same browser component within 0.35 seconds also insert once: timeline tracks insert before the selected parent track or append without selection, Comp Lane creates a take on the selected audio parent, and Matrix/Mix Bus use their existing bottom-panel destination. A non-audio or absent selection rejects Comp Lane insertion. Insertions are atomic and revision checked. Focus/pointer loss, Escape, hidden timeline, layout or document changes cancel. No timeline editing is caused by the consumed release. Invented NEW CLIP/EDIT CLIP controls and their hit routes are retired by explicit user correction; the browser owns only track components.",
+            "procedure": "Read Salamander137/BaseSystem/Vst3BrowserSystem.cpp componentLabel, component press/release handlers and computeDropTrackSlot before changes. Run browser, arrangement, backend and Host integration tests; compile/package; user manually checks selection/drop. No GUI automation or autolaunch."
+          },
+          {
+            "id": "cardinal_cursor_ghost",
+            "kind": "behavior",
+            "expectation": "Author-requested artwork drag previews replace the former label-only presentation on macOS. Audio/MIDI/CC tracks carry their ruby vertical handle; Comp Lane its ivory handle; Matrix/Mix Bus the existing meter casing; the stock EQ its complete baked gem GUI with the original plot and labels; WAV samples their baked tape and a worker-prepared source envelope. Other hosted plugins use their Edison assembly. Pointer velocity drives bounded damped pitch, yaw and roll; stopping settles to level. Pointer anchoring remains exact. Physical theatre-computer coordinates project back to the native window. Preview composition and motion never mutate document or optical frame packets, capture mouse/focus, or perform lighting. Release and cancellation hide immediately. Source envelope work streams within the existing source-value budget, cancels with the gesture and never runs in audio callbacks. Unsupported samples retain tape without an invented waveform. iOS retains its existing text preview.",
+            "procedure": "Run browser/Host drag routing, payload validation, scene-packet invariance, computer-screen projection and large-WAV envelope/cancellation checks. Compile and run the isolated native artwork/motion check; inspect composed previews. Build the normal executable and inspect intent. Manual real-window drag feel and installed-app verification remain separate."
+          },
+          {
+            "id": "cardinal_midi_double_click",
+            "kind": "behavior",
+            "expectation": "Single press/release on a track handle or its empty lane selects the same track and clears clip selection, including the gutter between handle and clip body. A second unmoved release on the same audio clip within a strict0.35s monotonic-wall interval selects the clip and opens the bottom Waveform editor. The same gesture on a lane, MIDI/CC clip or track handle selects its track and reveals the bottom Plugins page with Edison inserts. Option/Alt-double-click on a MIDI clip opens the existing piano roll without creating notes. Plain MIDI double-click opening the piano roll is explicitly retired by the requested channel-strip shortcut. Existing horizontal drag/commit threshold is preserved; vertical displacement greater than3 logical points also excludes a click. Escape, focus/pointer loss, layout or document changes clear the candidate. Audio/CC never open a MIDI editor. Timeline Enter and N opening are retired; Enter inside the open piano roll still places notes.",
+            "procedure": "Read Salamander137/BaseSystem/MidiLaneSystem.cpp:867-880 and :1023-1029. Run deterministic timing/boundary/identity/movement/cancellation tests, Host editor-opening/no-note tests and existing keyboard/drag/browser regressions, then compile normal app. Actual native clicks are verified manually; no GUI automation."
+          },
+          {
+            "id": "cardinal_range_selection",
+            "kind": "behavior",
+            "expectation": "Current seconds-based timeline uses preserved Cardinal free-time grid, not its musical tempo-map branch. Audio centers select and place an unsnapped edit cursor or time range; audio lips, fade handles and other clip/handle/ruler picking retain priority. Empty-body drag clamps endpoints and normalizes reverse selection. Store completed range across browser masking; cancel unfinished gesture on focus/pointer/layout/document changes. Native macOS fill and vertical edges exclude foreground tape rectangles except the selected audio tape; no optical rebake for endpoint motion. Command-Shift-M uses registered atomic per-kind backend. Restore the original platform Command-Shift-M rising chord. Buffer short presses and modifiers-last order, discard on focus loss, block when other views/gestures own input; command-modified Shift does not activate overview.",
+            "procedure": "Run range/controller/Host/overlay payload and existing drag/double-click/browser tests; build normal app. User manually checks overlay picking, range and creation; no GUI autolaunch."
+          },
+          {
+            "id": "free_canvas_attachment_editor_seek",
+            "kind": "behavior",
+            "expectation": "Unassigned audio previews and commits attachment to an audio track. Free-space movement retains fractional placement; empty-canvas clicks seek; double-click unassigned audio opens the waveform editor.",
+            "procedure": "Run free_canvas tests and native drag/double-click review."
+          }
+        ]
+      },
+      {
+        "id": "standalone_audio_start_failure",
+        "description": "Keep standalone DAW editing open after an audio startup failure whose partial resources have been released.",
+        "retention": "supported",
+        "selection": "Normal standalone Run only; embedded ownership and finite diagnostics retain existing rules. No automatic retry or new SETTINGS UI.",
+        "implements": [
+          "Run",
+          "Step",
+          "Status",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs",
+          "BaseSystem/LayerOne/JackAudio.rs"
+        ],
+        "checks": [
+          {
+            "id": "audio_failure_ownership",
+            "kind": "behavior",
+            "expectation": "Successful start owns and pumps native audio. Failed start runs cleanup, retains visual controls, reports audio unavailable and does not pump a nonexistent transport. Cleanup failure stays fatal. Existing owned-child shutdown and external JACK ownership remain unchanged; no unrelated server is stopped by application code. Error points to actual diagnostics log.",
+            "procedure": "Run failure/success/cleanup policy tests and error-path test, existing callback and controller regressions, compile/package normal app. User verifies actual launch/audio. Temporary JACK mode was investigated but rejected because installed JACK aborts on client crash."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_browser_plugin_loading",
+        "description": "Restore the existing Cardinal plugin catalog and release-to-existing-track workflow, with original Edison names and stock EQ graph beside the selected chain. Held browser payloads survive animated panel bounds and presentation refreshes; window resizing or canvas-scale changes still cancel the gesture. Drop hit testing uses current panel geometry. Verify with browser_drags_survive_panel_refresh_but_cancel_on_resize and native interaction review.",
+        "retention": "experimental",
+        "selection": "macOS workstation; the left browser starts greyed out. An explicit Enable Browser click authorizes session-local USER-folder discovery on the control thread. Startup and prewarm do not scan the user's audio or plugin directories.",
+        "implements": [
+          "Begin",
+          "Step",
+          "Close",
+          "Suspend",
+          "Resume",
+          "PreparePlugins"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/PluginBrowser.rs",
+          "Workstation/PluginInserts.rs",
+          "Workstation/PluginSurface.rs",
+          "Workstation/StockEq.rs",
+          "Workstation/Arrangement.rs",
+          "Workstation/TimelineEngravingKernel.glsl",
+          "Host/TimelineBarIntegrationTests.rs",
+          "Workstation/EdisonDemo.rs",
+          "Render/WorkstationBaked.rs",
+          "Render/WorkstationBaked.wgsl",
+          "Workstation/Engraving.rs",
+          "Workstation/PluginIntegrationTests.rs",
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs",
+          "Render/window.rs",
+          "Workstation/TrackIo.rs",
+          "Workstation/TrackIoScene.rs"
+        ],
+        "checks": [
+          {
+            "id": "plugin_drop_and_graph_routes",
+            "kind": "declared_calls",
+            "expectation": "Catalog mutations and native surface publication use named registered hooks.",
+            "targets": [
+              "PluginConnectionSystem.Command",
+              "GraphicsConnectionSystem.PluginSurface"
+            ]
+          },
+          {
+            "id": "plugin_gesture_isolation",
+            "kind": "behavior",
+            "expectation": "Catalog drag captures the complete gesture without arrangement edits. Edison outlets select on first click; only a subsequent click on the selected insert toggles its editor. Delete removes the selected insert and owns the key through release. Right-click on the selected outlet toggles bypass once per press. Baked production artwork shows blue selection and darkened bypass using inexpensive tinting, without optical refresh. Bottom-panel hover does not steal the next browser press. Stock graph changes reach the existing audio producer through PluginConnectionSystem.Command. Bottom-panel navigation uses equal small numbered gem buttons 1 Mixer, 2 Plugins and 3 Clip Editor for direct selection. The selected page is pressed in the shared colorless ruby mute palette, retaining the ruby cut and dielectric appearance; other page buttons remain ruby. On Plugins, a second row of matching 22-point numbered gems selects audio tracks, MIDI tracks and Mix Buses directly in mixer order, with the selected target in pressed colorless ruby. Wheel over that row reveals further groups of three. Previous/next plugin-track arrows are retired. Previous/next page arrows are retired; the explicit Buffer/Loopback page is hidden while capture functionality remains available for arm-button tracking. The live left catalog labels use the same embedded three-layer SSLE optical treatment as SETTINGS; category and scroll changes refresh their positions while hit rectangles, hover faces and drag behavior remain shared with the browser layout. Author-requested browser revision: use full-width category pages with Back, All/Components/Plugins/Audio, case-insensitive Cardinal substring search that owns typing until click-away, and left footer Import Audio/Add Plugins. Audio imports publish validated streaming WAVs to USER_SAMPLES and reveal refreshed Audio results immediately. Retire the right-panel import controls and split category/content columns.",
+            "procedure": "Run cardinal_plugin_browser_drop_stock_graph_and_labels_use_registered_routes and focused plugin/browser controller cases. Confirm actual native editor/font/gem placement manually after production integration. Run live_browser_uses_embedded_glyphs_and_preserves_other_frame_owners and retained-content tests; manually review native browser lettering and scrolling."
+          },
+          {
+            "id": "plugin_discovery_before_audio_activation",
+            "kind": "behavior",
+            "expectation": "The author-requested runtime browser gate replaces the former unconditional pre-audio discovery policy. PreparePlugins and ordinary Step do not scan USER folders while the browser is paused. A complete Enable Browser click permits discovery; later frames reuse the catalog. Scans remain outside audio callbacks, and failures remain visible browser errors rather than preventing application startup.",
+            "procedure": "Run browser access and workstation_browser_starts_paused tests. Inspect native startup with the browser paused and confirm no plugin scan or USER audio discovery precedes Enable Browser. Click to enable, check file-permission prompts and populated results, and separately check ongoing audio while discovery runs."
+          },
+          {
+            "id": "requested_track_layout_and_edge_input",
+            "kind": "behavior",
+            "expectation": "Right I/O footer cycles Top, Bottom and Free track placement. Free stores session-local per-track vertical positions; shared positions drive labels, clips and hit tests. Track resizing accepts sub-quarter-point panel convergence while meaningful layout changes cancel. General native pointer coordinates continue offscreen without requiring a handle click; resizing uses their actual delta without artificial edge velocity. OFF output crystals use white ruby artwork.",
+            "procedure": "Run requested_track_layout_tests and track_io checks, then manually repeat edge dragging with the left panel collapsed/extended, route OFF, and cycle layout modes."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_actual_keyboard_midi_sender",
+        "description": "Send the original22-key computer MIDI mapping and piano-roll editing audition to the native-clock MIDI input queue. Preserve default-disabled KEYBOARD toggle, Z/X octave bounds, selected MIDI target priority, modifier/focus/modal release and source microphone-derived attack velocity.",
+        "retention": "experimental",
+        "selection": "ComputerKeyboard toggle/set binds the preserved computer_midi_keyboard_toggle control. Step consumes the native GLFW held-key snapshot and sends final piano-roll audition. A successfully queued event is acknowledged; failed releases remain pending. New hooks create no visual control or alternate layout.",
+        "implements": [
+          "ComputerKeyboard",
+          "Step",
+          "Close",
+          "Suspend",
+          "Status"
+        ],
+        "sources": [
+          "Render/window.rs",
+          "Workstation/MidiKeyboard.rs",
+          "Workstation/PianoRoll.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "original_keyboard_mapping_release_velocity",
+            "kind": "behavior",
+            "expectation": "A maps to48, CapsLock47, Enter67, Backslash68; Z/X range-3..4; fallback velocity0.80; only a physical rising key captures velocity. Closed/blocked views release preview and keyboard notes, with note-offs before target/octave note-ons. Failed enqueue does not forget pending releases.",
+            "procedure": "Run workstation::midi_keyboard and piano_roll audition tests; then test real native key/focus events and integrate the preserved KEYBOARD visual control."
+          }
+        ]
+      },
+      {
+        "id": "continuous_retained_panel_motion",
+        "description": "Normal desktop panel slides use continuous source motion and retained panel-image composition. Unknown poses must not force synchronous exact-pose optical captures during movement. The finite exact foreground bank remains an explicit diagnostic alternative.",
+        "retention": "supported",
+        "selection": "Default desktop motion. WORMWOOD_WORKSTATION_MOTION_INTERACTIVE=bank or reference explicitly selects the previous canonical-pose experiment; WORMWOOD_WORKSTATION_MOTION_COMPARE retains finite exact comparisons.",
+        "implements": [
+          "Begin",
+          "Resume",
+          "Step"
+        ],
+        "sources": [
+          "Workstation/BenchmarkMotionInput.rs",
+          "Render/webgpu.rs",
+          "Render/WorkstationPrerender.rs"
+        ],
+        "checks": [
+          {
+            "id": "motion_stall_regression",
+            "kind": "behavior",
+            "expectation": "Ordinary panel motion reuses retained images, preserves smooth reversal and refreshes settled illumination without a synchronous exact-pose bake for every new transform. Full-detail capture remains enabled when selected.",
+            "procedure": "Run finite embedded pass-through motion replay with frame attribution; compare cold motion bake flags, whole-loop tails, actual optical details, edits and settled lighting against explicit bank/reference alternatives at the same size."
+          }
+        ]
+      },
+      {
+        "id": "prepare_workstation_before_gameplay",
+        "description": "Prepare and render the baked DAW before spawn, retain its Entity, graphics client, plugin catalog and panel assets for the game session. Computer and AR/VR entry change focus instead of recreating these resources. Retain the game graphics client across focus switches. While gameplay owns input, refresh the computer monitor from the resident DAW without showing or polling its hidden window; existing game audio continues. Prime the real embedded world shaders, water, vegetation and paused image offscreen before the first gameplay frame. PrimeWorld also completes the native first presentation as the final startup view before accepting gameplay input; this explicitly replaces the formerly hidden-only world-priming expectation to move the first-window hitch before spawn.",
+        "retention": "supported",
+        "selection": "Planet-surface application with AudioWorkstationSystem enabled; WORMWOOD_WORKSTATION_PREWARM=0 preserves lazy preparation for measurement. Other native backends retain lazy graphics preparation.",
+        "implements": [
+          "Prewarm",
+          "Resume",
+          "Suspend",
+          "Background",
+          "Close",
+          "PrimeWorld"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Render/mod.rs",
+          "Render/window.rs",
+          "Render/webgpu.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "prewarm_lifetime",
+            "kind": "behavior",
+            "expectation": "Prewarm is idempotent, owns exactly one parked DAW Entity and completes its first render before game spawn without showing its window. Repeated focus switches reuse that Entity, renderer, assets, document and layout. The game keeps its own native renderer. Background display updates neither steal input nor stop transport. Final shutdown releases both scenes and all Entities. PrimeWorld may show the current observer computer loading view before gameplay begins, completing the native first show before user focus switches.",
+            "procedure": "Run computer_focus_preserves_game_texture_document_and_workstation_layout and resident background ownership checks. Run finite native computer, AR and VR entry/reentry sessions; compare traced startup/focus timing and asset/native creation counts, confirm live monitor/transport and zero Entities on shutdown. Review manual E press/release and cursor focus separately."
+          }
+        ]
+      },
+      {
+        "id": "camera_theatre_monitoring",
+        "description": "The embedded workstation right-panel gem switches direct monitoring to theatre cabinet playback. The active security camera supplies the spatial listening position and orientation; switching speakers off restores direct monitoring. Enabling speakers also enables passthrough for this session and selects the theatre camera on the current editor page. Matrix input and track left/right output routing gems select baked blue crystal for L, cyan for FF, orange for S/Sub, and the original ruby for R or OFF. Matrix hardware routing now lives in the Settings Audio Routing patch bay; its former right-panel selectors are retired.",
+        "retention": "supported",
+        "selection": "Embedded workstation with a loaded theatre and active native transport; camera listening follows enabled passthrough. With passthrough disabled the last world listener remains.",
+        "implements": [
+          "Step",
+          "RunEmbedded"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/TrackIo.rs",
+          "Workstation/TrackIoScene.rs",
+          "Theatre/Cameras.rs",
+          "Workstation/Settings.rs",
+          "Workstation/RoutingEditor.rs"
+        ],
+        "checks": [
+          {
+            "id": "theatre_monitoring",
+            "kind": "behavior",
+            "expectation": "A queued press and release toggles once after the managed-button delay, even without tracks. The unavailable/standalone control is absent. Theatre view uses venue world coordinates. Existing callback cabinet propagation and speaker gating remain effective; camera pan changes spatial ears. The gem request selects the theatre view even when MIDI owns camera keys; keyboard panning remains blocked.",
+            "procedure": "Run theatre camera, TrackIo, line-array and transport tests, inspect contracts, then manually check embedded gem appearance and audible camera changes on a native device."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_drum_rack",
+        "description": "Present the four-channel, sixteen-step rack as a full-screen transparent workspace with existing baked bubble steps and gem controls. Empty steps are invisible; enabled steps use the former small inactive bubble size. The small-to-long bubble presentation is retired by user request. Share control rectangles for drawing and picking. Left strokes enable steps, right strokes erase, including swept cells and release positions. Load WAV samples through a modeless macOS chooser; carry a row pattern through Tab and drop onto its linked MIDI lane. The rack has a local tempo and explicit preview independent of arrangement playback.",
+        "retention": "experimental",
+        "selection": "Tab cycles timeline, piano roll, drum rack, then timeline. Explicit DrumRack entry and the right-panel DRUM RACK button also open the full-screen rack. Escape or TIMELINE returns to the timeline. No rack channels or preview are created automatically.",
+        "implements": [
+          "DrumRack",
+          "Step"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/DrumRackUi.rs",
+          "Workstation/PianoScene.rs",
+          "Render/WorkstationBaked.rs",
+          "Render/WorkstationBaked.wgsl",
+          "Workstation/TimelineScene.rs",
+          "Render/WorkstationControls.m",
+          "Workstation/TrackIo.rs",
+          "Workstation/TrackIoScene.rs"
+        ],
+        "checks": [
+          {
+            "id": "port_behavior",
+            "kind": "behavior",
+            "expectation": "Rack patterns, samples, routing, preview, revision rejection and pointer ownership follow the described behavior without importing Cardinal engine scheduling or its renderer.",
+            "procedure": "Run cargo test --offline --locked drum_rack and registered Host/geometry checks. Inspect intent. Separately verify native gem appearance, sample chooser, drag painting, drop placement and device listening; compilation and declarations do not establish those results."
+          }
+        ]
+      },
+      {
+        "id": "hands_on_workstation_tutorial",
+        "description": "Offer incremental audio and MIDI basics lessons inside the DAW. Observe committed practice-track edits, preserve the current project, and require an explicit listening confirmation.",
+        "retention": "experimental",
+        "selection": "The ruby LEARN button on right-panel page two in the desktop workstation opens a collapsible UIOnly card. Audio basics and MIDI basics start or restart their own lesson progress. Closing the card preserves progress in this workstation session.",
+        "implements": [
+          "Step",
+          "Status",
+          "Close"
+        ],
+        "sources": [
+          "Workstation/Tutorial.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Host/AudioLibraryIntegrationTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "tutorial_committed_workflow",
+            "kind": "behavior",
+            "expectation": "Each lesson follows a track created after lesson start. Audio observes clip creation, movement and gain. MIDI observes range clip creation, opening its own piano roll, committed notes and moving or resizing an existing note. Unrelated tracks, local previews and missing targets cannot complete these actions. The tutorial never mutates document content. Playback requires a moving native playhead inside the clip and does not establish audibility; the learner explicitly confirms listening.",
+            "procedure": "Run cargo test --offline --locked tutorial and the audio library, arrangement, piano roll and playback regressions. Walk both lessons in the actual desktop DAW and embedded theatre computer. Separately listen to device output; backend PCM and mock graphics do not verify audibility or native hit targets."
+          },
+          {
+            "id": "tutorial_input_and_baked_boundary",
+            "kind": "behavior",
+            "expectation": "Retained pointer callbacks and held samples share release activation. Lesson controls own their press and release without leaking into arrangement or note editing. Focus loss and foreign drags cannot activate a button. Text and card faces use the existing unlit UIOnly surface without changing optical cache keys or invoking an offline baker.",
+            "procedure": "Run tutorial pointer, Host fast-click and overlay payload checks. Inspect native card sizing and text on the actual app. Preserve production baked artwork and paused game background policy."
+          }
+        ]
+      },
+      {
+        "id": "attached_manual_comp_lanes",
+        "description": "Drag Comp Lane from DAW components onto an audio track to append an attached take row. Its unlabelled handle uses the same analytic gem cut and the ivory fader casing palette. Children resize independently and move with the parent group. Right-click a handle toggles the parent take rows. Option-click slices audio; drag pieces between take rows and main manually.",
+        "retention": "experimental",
+        "selection": "Production arrangement/browser path; immutable offline CompLaneIvory artwork. Old nested playlist menu remains a research implementation and is no longer invoked by track-handle right-click.",
+        "implements": [
+          "Step"
+        ],
+        "sources": [
+          "Workstation/Arrangement.rs",
+          "Workstation/TimelineEngravingKernel.glsl",
+          "Host/TimelineBarIntegrationTests.rs",
+          "Workstation/Browser.rs",
+          "Workstation/PluginBrowser.rs",
+          "Workstation/TimelineScene.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "attached_comp_lane_controls",
+            "kind": "behavior",
+            "expectation": "A drop requires an existing audio row. Extra rows stay directly below their parent, share its horizontal timeline and display source waveforms. Resizing one row leaves other heights unchanged. One right press toggles visibility without deleting takes. No automatic section selection or comp assembly occurs.",
+            "procedure": "Run comp_lane and workstation regressions, validate shipped baked ivory art and no-live-optics renderer guard. Separately inspect native desktop component dragging, slicing, lane transfer and real loop capture."
+          }
+        ]
+      },
+      {
+        "id": "audio_waveform_editor_controls",
+        "retention": "experimental",
+        "description": "The bottom Clip Editor page opens Waveform with per-clip gain, source-range selection, nondestructive trim and split. Its existing Warp tab now edits markers and transpose through the Cardinal map backend.",
+        "selection": "Double-click audio, right-click and choose OPEN AUDIO EDITOR, or navigate to the bottom Clip Editor page. Waveform display has a transparent background over persistent baked artwork. Drag across the overview zoom bar to select the visible clip fraction; click it to fit the whole clip. Command-wheel over Waveform zooms around the pointer down to one source frame; ordinary wheel pans. The preview is regenerated from the visible original PCM range at viewport resolution, rather than magnifying the former 240-column full-clip summary. Drag the loop bar to set an enabled transport loop within the clip. Selection and edits retain full-clip coordinates when zoomed. Waveform gain buttons change one dB/reset unity. Drag source waveform to select, then Trim/Split. No clip-edit controls are shown without an audio selection. Editor buttons use the transport mini ruby style, with active tabs and enabled Warp shown in white ruby. Zoom and loop bars reuse the timeline baked ruby artwork. Warp displays the source waveform on a transparent background with visible selectable marker handles; selected handles turn white. Warp toggle enables the map; click source waveform then Add Mark; drag interior source markers, Remove selected marker, or change pitch by semitone. Endpoints remain fixed. Spectral tab is temporarily disabled at the author's request; its processing implementation and existing document edits remain retained.",
+        "implements": [
+          "Step"
+        ],
+        "sources": [
+          "Workstation/BottomPanel.rs",
+          "Workstation/BottomPanelAdapter.rs",
+          "Workstation/BottomPanelRuntime.rs",
+          "Workstation/BottomPanelScene.rs",
+          "Workstation/BottomOverlay.rs",
+          "Workstation/ClipTreatment.rs",
+          "Workstation/BottomPanelBackendTests.rs",
+          "Workstation/PianoRollIntegrationTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "waveform_and_warp_control_routes",
+            "kind": "behavior",
+            "expectation": "Control-side edits are revision checked. Wave and marker gestures cancel on changed revision, focus/pointer loss or panel resize. Preview marker movement remains local until release. Source waveform display remains independent of clip gain. Production baked artwork is not rebaked.",
+            "procedure": "Run clip_editor_controls and existing bottom-panel/Host tests, inspect intent and build the normal app. Separately review native appearance, gestures and audio."
+          }
+        ]
+      },
+      {
+        "id": "track-freeze-flatten",
+        "description": "Selecting a main track handle and pressing unmodified F stages an incremental isolated stereo freeze. A progress popup retains Cancel through completion; OK publishes the freeze, Cancel leaves the original document intact. F on an accepted frozen track flattens its rendered audio and removes playback inserts and retained original clip treatments. Track gain, gain automation and routing remain live after the pre-fader bounce. Recording and conflicting edits are rejected; render work and popup operations stay outside audio callbacks.",
+        "retention": "experimental",
+        "selection": "Main timeline track handle selected, no clip selected, unmodified F on macOS. Frozen clip and playback insert edits are locked until flattening. Existing source memory and sample-rate limits apply.",
+        "implements": [
+          "Step",
+          "Close"
+        ],
+        "sources": [
+          "Workstation/TrackFreeze.rs",
+          "Render/window.rs",
+          "Workstation/Document.rs"
+        ],
+        "checks": [
+          {
+            "id": "track_freeze_transaction",
+            "kind": "behavior",
+            "expectation": "Selecting a main track handle and pressing unmodified F stages an incremental isolated stereo freeze. A progress popup retains Cancel through completion; OK publishes the freeze, Cancel leaves the original document intact. F on an accepted frozen track flattens its rendered audio and removes playback inserts and retained original clip treatments. Track gain, gain automation and routing remain live after the pre-fader bounce. Recording and conflicting edits are rejected; render work and popup operations stay outside audio callbacks.",
+            "procedure": "Run workstation::track_freeze::tests; review the native progress popup and real F shortcut on a selected track."
+          },
+          {
+            "id": "track_freeze_routes",
+            "kind": "declared_calls",
+            "expectation": "Track freeze operations are registered document entry points.",
+            "targets": [
+              "WorkstationDataSystem.TrackFreezeBegin",
+              "WorkstationDataSystem.TrackFreezeStep",
+              "WorkstationDataSystem.TrackFreezeAccept",
+              "WorkstationDataSystem.TrackFreezeCancel",
+              "WorkstationDataSystem.TrackFreezeFlatten"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "wearable_daw_views",
+        "description": "AR entry locks the player and observer to the captured real game view and disallows plain/security backdrops. VR entry permits walking with pointer look, plain backdrop, and explicit remote camera selection which transfers WASD to camera panning. Right-panel acoustic ray selection survives suspension and is visible during ordinary gameplay only with worn glasses. In a DAW session, VR observer movement does not advance the paused water, wildlife or world clock. The computer screen defaults to an opaque plain backdrop inside its physical display; surrounding theatre stays visible without repeating inside the display.",
+        "retention": "supported",
+        "selection": "Explicit worn-glasses E entry; computer and standalone entry retain independent camera policy.",
+        "implements": [
+          "RunEmbedded",
+          "Resume",
+          "Step",
+          "Suspend"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFive/GlassesSystem.rs",
+          "Workstation/TrackIo.rs",
+          "Workstation/Settings.rs",
+          "Workstation/RoutingEditor.rs",
+          "Render/window.rs",
+          "Host/WorkstationPerformanceTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "wearable_views_and_visibility",
+            "kind": "behavior",
+            "expectation": "AR player/camera remain fixed despite input; VR moves in player/plain view and remains stationary while WASD pans a selected camera. Ray toggle persists when the UI closes, and worn state gates gameplay rays.",
+            "procedure": "Run focused wearable/glasses/ray tests and finite native WORMWOOD_WEARABLE_VERIFY=ar and vr benchmarks; inspect pose evidence, real screenshots and retained-world statistics. Manually verify physical pickup, wear, E and pointer routing before claiming end-to-end manual gameplay."
+          }
+        ]
+      },
+      {
+        "id": "audio-preamp-edison-split",
+        "description": "The audio-track Plugins workspace splits the bottom gem into a scrollable preamp matching the browser width and the normal bottom panel. Selected effects move between capture and playback with unmodified Z or a selected Edison drag. Stable plugin identities and settings survive transfer. Dragged plugs lift and follow smoothly while neighboring plugs animate around the insertion gap. Preamp FX print only into newly captured track-input audio; imported clips and playback bypass this chain.",
+        "retention": "experimental",
+        "selection": "Desktop macOS Plugins page on an audio track. Instruments and MIDI tracks cannot enter the preamp. Escape, blur and modal ownership cancel a drag without mutating chain order.",
+        "implements": [
+          "Step",
+          "Run"
+        ],
+        "sources": [
+          "Workstation/PluginInserts.rs",
+          "Workstation/PanelMotion.rs",
+          "Workstation/PanelLayout.rs",
+          "Workstation/EdisonDemo.rs",
+          "Render/WorkstationBaked.rs",
+          "Render/window.rs",
+          "Workstation/Recording.rs",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "BaseSystem/LayerOne/PluginConnectionSystem.rs",
+          "Audio/Plugins/native/Bridge.mm"
+        ],
+        "checks": [
+          {
+            "id": "preamp_transfer_and_motion",
+            "kind": "behavior",
+            "expectation": "Transferred effects retain identity, settings and destination order. Preamp rejects MIDI and instruments. Split width matches the browser, both chains scroll independently, and selected dragging lifts the plug and opens an animated gap. Cancellation leaves native chains unchanged. Recorded PCM receives capture FX and imported PCM remains verbatim.",
+            "procedure": "Run preamp, plugin_inserts, panel_motion, panel_layout, recording and plugin integration tests. Use WORMWOOD_CHECK_PREAMP=1 with a finite native workstation benchmark for the actual split composition. Review Z in both directions, drag reordering and crossing, cancellation, scrolling, long sessions and recording/listening with third-party effects separately."
+          }
+        ]
+      },
+      {
+        "id": "physical_computer_display",
+        "description": "Left-clicking the theatre computer freezes the current observer position and orientation and projects the live baked workstation onto its authored glass. The chair is independent furniture. Perspective mouse mapping edits the same document. E or Escape releases focus; headsets retain separate immersive entry.",
+        "retention": "experimental",
+        "selection": "Computer click in the game; macOS baked WebGPU only. Finite verification can explicitly select WORMWOOD_COMPUTER_SCREEN_VERIFY=1.",
+        "implements": [
+          "Resume",
+          "Step",
+          "RunEmbedded",
+          "Suspend"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Workstation/ComputerScreen.rs",
+          "Theatre/mod.rs",
+          "Render/WorkstationBaked.rs",
+          "Render/WorkstationBaked.wgsl"
+        ],
+        "checks": [
+          {
+            "id": "physical_monitor_review",
+            "kind": "behavior",
+            "expectation": "Computer entry preserves the exact gameplay observer pose without teleporting or seating. E/Escape releases movement at the same location. DAW artwork stays within the monitor glass and perspective clicks match visible controls. UI changes reuse the paused game image and never trace optics.",
+            "procedure": "Run computer_focus_preserves_game_texture_document_and_workstation_layout and oblique_computer_projection_round_trips, perspective_image_and_pointer_agree, room_uses_authored_geometry_without_image_finish_tags and interactive_sprite_entries_cannot_reach_optical_lighting. Review real theatre computer focus, oblique click/drag, resize, release, and headset entry in native gameplay."
+          }
+        ]
+      },
+      {
+        "id": "timeline_mixer_mirrors",
+        "description": "Independent local timeline fader, routed stereo meter and authored crosswalk arming visibility, sharing existing track mix state.",
+        "retention": "supported",
+        "selection": "Right panel page two: LANE METERS, LANE FADERS and LANE ARMING. Each defaults off. Enabled columns follow fully visible audio/MIDI parent lanes and reserve space outside elapsed time; CC and comp rows keep their spacing without duplicate controls. Production appearance targets the normal macOS baked compositor.",
+        "implements": [
+          "Step",
+          "Status"
+        ],
+        "sources": [
+          "Workstation/TimelineControls.rs",
+          "Workstation/Arrangement.rs",
+          "Workstation/KeyboardToggle.rs",
+          "Workstation/BottomPanelRuntime.rs",
+          "Workstation/TimelineScene.rs",
+          "Workstation/InputMonitor.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Render/Workstation.rs",
+          "Render/WorkstationBaked.rs",
+          "Render/WorkstationBaked.wgsl"
+        ],
+        "checks": [
+          {
+            "id": "timeline_mirrors_behavior",
+            "kind": "behavior",
+            "expectation": "Both gain controls share stable track identity and gain law; both meters share routed smoothed observations; lane arming cycles existing arm modes and selects existing crosswalk artwork. Visibility does not edit the document. Rendering performs only image composition and live display color.",
+            "procedure": "Run timeline_controls, lane_control_tests, keyboard_toggle and arrangement unit tests plus interactive_sprite_entries_cannot_reach_optical_lighting. Review the real embedded macOS workstation with each visibility combination, track resize/reorder/scroll, audio/MIDI playback, recording and cancellation. Native visual review remains pending."
+          }
+        ]
+      },
+      {
+        "id": "desktop_review_controls",
+        "description": "User-requested workstation corrections from November 11, 2026: ordered quick-click handling in the drum rack and bottom mixer; normal track selection and undoable Delete; legible right/bottom labels above their buttons; remove in-canvas camera instruction text.",
+        "retention": "supported",
+        "selection": "Desktop workstation input; physical computer and glasses keep distinct backdrop policies.",
+        "implements": [
+          "Step",
+          "Run",
+          "Resume"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/DrumRackUi.rs",
+          "Workstation/BottomPanel.rs",
+          "Workstation/BottomPanelRuntime.rs",
+          "Workstation/BottomPanelScene.rs",
+          "Workstation/BottomOverlay.rs",
+          "Workstation/Arrangement.rs",
+          "Workstation/TrackIo.rs",
+          "Render/WorkstationBaked.rs",
+          "Render/WorkstationBaked.wgsl",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "review_controls_regression",
+            "kind": "behavior",
+            "expectation": "Right-panel bus rows show only white routing and mute engravings; the duplicate grey default-name overlay is explicitly retired by the author. Initial and re-created buses use the same presentation. Matrix L/S/FF/R are routing choices, not row names. Quick down/up clicks draw drum steps and select mixer tracks; fader grabs select without changing stationary gain. Delete removes selected track content in one reversible revision. Shift alone leaves view unchanged, wheel transition persists after release. Plain physical-screen gaps are opaque. UI edits do not advance the paused world.",
+            "procedure": "Run focused click_regressions, track_delete_regressions, bottom_panel and navigation tests, inspect intent, and build the macOS bundle. Inspect native right/bottom label captures and real theatre-computer/VR transitions; listening and physical interaction require separate verification."
+          }
+        ]
+      },
+      {
+        "id": "timeline_viewports",
+        "description": "The left panel has Browser and Properties pages. Properties lists every document track with a visibility checkbox above the viewport list. Global is initially selected and cannot be removed; its tracks are initially checked. New numbered viewports are selected immediately and start with all tracks unchecked. Each viewport retains independent choices; switching changes only timeline presentation and edit targets, never audio playback or mixer routing. Expanded comp lanes follow their parent track. New tracks appear checked in Global and unchecked in custom viewports. Choices are session-local and survive temporary track removal/undo by stable ID. Master Mix is a read-only synthetic display row, unchecked by default in Global and custom views; it never becomes a document track.",
+        "retention": "supported",
+        "selection": "All workstation sessions; native unlit labels and highlights over existing baked panel art.",
+        "implements": [
+          "Step"
+        ],
+        "sources": [
+          "Workstation/Viewports.rs",
+          "Workstation/Arrangement.rs",
+          "Workstation/PluginBrowser.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Host/WorkstationViewportTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "timeline_viewports_behavior",
+            "kind": "behavior",
+            "expectation": "Independent visibility, empty new viewports, immutable Global identity, queued pointer edges, cancelled releases, scrolling, comp-row filtering and document preservation.",
+            "procedure": "Run cargo test --offline --locked viewports --lib and relevant arrangement/browser tests. Review native Properties page, small/fullscreen panels, timeline switching, hidden-track playback and real theatre-computer interaction separately."
+          }
+        ]
+      },
+      {
+        "id": "master_preview_and_transcription",
+        "description": "Poll the isolated master preview after edits. Show its waveform through existing tape rendering when the read-only Master Mix row is enabled; show its unlit log-frequency spectrum behind piano notes with clip start, local tempo, EDO and physical-key projection. Clear stale content immediately and reuse completed analysis and projected display data. The piano room defaults to mix-bus audio-only analysis. Independent source and type controls cycle mix/all eligible tracks and Audio/MIDI/Both. A separate per-track default-sound toggle suppresses only the fallback instrument. Reuse TimelineBars gestures and baked images for piano zoom, pan, loop handles, loop toggle and transport seeking with clip-local beat projection. Responsive controls share hit rectangles and use bold headings above bounded-proportion baked buttons.",
+        "retention": "supported",
+        "selection": "Audio workstation Step; waveform lane is explicitly enabled in Properties and spectrum appears in the open piano room.",
+        "implements": [
+          "Step"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/MixPreview.rs",
+          "Workstation/Arrangement.rs",
+          "Workstation/Viewports.rs",
+          "Workstation/PianoWorkspace.rs",
+          "Workstation/PianoScene.rs",
+          "Workstation/PianoOverlayKernel.glsl",
+          "Workstation/TimelineBars.rs",
+          "Workstation/TimelineBarScene.rs",
+          "Render/WorkstationBaked.rs"
+        ],
+        "checks": [
+          {
+            "id": "mix_preview_ui",
+            "kind": "behavior",
+            "expectation": "Default visibility is off. Pointer/edit/drop operations cannot modify the master row. Spectral peaks align with notes after offset, tempo, tuning, pan and zoom; piano bubbles remain above the spectral background. Piano defaults to audio-only mix, with independent track/type and fallback controls. Shared zoom/loop captures cannot create notes. Bar time is projected to the clip local clock and transport remains in seconds.",
+            "procedure": "Run focused mix_preview and viewports tests, shader validation, then inspect the native piano room and enabled timeline preview."
+          }
+        ]
+      },
+      {
+        "id": "user_audio_file_picker",
+        "description": "The macOS left browser footer opens a modeless multi-file audio chooser. A worker converts compressed formats and streams mono/stereo WAV validation before publishing without overwrites into USER_SAMPLES. Library ingestion no longer inherits the drum-sample 8 MiB limit. Timeline and preview decoding retain the existing 16,777,216 decoded-value budget. Completion reveals Audio and refreshes immediately; errors appear in the caption. No track or clip is created by library import.",
+        "retention": "supported",
+        "selection": "macOS left browser footer; WORMWOOD_USER_ROOT overrides the USER library location.",
+        "implements": [
+          "Step",
+          "Close"
+        ],
+        "sources": [
+          "Workstation/AudioImport.rs",
+          "Workstation/AudioImportDialog.m",
+          "Workstation/AudioLibrary.rs",
+          "Workstation/TrackIo.rs",
+          "Workstation/TrackIoScene.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/PluginBrowser.rs",
+          "Workstation/DrumSample.rs",
+          "Workstation/AudioPreview.rs"
+        ],
+        "checks": [
+          {
+            "id": "audio_library_file_import",
+            "kind": "behavior",
+            "expectation": "Selected valid files appear in USER_SAMPLES and the Audio browser immediately; duplicate names retain both files. Invalid/cancelled files leave no partial entries. Left footer actions require matching press/release. Streaming validation and conversion remain off audio callbacks. Streaming WAV files with unknown RIFF/data lengths use the actual file end; imported WAV bytes are preserved.",
+            "procedure": "Run audio_import, explorer_root_back_search_and_import_controls_share_full_width, and audio_import_button_tests. The opt-in selected_audio_import_fixtures check copies the two supplied song WAVs and verifies bytes and discovery. Manually review left footer and native multi-selection with WAV/compressed audio."
+          }
+        ]
+      },
+      {
+        "id": "manual_plugin_file_picker",
+        "description": "The Add Plugins button below Import Audio on the macOS left browser footer opens a modeless multi-file chooser for VST3, VST2, CLAP and Audio Unit bundles. Only selected bundles are copied into the matching folders under the same USER root as the audio library. Bundle resources and symlinks are preserved; existing filenames are never replaced. The explicit import refreshes only the user plugin catalog while retaining active insert instances. No system plugin directories are scanned.",
+        "retention": "supported",
+        "selection": "macOS left browser footer; explicit Add Plugins action.",
+        "implements": [
+          "Step",
+          "Close"
+        ],
+        "sources": [
+          "Workstation/AudioImport.rs",
+          "Workstation/AudioImportDialog.m",
+          "Workstation/PluginImport.rs",
+          "Workstation/TrackIo.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/PluginBrowser.rs"
+        ],
+        "checks": [
+          {
+            "id": "manual_plugin_import",
+            "kind": "behavior",
+            "expectation": "Supported bundle extensions map to USER_VST3, USER_VST2, USER_CLAP and USER_AUDIOUNIT. Copies preserve internal links, reject overwrites and leave no staging entries. A manual refresh discovers new selected bundles without scanning system paths or removing active inserts.",
+            "procedure": "Run plugin_import and audio_import_button_tests. Run native plugin discovery with a controlled USER root, add a fixture plugin, refresh twice and verify one catalog row and retained inserts. Review native button placement."
+          }
+        ]
+      },
+      {
+        "id": "spectral_timeline_clip_display",
+        "description": "Audio timeline clips display source waveforms. The author requested reverting the spectral default on November 13, 2026. Spectral timeline rendering remains retained as an inactive experiment. Analysis remains outside audio callbacks and display remains unlit over persistent baked tapes.",
+        "retention": "experimental",
+        "selection": "Temporarily disabled. Timeline clips use waveforms regardless of saved spectral preferences; the clip-display setting is hidden.",
+        "implements": [
+          "Step"
+        ],
+        "sources": [
+          "Workstation/Settings.rs",
+          "Workstation/Arrangement.rs",
+          "Workstation/TimelineScene.rs",
+          "Workstation/TimelineEngravingKernel.glsl",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "spectral_clips_preference_and_payload",
+            "kind": "behavior",
+            "expectation": "Timeline waveform selection overrides absent and saved spectral preferences. The clip-display toggle is hidden. Retained spectral payload tests still verify the complete 128 by 32 source intensity field and cropped time mapping independently of production selection.",
+            "procedure": "Run settings::tests, timeline_scene::tests and interactive_sprite_entries_cannot_reach_optical_lighting. Separately review the native DAW with imported audio, clip edits, pan/zoom and saved preferences; automated payload checks do not establish native appearance."
+          }
+        ]
+      }
+    ]
+  },
+  "entry_steps": [
+    "Run",
+    "Begin",
+    "Step",
+    "SetPanel",
+    "Close",
+    "Status",
+    "OpenPianoRoll",
+    "Resume",
+    "Suspend",
+    "ComputerKeyboard",
+    "DrumRack"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "system": "WaterFlowSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": []
+    },
+    "Step": {
+      "calls": []
+    },
+    "Sample": {
+      "calls": [
+        "TerrainSurfaceHydrologySystem.Sample"
+      ]
+    },
+    "Close": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "continuous_water_currents",
+        "description": "Ocean crest/shore push and pulsed downstream river current retain legacy strengths and submergence factors. Continuous bed/channel queries replace integer river-column levels.",
+        "retention": "experimental",
+        "selection": "Invoked by the tracked WaterSystem application and its presentation/query consumers.",
+        "implements": [
+          "Configure",
+          "Step",
+          "Sample",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/WaterFlowSystem.rs",
+          "Water/runtime.rs",
+          "Water/flow.rs"
+        ],
+        "checks": [
+          {
+            "id": "continuous_water_currents_routes",
+            "kind": "declared_calls",
+            "expectation": "The retained operation declares each cross-System data route.",
+            "targets": [
+              "TerrainSurfaceHydrologySystem.Sample"
+            ]
+          },
+          {
+            "id": "continuous_water_currents_behavior",
+            "kind": "behavior",
+            "expectation": "Ocean crest/shore push and pulsed downstream river current retain legacy strengths and submergence factors. Continuous bed/channel queries replace integer river-column levels.",
+            "procedure": "Verify dry, submerged ocean and river samples, crest direction/lateral push, river pulse and actor locomotion/swimming consumers. Never infer an occupied water region beyond finite collision coverage."
+          }
+        ]
+      }
+    ]
+  }
+}

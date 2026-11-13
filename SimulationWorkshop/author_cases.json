@@ -1,67 +1,268 @@
 {
   "source": "https://graphics.cs.utah.edu/research/projects/ogc/Offset_Geometric_Contact-SIGGRAPH2025.pdf",
-  "scope": "Author scenarios; material additions are excluded until these cases are implemented and measured.",
-  "status": "reference_inventory_only",
+  "scope": "Mirror-only CPU material workshop using the standalone OGC adaptation; original solver, benchmark scale and assets are not reproduced.",
+  "status": "runnable_procedural_scenario_families",
   "cases": [
+    {
+      "id": "matter_worker_dig",
+      "description": "Worker · Dig a ground section",
+      "implementation_status": "native_and_ios_compile_checked_user_playtest_pending",
+      "differences": "Shared gameplay tools, materials and OGC. Player mesh with two-hand/leg IK and reduced muscle actuators; supported torso motion is prescribed. No forced excavation. Physical and visual results await user playtest."
+    },
+    {
+      "id": "matter_worker_axe",
+      "description": "Worker · Chop a standing tree",
+      "implementation_status": "native_and_ios_compile_checked_user_playtest_pending",
+      "differences": "Same anchored grain-bearing tree model as gameplay, with a visible supported worker and finite-force axe grips. No forced felling. Physical and visual results await user playtest."
+    },
+    {
+      "id": "matter_snow",
+      "description": "Worker · Shovel and compact snow",
+      "implementation_status": "native_and_ios_compile_checked_user_playtest_pending",
+      "differences": "Compressible plastic APIC snow with OGC boundaries and a supported shoveling worker. Meltwater preserves parcel mass. Heating is labelled at 180x; physical motion is ordinary speed. Awaiting user playtest."
+    },
+    {
+      "id": "matter_ice",
+      "description": "Ice · Fracture, float and melt in warm water",
+      "implementation_status": "native_and_ios_compile_checked_user_playtest_pending",
+      "differences": "Brittle bonded ice, exact clipped-volume buoyancy and a finite hydrostatic warm-water reservoir. Cellwise latent-heat melting at labelled 240x thermal time; mechanics run at ordinary speed. No resolved waves or refreezing. Awaiting user playtest."
+    },
+    {
+      "id": "matter_ice_air",
+      "description": "Ice · Melt in air",
+      "implementation_status": "native_and_ios_compile_checked_user_playtest_pending",
+      "differences": "Same ice material in warm air, with meltwater transferred into explicit APIC/OGC parcels. Labelled 240x thermal time; coarse cellwise melt front, no refreezing. Awaiting user playtest."
+    },
     {
       "id": "cloth_stack",
       "description": "50 cloth layers dropped onto a cylinder",
       "paper_figure": 10,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_procedural_fixture",
+      "differences": "Reduced procedural geometry; CPU XPBD distance/bending/volume constraints with the retained OGC contact adaptation. No paper performance or non-intersection guarantee is claimed.",
+      "short_regression": "passes_60_frames_at_default_scale"
     },
     {
       "id": "tight_knot",
       "description": "Tighten a loose cloth knot by pulling both ends",
       "paper_figure": 11,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_procedural_fixture",
+      "differences": "Reduced procedural geometry; CPU XPBD distance/bending/volume constraints with the retained OGC contact adaptation. No paper performance or non-intersection guarantee is claimed.",
+      "short_regression": "passes_60_frames_at_default_scale"
     },
     {
       "id": "cloth_twist",
       "description": "Twist opposite ends of a square cloth through eight turns",
       "paper_figure": 12,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_procedural_fixture",
+      "differences": "Reduced procedural geometry; CPU XPBD distance/bending/volume constraints with the retained OGC contact adaptation. No paper performance or non-intersection guarantee is claimed.",
+      "short_regression": "passes_60_frames_at_default_scale",
+      "extended_stress": {
+        "status": "halts_before_completion",
+        "simulated_seconds": 3.7225122451782227,
+        "failure": "minimum step rejected: 1 intersection pairs, 0 inverted tetrahedra; last valid state retained"
+      }
     },
     {
       "id": "cloth_on_body",
       "description": "Stitched garment on an animated body",
       "paper_figure": 14,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_proxy_original_assets_missing",
+      "differences": "14 stitched cylindrical panels around a spherical body proxy. Original animated body/garment assets are absent.",
+      "short_regression": "passes_60_frames_at_default_scale"
     },
     {
       "id": "robot_tshirt",
       "description": "Robot manipulation of a T-shirt",
       "paper_figure": 14,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_proxy_original_assets_missing",
+      "differences": "Two kinematic grips manipulate a cloth proxy above a cylinder. Original robot and T-shirt assets are absent.",
+      "short_regression": "passes_60_frames_at_default_scale"
     },
     {
       "id": "yarn_stretch",
       "description": "Stretch yarn-level cloth under tension",
       "paper_figure": 15,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_procedural_fixture",
+      "differences": "Reduced procedural geometry; CPU XPBD distance/bending/volume constraints with the retained OGC contact adaptation. No paper performance or non-intersection guarantee is claimed.",
+      "short_regression": "passes_60_frames_at_default_scale"
     },
     {
       "id": "yarn_twist",
       "description": "Twist yarn-level cloth five turns and release it",
       "paper_figure": 16,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_procedural_fixture",
+      "differences": "Reduced procedural geometry; CPU XPBD distance/bending/volume constraints with the retained OGC contact adaptation. No paper performance or non-intersection guarantee is claimed.",
+      "short_regression": "passes_60_frames_at_default_scale",
+      "extended_stress": {
+        "status": "halts_before_completion",
+        "simulated_seconds": 7.321285247802734,
+        "failure": "minimum step rejected: 1 intersection pairs, 0 inverted tetrahedra; last valid state retained"
+      }
     },
     {
       "id": "three_cloth_layers_sphere",
       "description": "Three cloth layers in contact on a sphere",
       "paper_figure": 17,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_procedural_fixture",
+      "differences": "Reduced procedural geometry; CPU XPBD distance/bending/volume constraints with the retained OGC contact adaptation. No paper performance or non-intersection guarantee is claimed.",
+      "short_regression": "passes_60_frames_at_default_scale"
     },
     {
       "id": "cloth_sphere",
       "description": "One cloth layer on a sphere",
       "paper_figure": 18,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_procedural_fixture",
+      "differences": "Reduced procedural geometry; CPU XPBD distance/bending/volume constraints with the retained OGC contact adaptation. No paper performance or non-intersection guarantee is claimed.",
+      "short_regression": "passes_60_frames_at_default_scale"
     },
     {
       "id": "volumetric_mat",
       "description": "Twist a volumetric mat with surface self-contact",
       "paper_figure": 19,
-      "implementation_status": "not_implemented"
+      "implementation_status": "runnable_procedural_fixture",
+      "differences": "Reduced procedural geometry; CPU XPBD distance/bending/volume constraints with the retained OGC contact adaptation. No paper performance or non-intersection guarantee is claimed.",
+      "short_regression": "passes_60_frames_at_default_scale",
+      "extended_stress": {
+        "status": "halts_before_completion",
+        "simulated_seconds": 1.9092692136764526,
+        "failure": "minimum step rejected: 0 intersection pairs, 3 inverted tetrahedra; last valid state retained"
+      }
+    },
+    {
+      "id": "matter_dirt",
+      "description": "Dirt — curved spade and adaptive loam",
+      "origin": "Mirror material workshop",
+      "differences": "Adaptive meshfree material, plastic loam, cohesive failure, implicit display skin and finite-force OGC spade contact. Compile-checked; user playtest pending."
+    },
+    {
+      "id": "matter_grass",
+      "description": "Turf — rooted sod, spade cut and peel",
+      "origin": "Mirror material workshop",
+      "differences": "Established turf has a dedicated deformable prism mesh, volume constraints, separate soil seams and tensile root bundles. 384 crowns and 1536 attached blade meshes follow the mat. Edge work cuts roots; tensile overload tears them permanently. OGC contacts the actual mat and spade. Individual leaf dynamics and biological growth remain in the separate seedling experiment. Uncalibrated reduced material."
+    },
+    {
+      "id": "matter_seedlings",
+      "description": "Seedlings — retained germination experiment",
+      "origin": "Mirror material workshop",
+      "differences": "Retained former grass demonstration: accelerated seed/growth state with moisture and reserves, roots in adaptive loam and OGC shoot/tool contact. This is sparse germination, not established turf."
+    },
+    {
+      "id": "matter_sand",
+      "description": "Fine sand — frictional continuum and bucket",
+      "origin": "Mirror material workshop",
+      "differences": "APIC material points represent parcels of fine dry sand. Hencky elastic strain and Drucker-Prager plastic yielding provide pressure-dependent shear resistance without tensile cohesion. Accepted OGC boundary motion updates strain. Continuous display skin; individual microscopic grains are not explicitly simulated. Bounded workshop patch, not a full beach."
+    },
+    {
+      "id": "matter_pebbles",
+      "description": "Pebbles — retained discrete grains and bucket",
+      "origin": "Mirror material workshop",
+      "differences": "The former matter_sand model is retained unchanged as pebbles: fixed centimetre-scale closed grain surfaces and persistent Coulomb contact constraints. No grain subdivision."
+    },
+    {
+      "id": "matter_wood",
+      "description": "Wood — axe split along grain",
+      "origin": "Mirror material workshop",
+      "differences": "Game-generated cut trunk on the contact table. Continuous fibre bundles are stiff; the weaker matrix between them fails at finite critical opening. Fracture fronts propagate along weak grain planes using contact work and axe orientation. Broken connections cannot act as elastic tethers. Prepared interfaces set fracture resolution."
+    },
+    {
+      "id": "matter_wood_chop",
+      "description": "Wood — axe chop across grain",
+      "origin": "Mirror material workshop",
+      "differences": "Same trunk and material as the splitting case. A sideways axe stroke loads the cross-grain fibres. Cross-grain interfaces require local cutting-edge contact and greater strength/toughness than longitudinal cleavage."
+    },
+    {
+      "id": "matter_stone",
+      "description": "Stone — pick and brittle fracture",
+      "origin": "Mirror material workshop",
+      "differences": "A closed angular rock with shape-preserving convex cells and traction/work-driven brittle interfaces. Tip contact area controls stress. Light tap then stronger pick blows. Chips preserve geometry, volume and mass."
+    },
+    {
+      "id": "matter_rubble",
+      "description": "Loose stone — curved shovel",
+      "origin": "Mirror material workshop",
+      "differences": "Separate closed stones lifted through OGC shovel contact. Shovel proximity never subdivides a stone; actual stress/work must fracture its material interfaces."
+    },
+    {
+      "id": "matter_stone_blunt",
+      "description": "Stone — broad bucket contact comparison",
+      "origin": "Mirror material workshop",
+      "differences": "The same rock and fracture law as the pick scene. A bucket applies the same sequence of drive-force limits over its broader contact surface; no tool-name damage exception exists."
+    },
+    {
+      "id": "matter_dirt_compare",
+      "description": "Dirt — compare light / medium / strong force",
+      "origin": "Mirror force comparison",
+      "differences": "Three fresh deterministic specimens, 17 seconds each. Identical requested trajectories and tool mass; actuator force limits 45, 240 and 800 N. Reports actual contact force, head kinetic energy, contact work, fracture and lifted/contained matter. Drive limit is not measured impact force. Reset restarts all trials."
+    },
+    {
+      "id": "matter_grass_compare",
+      "description": "Turf — compare light / medium / strong force",
+      "origin": "Mirror force comparison",
+      "differences": "Three fresh deterministic specimens, 17 seconds each. Identical requested trajectories and tool mass; actuator force limits 45, 240 and 800 N. Reports actual contact force, head kinetic energy, contact work, fracture and lifted/contained matter. Drive limit is not measured impact force. Reset restarts all trials."
+    },
+    {
+      "id": "matter_sand_compare",
+      "description": "Fine sand — compare light / medium / strong force",
+      "origin": "Mirror force comparison",
+      "differences": "Three fresh deterministic specimens, 17 seconds each. Identical requested trajectories and tool mass; actuator force limits 45, 240 and 800 N. Reports actual contact force, head kinetic energy, contact work, fracture and lifted/contained matter. Drive limit is not measured impact force. Reset restarts all trials."
+    },
+    {
+      "id": "matter_pebbles_compare",
+      "description": "Pebbles — compare light / medium / strong force",
+      "origin": "Mirror force comparison",
+      "differences": "Three fresh deterministic specimens, 17 seconds each. Identical requested trajectories and tool mass; actuator force limits 45, 240 and 800 N. Reports actual contact force, head kinetic energy, contact work, fracture and lifted/contained matter. Drive limit is not measured impact force. Reset restarts all trials."
+    },
+    {
+      "id": "matter_wood_compare",
+      "description": "Wood — compare light / medium / strong force",
+      "origin": "Mirror force comparison",
+      "differences": "Three fresh deterministic specimens, 17 seconds each. Identical requested trajectories and tool mass; actuator force limits 45, 240 and 800 N. Reports actual contact force, head kinetic energy, contact work, fracture and lifted/contained matter. Drive limit is not measured impact force. Reset restarts all trials."
+    },
+    {
+      "id": "matter_wood_chop_compare",
+      "description": "Wood — compare light / medium / strong force",
+      "origin": "Mirror force comparison",
+      "differences": "Three fresh deterministic specimens, 17 seconds each. Identical requested trajectories and tool mass; actuator force limits 45, 240 and 800 N. Reports actual contact force, head kinetic energy, contact work, fracture and lifted/contained matter. Drive limit is not measured impact force. Reset restarts all trials."
+    },
+    {
+      "id": "matter_stone_compare",
+      "description": "Stone — compare light / medium / strong force",
+      "origin": "Mirror force comparison",
+      "differences": "Three fresh deterministic specimens, 17 seconds each. Identical requested trajectories and tool mass; actuator force limits 45, 240 and 800 N. Reports actual contact force, head kinetic energy, contact work, fracture and lifted/contained matter. Drive limit is not measured impact force. Reset restarts all trials."
+    },
+    {
+      "id": "matter_rubble_compare",
+      "description": "Loose stone — compare light / medium / strong force",
+      "origin": "Mirror force comparison",
+      "differences": "Three fresh deterministic specimens, 17 seconds each. Identical requested trajectories and tool mass; actuator force limits 45, 240 and 800 N. Reports actual contact force, head kinetic energy, contact work, fracture and lifted/contained matter. Drive limit is not measured impact force. Reset restarts all trials."
+    },
+    {
+      "id": "matter_stone_blunt_compare",
+      "description": "Stone — compare light / medium / strong force",
+      "origin": "Mirror force comparison",
+      "differences": "Three fresh deterministic specimens, 17 seconds each. Identical requested trajectories and tool mass; actuator force limits 45, 240 and 800 N. Reports actual contact force, head kinetic energy, contact work, fracture and lifted/contained matter. Drive limit is not measured impact force. Reset restarts all trials."
+    },
+    {
+      "id": "matter_layers",
+      "description": "Layered ground — turf, soil, shovel and bedrock",
+      "origin": "Mirror material workshop",
+      "differences": "One coupled OGC scene: rooted turf over cohesive soil over brittle rock. Root anchors transfer load between turf and soil. Repeated shovel scoops deposit existing material beside the hole; a pick is selected only when a clear bedrock patch is measured. Remaining cover is reported honestly. No timed removal, material reset or forced attachment. Fixed bounded section; approximately one to two minutes depending on excavation."
+    },
+    {
+      "id": "soil_spade_contact",
+      "description": "Soil and spade: contact and hold (Mirror experiment)",
+      "origin": "Mirror experiment, not an OGC paper benchmark",
+      "implementation_status": "experimental_contact_only",
+      "differences": "A force-driven compliant spade presses against a fixed-base deformable soil patch through OGC. Fracture, roots, detached soil and mobile controls are not implemented; physical parameters are uncalibrated.",
+      "short_regression": "180_frame_macos_contact_and_hold_passed"
+    },
+    {
+      "id": "soil_spade_fracture",
+      "description": "Automatic soil fracture and excavation (Mirror experiment)",
+      "origin": "Mirror experiment, not an OGC paper benchmark",
+      "implementation_status": "experimental_awaiting_user_playtest",
+      "differences": "108 prepartitioned elastic soil cells, co-rotating cohesive interfaces damaged by tensile/shear load, a finite-force tapered spade and OGC contact. Numerical gaps and fixed cell-scale crack paths; uncalibrated material. Automatic press, lever, lift and tip; no forced debris attachment or deletion. Shaft and grass are visual geometry.",
+      "short_regression": "not_run_per_user_request_compile_only"
     }
   ],
   "validation": [
@@ -70,6 +271,8 @@
     "Actual simulated time per wall-clock second",
     "Contact-pair buffer demand and overflow",
     "Friction behavior and thread pull-through",
-    "Declared differences in mesh, solver, hardware and scale"
+    "Declared differences in mesh, solver, hardware and scale",
+    "Current monitor is discrete; it does not establish continuous collision detection or friction/thread pull-through correctness.",
+    "Every failed candidate restores the previous valid geometry and retries a smaller step; the run halts if the minimum step is rejected."
   ]
 }

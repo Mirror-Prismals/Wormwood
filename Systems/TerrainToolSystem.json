@@ -1,0 +1,221 @@
+{
+  "system": "TerrainToolSystem",
+  "layer": 2,
+  "functions": {
+    "Aim": {
+      "calls": [
+        "PlanetSurfaceSystem.Height"
+      ]
+    },
+    "Cut": {
+      "calls": []
+    },
+    "Advance": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "OGCConnectionSystem.Project",
+        "OGCConnectionSystem.Release",
+        "PlanetSurfaceSystem.Frame",
+        "PlanetSurfaceSystem.Height",
+        "PlanetSurfaceSystem.RefineMaterial",
+        "OGCConnectionSystem.Synchronize"
+      ]
+    },
+    "Frame": {
+      "calls": []
+    },
+    "Release": {
+      "calls": [
+        "OGCConnectionSystem.Release"
+      ]
+    },
+    "SurfaceHeight": {
+      "calls": []
+    },
+    "Prepare": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "OGCConnectionSystem.Project",
+        "OGCConnectionSystem.Release",
+        "PlanetSurfaceSystem.Frame",
+        "PlanetSurfaceSystem.Height",
+        "PlanetSurfaceSystem.RefineMaterial",
+        "OGCConnectionSystem.Synchronize"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "blade_terrain_cut",
+        "description": "Retained rejection hook for the retired blade-cookie-cut shortcut.",
+        "retention": "retired",
+        "selection": "Retired at the author’s request: a gesture-generated polygon subtraction does not meet the physical excavation goal. Cut rejects requests without changing terrain.",
+        "implements": [
+          "Cut"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/TerrainToolSystem.rs",
+          "Physics/terrain_tool.rs",
+          "Terrain/ToolCut.rs",
+          "Physics/planet.rs",
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs"
+        ],
+        "checks": [
+          {
+            "id": "cut_volume_and_contact",
+            "kind": "behavior",
+            "expectation": "The visible cut and contact floor share the blade polygon. Soil is created only after real terrain removal, preserves the geometrically removed prism volume and mass, and moves through contact without tool attachment. A rejected candidate does not commit a hole.",
+            "procedure": "Pick up the shovel, aim at reachable ground, hold/release and inspect lowering, geometric cut, lift, tip and return. Compare before/after ground and removed volume/mass. Check soil resting on the blade and dumping under gravity, repeated cuts, shallow/charged cuts, rigid-tool blocking, reset/close cleanup and both pointer/keyboard paths. Scene compilation alone is not behavioral evidence."
+          }
+        ]
+      },
+      {
+        "id": "rooted_soil_contact",
+        "description": "A bounded initially occupied porous tetrahedral soil domain deforms under spade contact. Cohesive interfaces and tension-limited roots fail from material strain/load. Detached elements retain geometry, density-derived mass, volume constraints and OGC contact. A full-spade rigid Newton solve uses conservative bounds and the contact Hessian metric; invalid candidates cannot commit fracture. Static earth switches to the bounded deformable representation under the carried blade before contact; preparation preserves occupied material and is not excavation. ToolMotion.control_point is a finite model-space position; absent/null explicitly preserves model-origin control. Optional grasp carries the existing arm workspace and support-slide limits while equipped. Collision and grasp bounds are solved together before acceptance; infeasible requests restrict motion and report resistance, without moving the accepted tool after contact. Session preparation can supply an independent patch_position and optional=true to leave the disabled controls-only selection intact. Gameplay prepares this bounded existing-material domain before digging. Advance cannot create a material region. The retained finite-element clearance is still an approximation and may allow blade alignment artifacts; narrowing that clearance or perturbing the second interior plane failed the retained fracture/lift obligations and was not adopted. Cohesive rest separation is stored in a rotating material face frame. A pressure-dependent mixed tensile/shear criterion uses force per reference face area; compression supports friction instead of counting as tensile fracture. The parameters are uncalibrated. Material parcels retain session-stable element identities, mass and current world centroids for tracking the same earth through an interaction. A physical sod skin bridges the topological clearance between surface elements using their existing massive vertices. Its contact triangles, rendered surface and height queries use the same topology. Interface strips and vertex caps tear with their supporting cohesive bonds, and rejected candidates restore native topology as well as material state. Increasing the domain from 48 to 108 tetrahedra was tested and rejected: the retained native stroke still failed and took 16.96 seconds instead of 6.13 seconds; refinement alone did not repair cutting.",
+        "retention": "experimental",
+        "selection": "Procedures/soil_patch.json enabled=true with material_model other than polyhedral_cutting selects this retained porous-tetrahedron prototype. Native and actual-player acceptance remain required.",
+        "implements": [
+          "Aim",
+          "Advance",
+          "Frame",
+          "SurfaceHeight",
+          "Release",
+          "Prepare"
+        ],
+        "sources": [
+          "Physics/terrain_tool.rs",
+          "Physics/OGC/Bridge.cpp",
+          "BaseSystem/LayerTwo/TerrainToolSystem.rs",
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "Physics/rigid_contact.rs",
+          "Physics/rigid_fit.rs",
+          "Physics/rigid_motion.rs",
+          "Physics/soil_material.rs"
+        ],
+        "checks": [
+          {
+            "id": "rooted_contact_and_release",
+            "kind": "behavior",
+            "expectation": "Initially filled soil survives idle gravity without automatic excavation; actual blade contact deforms soil, breaks cohesive/root constraints, detaches and lifts accounted material, and leaves detached earth physical after tool release. Rejected candidates cannot commit fracture.",
+            "procedure": "Run both the retained native blade-origin command trajectory and the production player-controls/native-OGC trajectory with actual rig feedback. Both retain root/contact/anchored remainder/mass/rest-volume/lift/release obligations; the production path also verifies two seconds of idle prepared material and actual reachable hands within 5 cm. No failing diagnostic is retired merely because the other path passes. Play desktop/mobile controls separately."
+          },
+          {
+            "id": "motion_reference_and_grasp_constraints",
+            "kind": "behavior",
+            "expectation": "Origin control retains its straight commanded origin path; upper-grip control preserves the held pivot. Held reach and native collision bounds coexist, release removes the grasp joint, and infeasible constraints hold the prior pose and report resistance.",
+            "procedure": "Run both motion-reference invariant tests, held/released and infeasible blocked-grasp tests, the unchanged native origin soil trajectory, the full production trajectory with hand reach checked every frame and latched error below 50 mm, and retained pickup/release/repickup checks."
+          },
+          {
+            "id": "objective_soil_cohesion",
+            "kind": "behavior",
+            "expectation": "Rigidly rotating the soil rotates its cohesive rest vectors. Compression alone does not sever soil. Shear strength increases under compression and face subdivision preserves aggregate strength. Existing idle/root/lift/mass checks remain required.",
+            "procedure": "Run soil_material tests and both retained production and native rooted-soil trajectories; verify accepted candidates and detached mass separately from material-law unit checks."
+          },
+          {
+            "id": "continuous_sod_surface",
+            "kind": "behavior",
+            "expectation": "Intact sod covers interior element interfaces and junctions in actual contact and height queries. It opens with cohesive failure without deleting material or committing rejected topology changes.",
+            "procedure": "Cast downward Aim rays at the central junction and both interface directions; all must hit physical_soil before contact. Inspect skin triangles and torn triangles during accepted fracture, then verify mass/rest volume and native contact after release."
+          }
+        ]
+      },
+      {
+        "id": "polyhedral_soil_cutting",
+        "description": "Experimental bounded soil volume represented by deformable affine polyhedral pieces. Local subdivision preserves reference material, mass, current deformation and velocity. Root constraints and cohesive interfaces can fail from load; accepted blade motion can damage covered cohesive area using accepted contact work. OGC supplies blade and external contact forces and conservative bounds; a separate coupled solver handles near-touching material interfaces. Candidate geometry and native state roll back on rejection. This material law is uncalibrated, the patch is bounded and the current player body does not have a dynamic whole-body OGC grip solve. The retained porous tetrahedron remains an alternative rather than being silently retired. Native collision defaults to the retained full-face approximation, which can cause extra blocking. The optional clipped contact mesh triangulates only damaged portions and attaches their contact points to the same affine material bodies. Its independent full-polyhedron crossing monitor remains conservative. The clipped implementation is experimental and is not selected by default after its native stroke and mobile tests failed and ran slower. A trial that prepared subdivisions from accumulated accepted movement was rejected after stalling without a cut.",
+        "retention": "experimental",
+        "selection": "Procedures/soil_patch.json enabled=true and material_model=polyhedral_cutting. This selection is unfinished and not yet cleared for playtesting. Procedures/soil_patch.json internal_contact_mesh selects full_face (default) or the retained clipped experiment.",
+        "implements": [
+          "Aim",
+          "Advance",
+          "Frame",
+          "SurfaceHeight",
+          "Release",
+          "Prepare"
+        ],
+        "sources": [
+          "Physics/terrain_tool.rs",
+          "Physics/soil_volume.rs",
+          "Physics/soil_cutting.rs",
+          "Physics/cut_geometry.rs",
+          "Physics/affine_soil.rs",
+          "Physics/soil_material.rs",
+          "Physics/rigid_contact.rs",
+          "BaseSystem/LayerOne/OGCConnectionSystem.rs",
+          "BaseSystem/LayerTwo/TerrainToolSystem.rs",
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "Procedures/soil_patch.json"
+        ],
+        "checks": [
+          {
+            "id": "cut_material_conservation",
+            "kind": "behavior",
+            "expectation": "Subdivision preserves occupied material, mass, momentum and strain; a requested or blocked stroke alone cannot fracture it. Accepted contact work and a bounded tip fracture zone account for damage. Repeated cuts preserve total material.",
+            "procedure": "Run cut geometry, affine soil and cutting tests, then exercise real native contact through insertion, lift, drop and another cut. Compare mass and reference volume before and after; inspect rejected candidate rollback."
+          },
+          {
+            "id": "cutting_contact_and_lift",
+            "kind": "behavior",
+            "expectation": "The native and actual-player blade trajectories each insert, break real cohesion and roots, detach accounted soil and lift it while preserving a planted remainder. Native bounds and independent intersection checks reject unsafe candidates.",
+            "procedure": "Run the retained rooted_soil_exists_before_contact_and_detaches_through_load, player_spade_controls_reach_rooted_material_and_release_it and mobile_work_button_lifts_the_same_soil_with_reachable_hands checks, then separately playtest mobile. Failures remain outstanding."
+          },
+          {
+            "id": "cut_surface_visibility",
+            "kind": "behavior",
+            "expectation": "The intact internal surface is hidden; accepted fracture exposes the corresponding portions, and grass follows material motion. Physical and visual surfaces remain separate.",
+            "procedure": "Run focused material and initialized patch tests, then inspect accepted cuts and detached material in a playable build."
+          }
+        ]
+      },
+      {
+        "id": "rigid_spade_control_trial",
+        "description": "Provide accepted rigid spade poses, native OGC contact against immovable terrain and gravity on hand release so direct no-HUD controls can be tested independently of experimental soil separation.",
+        "retention": "supported",
+        "selection": "Procedures/soil_patch.json enabled=false. No soil deformation, root failure or excavation is claimed in this selection.",
+        "implements": [
+          "Advance",
+          "Frame",
+          "Release"
+        ],
+        "sources": [
+          "Physics/tool_motion.rs",
+          "Physics/terrain_tool.rs",
+          "Procedures/soil_patch.json",
+          "BaseSystem/LayerFive/ShovelSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "accepted_tool_and_hands",
+            "kind": "behavior",
+            "expectation": "The cold tool is pickable; both hands derive from the accepted rigid pose; manual movement/levering uses contact bounds; release preserves the same tool under gravity/contact and permits repickup.",
+            "procedure": "Run the explicit controls-selection production-hook/actual-rig native test and iOS touch-module checks. Test pickup, hold/drag, two-contact rotation, drop and camera gestures in the identified build. The rooted-material selection has separate production-control and native-contact verification obligations."
+          }
+        ]
+      },
+      {
+        "id": "soil_attached_grass_visual",
+        "description": "Visible grass tufts are anchored to all original top faces of the bounded soil patch. Top surfaces have a sod color, cohesive internal faces are hidden in presentation until failure, and collision tetrahedra remain unchanged by presentation. Frame.visual and Frame.grass remain separate from physical collision triangles.",
+        "retention": "experimental",
+        "selection": "Rendered by the retained porous-tetrahedron material selection. The polyhedral-cutting selection has a separate experimental surface.",
+        "implements": [
+          "Frame"
+        ],
+        "sources": [
+          "Physics/terrain_tool.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "soil_grass_follow",
+            "kind": "behavior",
+            "expectation": "Grass follows accepted soil face motion. Intact internal faces are hidden in presentation while every physical tetrahedron remains collidable. The Frame hook supplies separate collision, soil-presentation and grass arrays.",
+            "procedure": "Run the focused grass geometry and initialized patch tests, then visually inspect the patch and a detached element in a playable build. The grass blades have no mechanical contact and are not individually rooted."
+          }
+        ]
+      }
+    ]
+  }
+}

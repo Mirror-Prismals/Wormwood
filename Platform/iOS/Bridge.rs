@@ -133,3 +133,129 @@ pub unsafe extern "C" fn wormwood_ios_run_cues(
         _ => -1,
     }
 }
+
+/// Native application entry; called off the UIKit thread, never from audio.
+/// # Safety
+/// All pointers must reference valid NUL-terminated UTF-8 for this call.
+#[cfg(target_os = "ios")]
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn wormwood_ios_run_game(
+    resources: *const c_char,
+    output: *const c_char,
+    backend: *const c_char,
+) -> i32 {
+    if resources.is_null() || output.is_null() || backend.is_null() {
+        return -1;
+    }
+    let result = std::panic::catch_unwind(|| -> Result<(), String> {
+        let root = Path::new(
+            unsafe { CStr::from_ptr(resources) }
+                .to_str()
+                .map_err(|e| e.to_string())?,
+        );
+        let output = Path::new(
+            unsafe { CStr::from_ptr(output) }
+                .to_str()
+                .map_err(|e| e.to_string())?,
+        );
+        let backend = unsafe { CStr::from_ptr(backend) }
+            .to_str()
+            .map_err(|e| e.to_string())?;
+        std::fs::create_dir_all(output).map_err(|e| e.to_string())?;
+        let execution = (|| {
+            if !["OpenGL", "Vulkan", "WebGPU"].contains(&backend) {
+                return Err("unknown explicit iOS backend".into());
+            }
+            let project: serde_json::Value = serde_json::from_slice(
+                &std::fs::read(root.join("Project.json")).map_err(|e| e.to_string())?,
+            )
+            .map_err(|e| e.to_string())?;
+            let procedure = project["default_scene"]
+                .as_str()
+                .ok_or("missing default_scene")?;
+            let mut host = crate::host::Host::load_paths(root, output)?;
+            host.startup()?;
+            host.run_interactive(procedure, backend, false)
+        })();
+        if let Err(error) = &execution {
+            let _ = std::fs::write(output.join("session-error.txt"), error);
+        }
+        execution
+    });
+    match result {
+        Ok(Ok(())) => 0,
+        _ => -1,
+    }
+}
+
+/// Run the isolated soil workshop on the native surface, off the UIKit thread.
+/// # Safety
+/// All pointers must reference valid NUL-terminated UTF-8 for this call.
+#[cfg(target_os = "ios")]
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn wormwood_ios_run_soil_workshop(
+    resources: *const c_char,
+    output: *const c_char,
+    backend: *const c_char,
+) -> i32 {
+    unsafe {
+        wormwood_ios_run_material_workshop(resources, output, backend, c"matter_dirt".as_ptr())
+    }
+}
+
+/// Automatic material showcase selected by the native title screen.
+/// # Safety
+/// All four pointers must reference valid NUL-terminated UTF-8 for this call.
+#[cfg(target_os = "ios")]
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn wormwood_ios_run_material_workshop(
+    resources: *const c_char,
+    output: *const c_char,
+    backend: *const c_char,
+    case: *const c_char,
+) -> i32 {
+    if resources.is_null() || output.is_null() || backend.is_null() || case.is_null() {
+        return -1;
+    }
+    let result = std::panic::catch_unwind(|| -> Result<(), String> {
+        let root = Path::new(
+            unsafe { CStr::from_ptr(resources) }
+                .to_str()
+                .map_err(|e| e.to_string())?,
+        );
+        let output = Path::new(
+            unsafe { CStr::from_ptr(output) }
+                .to_str()
+                .map_err(|e| e.to_string())?,
+        );
+        let backend = unsafe { CStr::from_ptr(backend) }
+            .to_str()
+            .map_err(|e| e.to_string())?;
+        let case = unsafe { CStr::from_ptr(case) }
+            .to_str()
+            .map_err(|e| e.to_string())?;
+        std::fs::create_dir_all(output).map_err(|e| e.to_string())?;
+        let execution = (|| {
+            if !["OpenGL", "Vulkan", "WebGPU"].contains(&backend) {
+                return Err("unknown explicit iOS backend".into());
+            }
+            let mut host = crate::host::Host::load_paths(root, output)?;
+            host.startup()?;
+            if case == "workstation_panels" {
+                return host.run_workstation(backend, None);
+            }
+            if !case.starts_with("matter_") || !crate::physics::is_case(case) {
+                return Err("unknown material showcase".into());
+            }
+            host.run_workshop(case, backend, None)
+        })();
+        if let Err(error) = &execution {
+            let _ = std::fs::write(output.join("session-error.txt"), error);
+        }
+        execution
+    });
+    match result {
+        Ok(Ok(())) => 0,
+        _ => -1,
+    }
+}

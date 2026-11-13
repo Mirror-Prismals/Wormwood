@@ -45,3 +45,23 @@ No device rendering, audio output, or lifecycle recovery is yet verified.
 Primary platform references
 https://github.com/gfx-rs/wgpu#supported-platforms
 https://github.com/KhronosGroup/MoltenVK#introduction
+
+October 25, 2026: the new playable iOS host supersedes the diagnostics-only
+launch described above. UIKit supplies Rust touch input through the contracted
+GraphicsConnectionSystem.Pump path. ApplicationSystem runs the game with native
+scene batches on the selected ES/Vulkan/WebGPU backend; iOS native audio owns
+RemoteIO output. Each game's Project.json defines its independent iOS bundle ID.
+BuildSupport/iOS/build_ios.py handles device builds and TestFlight archives.
+BuildSupport/iOS/build_device.py is now a game build/install/launch wrapper; it
+does not run the historical diagnostic verifiers. Earlier verification entries
+do not establish the current game or touch controls have been tested on-device.
+
+November 12, 2026 session-thread contract:
+Both Play and DAW-only enter large shared Rust Host functions. Their measured
+nested arm64 startup frames total about 2.5 MiB. Never run these entry points on
+a default GCD worker stack. Platform/iOS/App.m uses a dedicated NSThread with the
+budget in SessionLimits.h, configured before start; it checks the actual stack
+and records mobile-session-startup.json before calling Rust. Every iOS package
+runs verify_startup_stack.py against its compiled static library. That check is
+not device testing. Matching binary/dSYM UUIDs are required before upload; CMake's
+generated dSYM must be included in the archive's dSYMs directory.

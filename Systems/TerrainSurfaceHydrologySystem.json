@@ -1,0 +1,179 @@
+{
+  "system": "TerrainSurfaceHydrologySystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": []
+    },
+    "Update": {
+      "calls": [
+        "WaterSlideSystem.CollisionMesh"
+      ]
+    },
+    "Raycast": {
+      "calls": []
+    },
+    "Sample": {
+      "calls": [
+        "TideSystem.Sample",
+        "OceanWaveSystem.Snapshot",
+        "PhysicsSystem.GameWaterSample"
+      ]
+    },
+    "SurfaceMesh": {
+      "calls": [
+        "TideSystem.Sample",
+        "OceanWaveSystem.Snapshot",
+        "SoftBodyWaterSystem.Snapshot",
+        "PhysicsSystem.GameWater"
+      ]
+    },
+    "Revision": {
+      "calls": []
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Close": {
+      "calls": []
+    },
+    "Drainage": {
+      "calls": []
+    },
+    "MaterialDomain": {
+      "calls": []
+    },
+    "MaterialPreview": {
+      "calls": [
+        "TideSystem.Sample",
+        "OceanWaveSystem.Snapshot"
+      ]
+    },
+    "AudioSources": {
+      "calls": [
+        "TideSystem.Sample",
+        "OceanWaveSystem.Snapshot",
+        "SoftBodyWaterSystem.Snapshot",
+        "PhysicsSystem.GameWater"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "accepted_surface_hydrology",
+        "description": "Finite accepted continuous terrain/soil triangles and actual trough geometry provide bed/ray/contact and water-body queries. Ocean tide/waves and authored river/source data are distinct from terrain generation.",
+        "retention": "experimental",
+        "selection": "Invoked by the tracked WaterSystem application and its presentation/query consumers.",
+        "implements": [
+          "Configure",
+          "Update",
+          "Raycast",
+          "Sample",
+          "SurfaceMesh",
+          "Revision",
+          "Snapshot",
+          "Close",
+          "Drainage"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/TerrainSurfaceHydrologySystem.rs",
+          "Water/runtime.rs",
+          "Water/hydrology.rs",
+          "Terrain/Drainage.rs",
+          "Terrain/mod.rs",
+          "Water/bodies.rs",
+          "Water/surface_mesh.rs",
+          "Water/visibility.rs",
+          "Procedures/Water/bodies.json",
+          "Host/Host.rs",
+          "Physics/WaterSnapshot.rs",
+          "Water/types.rs",
+          "BaseSystem/LayerFive/WaterSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "accepted_surface_hydrology_routes",
+            "kind": "declared_calls",
+            "expectation": "The retained operation declares each cross-System data route.",
+            "targets": [
+              "OceanWaveSystem.Snapshot",
+              "SoftBodyWaterSystem.Snapshot",
+              "TideSystem.Sample",
+              "WaterSlideSystem.CollisionMesh"
+            ]
+          },
+          {
+            "id": "accepted_surface_hydrology_behavior",
+            "kind": "behavior",
+            "expectation": "Finite accepted continuous terrain/soil triangles and actual trough geometry provide bed/ray/contact and water-body queries. Ocean tide/waves and authored river/source data are distinct from terrain generation.",
+            "procedure": "Validate local-f32/f64-origin snapshots, index/triangle/coverage/revision constraints and dynamic soil updates; raycast overhangs and cuts. Check dry/wet and missing-coverage answers, actual shore/bed geometry and river course membership. New source locations are explicit procedure data, not copied legacy terrain labels."
+          },
+          {
+            "id": "continuous_regional_drainage",
+            "kind": "behavior",
+            "expectation": "Deterministic catchments drain without cycles toward minimum spill outlets. Connected depressions have flat lake levels; river grades descend and channels share the ground sampler used by rendering and physics. Shorelines clip to accepted bed geometry; enclosed lakes are distinct from tidal ocean.",
+            "procedure": "Run drainage basin and channel regressions. Review finite 64-metre regional analysis and 3-metre accepted collision limits separately from water presentation. Validate tributary joins, lake outlets, coast connectivity and edited beds in native gameplay; these generation rules do not claim a transient rainfall/erosion or global water-mass solver."
+          },
+          {
+            "id": "numeric_collision_transport",
+            "kind": "behavior",
+            "expectation": "Numeric CollisionSnapshot, GameCollision and Update transport uses the registered caller/ownership routes and invocation trace. Water receives the same accepted geometry without round-tripping unchanged terrain through JSON.",
+            "procedure": "Run water snapshot revision/indexing regressions and release mining benchmark with water enabled. Exercise moving debris, unchanged snapshots, removed debris and stale revision rejection. The JSON hooks remain available."
+          }
+        ]
+      },
+      {
+        "id": "local_material_water_transfer",
+        "description": "Bounded occupied-point preview and session masks transfer local water to the game material solver. Its accepted liquid geometry participates in native water rendering and occupancy queries. Regional water is not dynamically solved or refilled by this transfer.",
+        "retention": "experimental",
+        "selection": "PhysicsSystem.GameStep requests MaterialPreview and MaterialDomain; Close clears the session masks.",
+        "implements": [
+          "MaterialPreview",
+          "MaterialDomain",
+          "Sample",
+          "SurfaceMesh"
+        ],
+        "sources": [
+          "Water/runtime.rs",
+          "Water/hydrology.rs",
+          "Water/surface_mesh.rs",
+          "Water/visibility.rs",
+          "Physics/matter/game.rs",
+          "Physics/matter/sand.rs"
+        ],
+        "checks": [
+          {
+            "id": "water_material_scoop",
+            "kind": "behavior",
+            "expectation": "A bucket can carry and pour occupied source water without a second untouched surface occupying the same activated region.",
+            "procedure": "Compile native and iOS, then user playtests scoop/carry/pour. Hydrological refill, cross-site mass exchange and realism are outside this reduced transfer."
+          }
+        ]
+      },
+      {
+        "id": "accepted_water_audio_sources",
+        "description": "Discover nearby accepted ocean and running-water sources within 96 metres, including moving water parcels and material water. Report actual listener submersion. Unknown terrain and still lakes do not create ocean or flow noise.",
+        "retention": "supported",
+        "selection": "Explicit AudioSources queries from environment audio.",
+        "implements": [
+          "AudioSources"
+        ],
+        "sources": [
+          "Water/ambient.rs",
+          "Water/runtime.rs"
+        ],
+        "checks": [
+          {
+            "id": "accepted_water_sound_selection",
+            "kind": "behavior",
+            "expectation": "Dry and unknown sites return no inferred ocean; accepted running rivers, moving water and ocean produce their corresponding source positions; submersion requires an accepted surface and bed.",
+            "procedure": "Review bounded discovery probes and run dry-land/submersion source-selection tests. Verify river, coast, lake, moving water and underwater transitions in the native world."
+          }
+        ]
+      }
+    ]
+  }
+}

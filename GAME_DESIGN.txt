@@ -4,3 +4,16 @@ Engine: Wormwood
 The game takes place on a very large destructible planet. Ground appears locally flat; curvature becomes apparent at altitude. The world is not made of blocks. Realistic building is planned later.
 
 Offset Geometric Contact will supply contact handling as part of future, separately tested simulations. Ground deformation, excavation, loose material and compaction require additional models and solvers; contact alone is not those simulations. No OGC or material simulation is implemented by this environment milestone.
+
+Nightworld
+
+Mining to the bottom of the overworld reveals portals. Crossing a portal uses
+a loading screen and places the player at the bottom of Nightworld, with up
+reversed and the entry's horizontal coordinates preserved. The player mines up
+toward a dry sand-dune landscape. Nightworld's clock runs with the overworld,
+twelve hours out of phase; it is not permanently night.
+
+A secret passage branches from the waterpark depths pools to the world-floor
+portal. Its counterpart arrives in water inside a very tall metal tube with
+green and magenta spiral bands. Separated suspended metal blocks provide the
+parkour route upward.

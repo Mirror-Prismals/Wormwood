@@ -1,0 +1,172 @@
+{
+  "system": "PlayerRigSystem",
+  "layer": 4,
+  "functions": {
+    "Prepare": {
+      "calls": [
+        "PlayerModelSystem.Load",
+        "InverseKinematicsSystem.Configure",
+        "EntitySystem.Create",
+        "GraphicsConnectionSystem.Texture"
+      ]
+    },
+    "Advance": {
+      "calls": [
+        "InverseKinematicsSystem.Solve",
+        "EntitySystem.Update",
+        "PlanetSurfaceSystem.Height"
+      ]
+    },
+    "Release": {
+      "calls": [
+        "GraphicsConnectionSystem.ReleaseTexture",
+        "EntitySystem.Remove",
+        "InverseKinematicsSystem.Release"
+      ]
+    },
+    "Plan": {
+      "calls": [
+        "InverseKinematicsSystem.Solve"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "first_person_body",
+        "description": "Create and update a tracked textured Prismals player appearance with CPU skinning and a first-person head-triangle mask.",
+        "retention": "supported",
+        "selection": "Prepared and released with the planet scene. Navigation supplies each pose under its existing movement Audicle.",
+        "implements": [
+          "Prepare",
+          "Advance",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/PlayerRigSystem.rs",
+          "BaseEntity.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/RigRetarget.rs",
+          "Procedures/player_body.json",
+          "BaseSystem/LayerTwo/InverseKinematicsSystem.rs",
+          "BaseSystem/LayerTwo/EntitySystem.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "first_person_body_routes",
+            "kind": "declared_calls",
+            "expectation": "The retained behavior has explicit declared routes for its dependencies.",
+            "targets": [
+              "PlayerModelSystem.Load",
+              "InverseKinematicsSystem.Solve",
+              "EntitySystem.Create",
+              "EntitySystem.Update",
+              "GraphicsConnectionSystem.Texture",
+              "GraphicsConnectionSystem.ReleaseTexture",
+              "EntitySystem.Remove",
+              "PlanetSurfaceSystem.Height"
+            ]
+          },
+          {
+            "id": "first_person_body_review",
+            "kind": "behavior",
+            "expectation": "The original texture and body remain visible while looking down, without head polygons enclosing the first-person camera or replacing the existing camera controls.",
+            "procedure": "Review weighted skinning, inherited terminal transforms, rigid dominant-head vertices and the original two-of-three head mask. Manually inspect feet/arms/torso while moving, both walking and flight. Check preparation failure and normal shutdown release native texture ownership and the body Entity. Compare pelvis/torso retargeting and the eleven driven bone chains to Cardinal. Verify undriven spine/clavicle/toe inheritance, level feet, correct left/right orientation, wrist rotation and the original 1.15 rig scale. Verify body and planet share the hinge/sway camera origin. Final visible ankle targets are corrected after torso/scale retargeting using measured authored sole footprints and terrain samples at the resulting world positions; planted legs preserve bind lengths and feet align to local grade. Airborne feet only receive penetration prevention, never attraction down to terrain. Manually check walking, uphill/downhill, turn, jump/land, and flight at minimum altitude. These new checks remain unverified until observed."
+          },
+          {
+            "id": "numeric_player_skin_transport",
+            "kind": "behavior",
+            "expectation": "Per-frame numeric player vertices preserve the validated UV/head-mask/texture metadata and original JSON Get envelope; prior immutable scene readers retain their old pose. Reject nonfinite or topology-changing skin updates without replacement.",
+            "procedure": "Run numeric_player_update_matches_json_and_preserves_prior_reader_and_shared_uvs, player rig/retarget/phone-selfie regressions, registered actor and scene checks, and native game/phone captures. Compare JSON transport output and queued scene poses. No animation, IK or body/camera policy changes are implied."
+          }
+        ]
+      },
+      {
+        "id": "physical_tool_grip",
+        "description": "Present the player body gripping the physical tool through its contracted IK pose and return the achieved hand positions and reach diagnostics. Plan advances the body once and exports current shoulder positions and bind-length reach before material contact; Advance resolves the accepted tool grips with zero additional elapsed time. Locked equipped grips attach immediately rather than blending from walking arms.",
+        "retention": "experimental",
+        "selection": "A tool_grip object supplied to Advance/Solve activates two-hand grip; an absent object, null, or active false blends back to locomotion arms.",
+        "implements": [
+          "Advance",
+          "Plan"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/PlayerRigSystem.rs",
+          "BaseSystem/LayerFour/RigRetarget.rs",
+          "Physics/matter/game_hand.rs",
+          "Physics/matter/tools.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "physical_tool_grip_review",
+            "kind": "behavior",
+            "expectation": "Visible wrists approach the physical shovel grip positions with bounded arm reach. The tool remains simulation-owned. Releasing a grip restores the walking arm pose smoothly, and feedback identifies targets beyond the arm reach.",
+            "procedure": "Manually equip the shovel and inspect both grips through approach, shovel insertion, lifting and dumping; compare reported world wrists with the visible mesh and physical grip points. Place a target beyond maximum reach and near the shoulder; confirm finite output, unchanged tool pose, and appropriate reach/error feedback. Release while stationary, moving, turning and resetting; confirm smooth blend and eventual settling. This behavior is unverified until reviewed in the running game."
+          },
+          {
+            "id": "same_frame_grasp",
+            "kind": "declared_calls",
+            "expectation": "Plan and Advance both retain the contracted IK solve; locomotion time advances only in Plan when used by material navigation.",
+            "targets": [
+              "InverseKinematicsSystem.Solve"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "reachable_tool_work_posture",
+        "description": "Use a bounded waist bend selected from the manually requested spade pose. The pelvis and feet remain fixed by the existing gait/ground solve; torso, head and camera move coherently, while both hands retain actual bind lengths and accepted-pose grip targets. No crouch mode, timed tool stroke or terrain cut is introduced.",
+        "retention": "supported",
+        "selection": "The player holds/manipulates the spade; posture recovers continuously after release and remains inactive during ordinary untooled movement.",
+        "implements": [
+          "Advance"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "BaseSystem/LayerTwo/InverseKinematicsSystem.rs",
+          "BaseSystem/LayerFour/RigRetarget.rs",
+          "BaseSystem/LayerFour/PlayerRigSystem.rs",
+          "Procedures/player_body.json"
+        ],
+        "checks": [
+          {
+            "id": "reachable_manual_penetration_and_lever",
+            "kind": "behavior",
+            "expectation": "Manual lowering, toward-body levering and lifting reach the physical soil while the visible torso bends and both hands remain reachable without arm stretching. Camera follows the same head/torso shift, tool rays use displayed camera position, and release recovers upright posture without a hidden stroke or cut.",
+            "procedure": "Run the production player-controls soil/root/lift/release fixture with actual IK/retarget feedback and check fixed bone lengths, hand errors, measured posture/camera offsets, and accepted tool pose on Mac and phone. Also check ordinary standing/gait, reset, pause/resume and no-HUD touch controls."
+          }
+        ]
+      },
+      {
+        "id": "waterpark_inflatable_tube",
+        "description": "Retain a Blender-authored inflatable ring with the player rig and present it around a seated rider in the funnel/lazy-river area. Expanded contact radius and a damped water-surface buoyancy force belong to the park contact solver.",
+        "retention": "supported",
+        "selection": "Sitting with Z in the new tube-ride areas while not flying. Standing, leaving the area, reset or rig Release clears the presentation.",
+        "implements": [
+          "Prepare",
+          "Advance",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/PlayerRigSystem.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Theatre/Waterpark.rs",
+          "ModSources/prismals/BuildSupport/Waterpark/build_tube.py",
+          "ModSources/prismals/Assets/Procedures/Assets/Waterpark/tube.json"
+        ],
+        "checks": [
+          {
+            "id": "waterpark_tube_contact_and_buoyancy",
+            "kind": "behavior",
+            "expectation": "The ring is visible around the seated body and shares a conservative 0.87-metre contact radius. In new surface pools the seated tube floats under a damped buoyancy force; gravity/contact and steering remain free, without a captured centerline.",
+            "procedure": "Run waterpark tests and inspect native seated tube launch, funnel descent and lazy-river circulation. Check standing/release hides the ring and original deep slide behavior remains unchanged."
+          }
+        ]
+      }
+    ]
+  }
+}

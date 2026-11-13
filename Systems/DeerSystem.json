@@ -1,0 +1,116 @@
+{
+  "system": "DeerSystem",
+  "layer": 5,
+  "functions": {
+    "Step": {
+      "calls": [
+        "TheatreSystem.Status",
+        "PlanetSurfaceSystem.Height",
+        "VegetationSystem.QueryPlants",
+        "WaterSystem.Sample",
+        "PhysicsSystem.GameResolveBody",
+        "EntitySystem.Create",
+        "EntitySystem.Remove",
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "InverseKinematicsSystem.SolveChains"
+      ]
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Close": {
+      "calls": [
+        "EntitySystem.Remove",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "whitetail_proximity_flee",
+        "description": "Maintain at most two independently tracked whitetail buck appearances on accepted outdoor ground. Notice the player within 24 metres; flee inside 14 metres with bounded acceleration and a fifteen-metre-per-second limit and twelve-metre-per-second-squared acceleration, turn onto a direct outward route and select locally clear routes. Stay startled until the player is beyond 34 metres for four simulation seconds, then decelerate. Reject steep ground, cliff steps, known or unresolved water coverage, tree trunks, material body obstructions and the theatre footprint. Stop when no safe route is available; never teleport a nearby deer. Despawn beyond 180 metres and discover replacements at 40\u201370 metres, independently of audio. Freeze with paused gameplay and release all animal and flee events on session close or abort.",
+        "retention": "supported",
+        "selection": "Mirror planet navigation while DeerSystem is enabled. A bounded kinematic wildlife behavior, not herd ecology, navigation-mesh pathfinding or full physical antler/body simulation.",
+        "implements": [
+          "Step",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/DeerSystem.rs",
+          "BaseSystem/LayerFive/DeerBehavior.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFour/DeerRig.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Procedures/Assets/Wildlife/deer.bin",
+          "BuildSupport/Blender/rig_deer.py",
+          "Art/Wildlife/Deer/Whitetail_Rigged.blend"
+        ],
+        "checks": [
+          {
+            "id": "flee_ground_lifecycle",
+            "kind": "behavior",
+            "expectation": "Approaching within 14 metres starts a tracked flee and increases separation on clear ground; hysteresis prevents repeated stop/start; blocked or unsafe routes stop without teleporting. Audio-independent updates, pause, capacity, terrain grounding and cleanup remain bounded.",
+            "procedure": "Run deer behavior/skin tests and registered_deer_system_spawns_flees_and_cleans_up_without_audio. Run the scene instance bound and composition checks with two tools, four birds and two deer. Inspect Blender idle/alert/run poses. Run a native macOS outdoor encounter and inspect position separation, projection and cleanup; iOS device checks are deferred."
+          },
+          {
+            "id": "deer_routes",
+            "kind": "declared_calls",
+            "expectation": "All wildlife creation, queries and lifecycle operations use declared System hooks.",
+            "targets": [
+              "TheatreSystem.Status",
+              "PlanetSurfaceSystem.Height",
+              "VegetationSystem.QueryPlants",
+              "WaterSystem.Sample",
+              "PhysicsSystem.GameResolveBody",
+              "EntitySystem.Create",
+              "EntitySystem.Remove",
+              "AudicleSystem.Create",
+              "AudicleSystem.Ready",
+              "AudicleSystem.Go",
+              "AudicleSystem.Resume",
+              "AudicleSystem.Finish",
+              "AudicleSystem.Cancel"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "watchful_ik_animation",
+        "description": "Track the player with a smoothed, bounded neck/head aim only while stationary and alert. Fleeing is a separate state: release gaze smoothly to forward, use the running pose, and escape directly outward with obstacle avoidance. While standing, turn the body only enough to keep a comfortable head aim. Plant standing and stance hooves in world space; use a 7.6-metre suspended bound with hind push, fore support and a gravity-derived airborne arc, release all hoof anchors during flight and tuck the swinging legs, and replant one hoof at a time when the standing body turns. Use the registered IK limb batch solver to adapt all four legs to sampled terrain, preserve bone lengths and keep contact hooves level. Retain independent per-animal seeds, bounded body support lowering and the original indexed skin.",
+        "retention": "supported",
+        "selection": "DeerSystem Step while InverseKinematicsSystem is enabled; baked poses remain the explicit fallback when IK is disabled. Look tracking is a proximity attention response, not microphone-based hearing simulation.",
+        "implements": [
+          "Step",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/DeerBehavior.rs",
+          "BaseSystem/LayerFive/DeerPose.rs",
+          "BaseSystem/LayerFive/DeerSystem.rs",
+          "BaseSystem/LayerFour/DeerRig.rs",
+          "BuildSupport/Blender/rig_deer.py",
+          "Procedures/Assets/Wildlife/deer_rig.json"
+        ],
+        "checks": [
+          {
+            "id": "watch_and_hoof_ik",
+            "kind": "behavior",
+            "expectation": "A watched player causes visible head/neck tracking independent of body motion, only while stationary and alert; fleeing releases gaze to forward; stance feet retain their world anchors and solved skin follows the four IK chains with fixed lengths.",
+            "procedure": "Run deer gaze/IK tests, registered no-audio movement and player-state-isolation checks, and scene composition/cleanup. Render evaluated Rust look/IK poses, including uneven support and forward-facing flight. Check native macOS scene integration and inspect an outdoor encounter; iOS device validation remains deferred."
+          }
+        ]
+      }
+    ]
+  }
+}

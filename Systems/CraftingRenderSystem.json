@@ -1,0 +1,41 @@
+{
+  "system": "CraftingRenderSystem",
+  "layer": 4,
+  "functions": {
+    "Load": {
+      "calls": []
+    },
+    "Frame": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "authored_crafting_meshes",
+        "description": "Render metric Blender jar, recipe sheet and timber plank meshes in the shared depth scene. Runtime uses diffuse facet shading.",
+        "retention": "supported",
+        "selection": "First Mirror ground crafting recipe.",
+        "implements": [
+          "Load",
+          "Frame"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/CraftingRenderSystem.rs",
+          "Art/Crafting/make_crafting.py",
+          "Procedures/Assets/Crafting/crafting_mesh.json"
+        ],
+        "checks": [
+          {
+            "id": "crafting_playtest",
+            "kind": "behavior",
+            "expectation": "Cave jars are reachable, ground recipes require felled wood, no input leaks to tools, completion produces six distinct movable planks.",
+            "procedure": "Run focused crafting regressions and inspect Blender review; playtest real cave discovery, felling, F placement, Shift-click, walking 10/15/20 metres away, returning, completion, individual pickup, pause and cleanup. Compilation is not native interaction evidence."
+          }
+        ]
+      }
+    ]
+  }
+}

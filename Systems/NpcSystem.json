@@ -1,0 +1,60 @@
+{
+  "system": "NpcSystem",
+  "layer": 5,
+  "functions": {
+    "Step": {
+      "calls": [
+        "AudicleSystem.Create",
+        "EntitySystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "EntitySystem.Remove",
+        "AudicleSystem.Cancel"
+      ]
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Close": {
+      "calls": [
+        "EntitySystem.Remove",
+        "AudicleSystem.Cancel"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "waterpark_placeholder_visitors",
+        "description": "Three individually named emissive sphere visitors repeat distinct pool laps, wade-and-rest and lazy-river circuits using authored waterpark pool bounds. Nearby forward-facing T presses cycle authored dialogue. Movement and dialogue timers advance only with normal gameplay; session close removes owned Entities and Audicles. Emission is a fixed vertex-color appearance with no dynamic lighting or light contribution.",
+        "retention": "supported",
+        "selection": "NpcSystem enabled during Mirror planet navigation. Initial scripted aquatic routines only; general town pathfinding, slide queues, collision agents, schedules and character models remain future work.",
+        "implements": [
+          "Step",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/NpcSystem.rs",
+          "ModSources/prismals/src/gameplay/NpcSystem.rs",
+          "BaseSystem/LayerFour/NpcAppearance.rs",
+          "ModSources/prismals/src/render/NpcAppearance.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Render/window.rs",
+          "Render/MaterialHUD.m"
+        ],
+        "checks": [
+          {
+            "id": "routine_dialogue_lifecycle",
+            "kind": "behavior",
+            "expectation": "Independent bounded continuous loops, dwell, pause, dialogue edge/range checks and complete repeated-close cleanup. Three visitors fit alongside all existing scene instances.",
+            "procedure": "Run NPC unit and registered host lifecycle tests, scene capacity test and intent inspection. Native waterpark appearance and T interaction require separate visual review."
+          }
+        ]
+      }
+    ]
+  }
+}

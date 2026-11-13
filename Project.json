@@ -1,10 +1,11 @@
 {
-  "name": "MirrorPrismals",
-  "display_name": "Mirror (Prismals!)",
+  "name": "Mirror",
+  "display_name": "Mirror",
   "engine": "Wormwood",
-  "bundle_id": "org.salamander.mirror-prismals.mac",
+  "bundle_id": "org.salamander.mirror.mac",
   "data_directory": "MirrorPrismals",
   "default_scene": "planet_surface",
-  "environment_label": "Planet flight",
-  "environment_controls": "WASD \u2014 fly; Space/Shift \u2014 altitude\nHold right mouse \u2014 look; Q/E \u2014 roll\nLeft Control \u2014 boost; R \u2014 reset\nEscape \u2014 close\n\nAnalytic planet ground; material physics is not implemented."
+  "environment_label": "Pennsylvania landscape",
+  "environment_controls": "WASD move; mouse look; Space jump; Shift sprint. 1 shovel, 2 pickaxe, 3 axe, 4 bucket. Hold left mouse for force, release to work; right mouse empties the tool. Click the theatre computer to open the audio workstation. VR/AR glasses beside it: F pick up/place on a surface, B wear/remove, E open the same DAW while worn. Aim at the phone and press F to pick up or place it with an empty tool; R focuses a held phone, otherwise resets the session only with cheats enabled. Pause, enable Cheats, and enable Night vision for a full-bright cave inspection. Escape releases phone focus, then pauses. Mobile: left drag moves, right drag looks; select a tool, hold Work and release; Pour empties it. Tap the phone to pick up/focus/select; Lower phone / Put down phone releases it. Physical material sites remain for this session. Cave jars: F opens a jar and carries its plank blueprint; F places it on ground. Place near a felled tree and Shift-left-click to craft for 60 local seconds. Stay within 10 metres for full speed; at 20 metres crafting is 100x slower. F picks up/places each finished plank.",
+  "ios_bundle_id": "org.salamander.mirror-prismals.ios"
 }

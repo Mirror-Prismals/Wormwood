@@ -1,0 +1,53 @@
+{
+  "system": "OceanWaveSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": []
+    },
+    "Step": {
+      "calls": []
+    },
+    "Sample": {
+      "calls": []
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Close": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "continuous_ocean_waves",
+        "description": "Incoming, grouped, warped and crossing waves use the retained hash/noise and amplitude constants with actual continuous bed/shore inputs.",
+        "retention": "experimental",
+        "selection": "Invoked by the tracked WaterSystem application and its presentation/query consumers.",
+        "implements": [
+          "Configure",
+          "Step",
+          "Sample",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/OceanWaveSystem.rs",
+          "Water/runtime.rs",
+          "Water/ocean.rs"
+        ],
+        "checks": [
+          {
+            "id": "continuous_ocean_waves_behavior",
+            "kind": "behavior",
+            "expectation": "Incoming, grouped, warped and crossing waves use the retained hash/noise and amplitude constants with actual continuous bed/shore inputs.",
+            "procedure": "Compare deterministic noise and waveform samples, shallow gain and normal finite differences; check tide composition, actual shore distance and animation while player input is idle."
+          }
+        ]
+      }
+    ]
+  }
+}

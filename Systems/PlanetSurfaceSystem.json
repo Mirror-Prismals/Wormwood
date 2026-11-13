@@ -1,0 +1,289 @@
+{
+  "system": "PlanetSurfaceSystem",
+  "layer": 2,
+  "functions": {
+    "Frame": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "CaveSystem.Snapshot"
+      ]
+    },
+    "Height": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "CaveSystem.Support",
+        "PhysicsSystem.GameHeight"
+      ]
+    },
+    "Excavate": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "OGCConnectionSystem.Release",
+        "OGCConnectionSystem.Ownership"
+      ]
+    },
+    "Advance": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "OGCConnectionSystem.Project"
+      ]
+    },
+    "Save": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "OGCConnectionSystem.Release",
+        "OGCConnectionSystem.Ownership"
+      ]
+    },
+    "SuspendMaterial": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "OGCConnectionSystem.Release",
+        "OGCConnectionSystem.Ownership"
+      ]
+    },
+    "MineCell": {
+      "calls": []
+    },
+    "BladeCut": {
+      "calls": []
+    },
+    "Reset": {
+      "calls": [
+        "OGCConnectionSystem.Ownership",
+        "OGCConnectionSystem.Release"
+      ]
+    },
+    "RefineMaterial": {
+      "calls": []
+    },
+    "CollisionSnapshot": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "CaveSystem.Snapshot",
+        "PhysicsSystem.GameCollision"
+      ]
+    },
+    "ReleaseMaterials": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "persistent_excavation",
+        "description": "Maintain reversible terrain-piece removal in the current session from a world-fixed tetrahedral tiling at 0.65 m lattice spacing. Neighboring pieces share displaced vertices and triangular interfaces; geological occupancy trims surface and cave pieces. Aim selects a stable piece identity independently of viewing direction. Removed pieces are empty for rendering, aiming and cave contact. Aim-oriented pyramid stamps are explicitly retired from normal gameplay; old box and pyramid edits remain supported. Refilling restores the original material. Retain blade-footprint cuts for physical tool experiments. Shared cut data drives presentation, radial height queries and the native tool collider. Legacy parabolic excavation and opt-in saves remain retained experiments; default sessions start fresh.",
+        "retention": "experimental",
+        "selection": "Legacy excavation operations remain retained experiments; default gameplay sessions do not restore or persist their cuts. Existing old saves are archived once rather than destroyed.",
+        "implements": [
+          "Frame",
+          "Height",
+          "Excavate",
+          "Advance",
+          "Save",
+          "MineCell",
+          "BladeCut",
+          "Reset",
+          "RefineMaterial",
+          "CollisionSnapshot"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/PlanetSurfaceSystem.rs",
+          "Physics/planet.rs",
+          "Terrain/mod.rs",
+          "Terrain/Tetrahedral.rs",
+          "Terrain/MaterialDomain.rs",
+          "Procedures/terrain_session.json",
+          "Physics/WaterSnapshot.rs",
+          "Terrain/Drainage.rs",
+          "Host/Host.rs",
+          "Water/types.rs",
+          "Water/runtime.rs",
+          "BaseSystem/LayerFive/WaterSystem.rs",
+          "Physics/WaterCollisionWorker.rs"
+        ],
+        "checks": [
+          {
+            "id": "contact_simulation",
+            "kind": "declared_calls",
+            "expectation": "Surface simulation has declared OGC preparation, advancement and release routes.",
+            "targets": [
+              "OGCConnectionSystem.Configure",
+              "OGCConnectionSystem.Project",
+              "OGCConnectionSystem.Release"
+            ]
+          },
+          {
+            "id": "excavation_persistence",
+            "kind": "behavior",
+            "expectation": "Surface cuts affect navigation and visible geometry, survive a save/reload, and release simulation resources appropriately.",
+            "procedure": "Run tetrahedral tiling tests for shared interfaces, nondegenerate volumes, gap-free unique ownership and planet-scale identity. Run mining_checks for remove/refill collision and direction-independent piece selection. Review surface state and serialization; check excavation, repeated cuts, navigation over the result, save/reload, bounded simulation and close/failure cleanup. Reopen a version-1 save with fragments overlapping the new terrain; verify retained data and inactive material, no startup OGC configuration, and no save loading during cleanup after graphics preparation fails. With persist_excavation false, verify an existing surface save is archived and new sessions have no retained holes. No save rewrite is permitted in this mode."
+          },
+          {
+            "id": "numeric_collision_transport",
+            "kind": "behavior",
+            "expectation": "Numeric CollisionSnapshot, GameCollision and Update transport uses the registered caller/ownership routes and invocation trace. Water receives the same accepted geometry without round-tripping unchanged terrain through JSON.",
+            "procedure": "Run water snapshot revision/indexing regressions and release mining benchmark with water enabled. Exercise moving debris, unchanged snapshots, removed debris and stale revision rejection. The JSON hooks remain available."
+          }
+        ]
+      },
+      {
+        "id": "continuous_cave_support",
+        "description": "Preserve the shared surface baseline while selecting traversable support below the player inside the configured cave volume. Include cave data in scene, acoustic and water-collision snapshots.",
+        "retention": "experimental",
+        "selection": "Selected with CaveSystem and Procedures/caves.json. It does not implement underground rock fracture or replace accepted tool/material accounting.",
+        "implements": [
+          "Frame",
+          "Height",
+          "CollisionSnapshot"
+        ],
+        "sources": [
+          "Terrain/Underground.rs",
+          "Physics/planet.rs",
+          "Physics/WaterSnapshot.rs"
+        ],
+        "checks": [
+          {
+            "id": "underground_support_and_reset",
+            "kind": "behavior",
+            "expectation": "Walking through an entrance can descend below the former surface. Walls/ceilings remain collidable, reset returns to the surface, and sound/water use the same cave void.",
+            "procedure": "Source-only first pass; inspect and run passage traversal, support, reset, water and sound checks separately when execution is authorized."
+          }
+        ]
+      },
+      {
+        "id": "game_material_replacement",
+        "description": "RefineMaterial transfers ownership of an occupied material volume from its implicit rest representation to explicit matter. This is resolution refinement, not removed-volume accounting. Frame, player/cave support, water collision and appearance share ownership domains. Closing clears session ownership together with its physical owner.",
+        "retention": "experimental",
+        "selection": "PhysicsSystem.GameStep/GameClose. Supersedes MaterialPatch and the atlas-ground-plus-specimen approach at the user request of 2026-10-29. No fixed twelve-site quota; storage remains bounded at 4096 regions. Session material is not serialized.",
+        "implements": [
+          "RefineMaterial",
+          "ReleaseMaterials",
+          "Frame",
+          "Height",
+          "CollisionSnapshot"
+        ],
+        "sources": [
+          "Physics/planet.rs",
+          "Physics/WaterSnapshot.rs",
+          "Terrain/MaterialDomain.rs",
+          "Terrain/ToolCut.rs",
+          "Terrain/Underground.rs",
+          "Physics/matter/game.rs",
+          "Physics/matter/world_field.rs"
+        ],
+        "checks": [
+          {
+            "id": "session_domain_ownership",
+            "kind": "behavior",
+            "expectation": "Replacement accepts physical material before hiding static ground; closing/resetting restores the static world and removes session masks.",
+            "procedure": "Compile and inspect named hook declarations; user observes excavation, walk-away/return, reset, pause and close. Compilation does not verify play behavior."
+          }
+        ]
+      },
+      {
+        "id": "authored_east_west_regions",
+        "description": "November 12 geography supersedes the former forest-at-spawn and repeated Ridge and Valley terrain. Distances are metres relative to town at X=125, Z=-125; +X is east. Open plains precede a forest from +1000 to +21000, retaining the existing forest species and density; a desert reaches the cliff-and-beach coast near +28000. A roughly 1550 m north-south mountain ridge at -8000 separates the town from plains and a city at -11000. The desert city is at +24500. Shared height, soil and ocean connectivity drive visible and physical ground. A bounded visual ocean mesh extends to 15.36 km beyond the local water patch; it is clipped against the shared analytic coast without replacing local collision or water occupancy.",
+        "retention": "supported",
+        "selection": "Default Wormwood surface; Nightworld keeps its independent terrain.",
+        "implements": [
+          "Frame",
+          "Height",
+          "CollisionSnapshot"
+        ],
+        "sources": [
+          "Terrain/Regions.rs",
+          "Terrain/mod.rs",
+          "Terrain/Drainage.rs",
+          "Physics/matter/world_field.rs",
+          "Procedures/Water/bodies.json",
+          "Procedures/Water/settings.json",
+          "Render/RegionalCheck.rs",
+          "Render/TheatreExteriorCheck.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Water/hydrology.rs",
+          "Water/surface_mesh.rs",
+          "Water/bodies.rs"
+        ],
+        "checks": [
+          {
+            "id": "regional_geography",
+            "kind": "behavior",
+            "expectation": "Forest membership begins exactly 1 km east and ends at 21 km; the western ridge exceeds 1100 m along its north-south extent; plains beyond it stay low, desert ground is sand, and eastern water has a continuous ocean bed and rough surf.",
+            "procedure": "Run terrain::regions tests and regional water/material integration tests. Review rendered regional views and traverse the coast in the native game; numeric tests alone do not establish visual quality."
+          }
+        ]
+      },
+      {
+        "id": "northern_forest_sea_and_pole",
+        "description": "North is -Z and distances are metres from town. A northwest-sloping forest edge begins 1 km north and joins the eastern forest. The northern sea spans 6 to 11 km north and 30 km east-west, from 9 km west to 21 km east. Across it a forest extends to 41 km north, where permanent treeless snow begins. Shared ground height, material, vegetation and water classification follow the same geography.",
+        "retention": "supported",
+        "selection": "Default surface outside Nightworld; separate southern geography remains retained.",
+        "implements": [
+          "Frame",
+          "Height"
+        ],
+        "sources": [
+          "Terrain/Regions.rs",
+          "Terrain/mod.rs",
+          "Terrain/Drainage.rs",
+          "Terrain/Woodland.rs",
+          "Physics/matter/world_field.rs",
+          "Physics/matter/game.rs",
+          "Water/bodies.rs",
+          "Water/surface_mesh.rs",
+          "Water/hydrology.rs"
+        ],
+        "checks": [
+          {
+            "id": "northern_boundaries_and_material",
+            "kind": "behavior",
+            "expectation": "The northwest wedge connects to the east forest; the sea has a submerged bed and correct shore directions on all four sides. Land continues for 30 km beyond the sea, then snow replaces turf and trees. Banks remain continuous.",
+            "procedure": "Run northern_ terrain tests and regional_ocean tests; review native northern forest, sea, polar ground and ice-city views separately. Unit checks do not establish native appearance or travel performance."
+          }
+        ]
+      },
+      {
+        "id": "southern_seas_polar_island_jungle",
+        "description": "An all-longitude coastline 16 km south of town leads to a 40 km sea, a rounded 100 by 100 km snowy island with ocean on both sides, another 100 km sea, and a rounded jungle continent with 4000 by 4000 km chart extents starting 256 km south. Arc-length coordinates prevent a mirrored southern continent. Jungle has wet green soil, evergreen broadleaf forest with a distinct procedural profile, sandy shores and a city clearing 1 km inland. This is an authored southern island, not the geometric pole. Distant jungle crowns reuse the existing broadleaf atlas at tropical tree scale; near trees use the evergreen procedural profile. Original southern surface colors use authoritative biome material sampling without reconstructing the town cave color tiles.",
+        "retention": "supported",
+        "selection": "Default overworld southern geography; preserve independent Nightworld and northern geography.",
+        "implements": [
+          "Frame",
+          "Height",
+          "CollisionSnapshot"
+        ],
+        "sources": [
+          "Terrain/Regions.rs",
+          "Terrain/mod.rs",
+          "Terrain/Woodland.rs",
+          "Vegetation/mod.rs",
+          "Water/bodies.rs",
+          "Water/hydrology.rs",
+          "Water/surface_mesh.rs",
+          "Vegetation/Profiles.rs",
+          "Vegetation/Forest.rs",
+          "Vegetation/Mechanics.rs",
+          "BaseSystem/LayerFour/VegetationGeometry.rs",
+          "BaseSystem/LayerTwo/VegetationSystem.rs",
+          "Terrain/Drainage.rs",
+          "Render/RegionalCheck.rs",
+          "BuildSupport/World/render_globe.py",
+          "Terrain/SurfaceCover.rs",
+          "Physics/matter/world_field.rs",
+          "Vegetation/Impostor.rs"
+        ],
+        "checks": [
+          {
+            "id": "southern_distances_and_materials",
+            "kind": "behavior",
+            "expectation": "Sea samples are submerged; snowy and jungle interiors are dry; the polar island ends east and west, jungle ends after 4000 km; no antipodal duplicate. Tree identities round-trip. Snow has the existing physical Snow substance and its surface color; jungle retains evergreen foliage through winter.",
+            "procedure": "Run southern_ tests, export_southern_globe ignored diagnostic, and native southern scene review. Inspect coast continuity and native collision separately from cartographic output."
+          }
+        ]
+      }
+    ]
+  }
+}

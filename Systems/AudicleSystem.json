@@ -16,7 +16,51 @@
     },
     "Cancel": {
       "calls": []
+    },
+    "Resume": {
+      "calls": []
+    },
+    "Fail": {
+      "calls": []
     }
   },
-  "init_steps": []
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "event_lifecycle",
+        "description": "Only layer-five Systems originate application Audicles. Preparation and active execution have explicit Ready, Go, Finished or cancellation outcomes, with Entity lifetime tracked separately. Up to 128 live Audicles may overlap, with parent identity recorded at creation; each dispatched operation still has one explicitly active attribution.",
+        "retention": "supported",
+        "selection": "Used whenever an application event is created, armed, started, completed or cancelled.",
+        "implements": [
+          "Create",
+          "Ready",
+          "Go",
+          "Finish",
+          "Cancel",
+          "Resume",
+          "Fail"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudicleSystem.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "lifecycle",
+            "kind": "behavior",
+            "expectation": "Valid event transitions are recorded and invalid transitions and non-layer-five origins are rejected.",
+            "procedure": "Review transition guards and Host origin checks; check each allowed transition and rejection, cancellation during preparation and active execution, and attribution of deferred work."
+          },
+          {
+            "id": "overlapping_navigation_and_tool",
+            "kind": "behavior",
+            "expectation": "Movement and the shovel trial retain distinct live event IDs. Their transitions apply only to the explicitly active event, and closing/resetting leaves no stale event.",
+            "procedure": "Inspect parent creation attribution, the live-event bound, active-ID checks and nested dispatch restoration. Play movement alongside shovel work, pause, reset, fail preparation and close; confirm terminal transitions for both events."
+          }
+        ]
+      }
+    ]
+  }
 }

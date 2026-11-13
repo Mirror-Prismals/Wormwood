@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "initial_mode": "walking",
+  "mouse_degrees_per_pixel": 0.1,
+  "pitch_limit_degrees": 89,
+  "eye_height": 1.84,
+  "flight_speed": 20,
+  "fast_flight_multiplier": 4,
+  "walk_start_speed": 2.3184,
+  "walk_speed": 5.04,
+  "sprint_speed": 9,
+  "walk_acceleration_seconds": 1.05,
+  "walk_deceleration_seconds": 0.22,
+  "walk_curve": 1.6,
+  "sprint_charge_seconds": 1.45,
+  "sprint_release_seconds": 0.3,
+  "sprint_curve": 2.5,
+  "default_walk_scale": 0.25,
+  "direction_double_tap_seconds": 0.28,
+  "flight_double_tap_seconds": 0.32,
+  "gravity": 21,
+  "jump_speed": 8
+}

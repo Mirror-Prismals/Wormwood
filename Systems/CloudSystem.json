@@ -1,0 +1,51 @@
+{
+  "system": "CloudSystem",
+  "layer": 4,
+  "functions": {
+    "Frame": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "original_multilayer_cloud_appearance",
+        "description": "Adapt the original periodic 64-cubed noise, seven volume mip levels, independent low/middle/upper cloud shapes, wind shear and forward/back scattering to the continuous planet and shared wall-time sky. Clouds compose into the sky before terrain and appear in water reflection scene batches.",
+        "retention": "supported",
+        "selection": "Initial authored three-layer fields use real-time wind and a gentle seasonal coverage bias. The original condensate/convection regional weather solver, rain, half-resolution HDR filtering and terrain cloud shadows are not yet ported. The native volumetric pass uses 24 samples per layer and two light probes; phone frame cost and visual parity remain unverified.",
+        "implements": [
+          "Frame"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/CloudSystem.rs",
+          "BaseSystem/LayerFour/Atmosphere.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Render/SceneAssets.rs",
+          "Render/Scene.rs",
+          "Render/opengl.rs",
+          "Render/ios_gl.rs",
+          "Render/vulkan.rs",
+          "Render/webgpu.rs",
+          "BaseSystem/LayerOne/IOSGraphics.m",
+          "BuildSupport/generate_cloud_noise.cpp",
+          "BuildSupport/generate_cloud_shaders.py",
+          "Procedures/Shaders/clouds.shared.glsl",
+          "Procedures/Shaders/triangle.gl.frag",
+          "Procedures/Shaders/triangle.frag",
+          "Procedures/Shaders/triangle.wgsl",
+          "Procedures/Shaders/scene.ios.frag"
+        ],
+        "checks": [
+          {
+            "id": "cloud_shape_light_motion_review",
+            "kind": "behavior",
+            "expectation": "Three cloud layers remain separate, world anchored, mip filtered and wind advected; sunset/night lighting matches the sky, camera motion and water reflections. No rain-only gate or opaque rectangular cloud plane appears.",
+            "procedure": "Validate all native shader modules and stage interfaces, cloud frame bounds and scene storage layout. Inspect live ground/horizon/sunset/night/water views and flight above and through cloud layers, including terrain ordering and phone performance. Metadata/shader checks do not establish rendered appearance, depth composition or frame cost."
+          }
+        ]
+      }
+    ]
+  }
+}

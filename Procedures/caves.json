@@ -1,0 +1,435 @@
+{
+  "schema_version": 1,
+  "enabled": true,
+  "meshing": "surface_net",
+  "organic_noise": {
+    "enabled": true,
+    "center": [
+      -25,
+      -12
+    ],
+    "radius": 1024,
+    "min_depth": 3,
+    "max_depth": 80,
+    "field": "legacy_perlin"
+  },
+  "reference": {
+    "source": "Cardinal Procedures/expanse_terrain_the_depths.json and Procedures/spawns.json",
+    "adaptation": "Expansive brown upper caves inspired by WORKSPACE_APR_17/Salamander92 pre-binary 64/128-metre Perlin fields, joined continuously to the existing blue Depths. No block storage or square-cell generation imported.",
+    "water_surface_reference_metres": -36,
+    "floor_reference_metres": -66,
+    "spawn_reference": [
+      -51,
+      -44,
+      16
+    ]
+  },
+  "tunnels": [
+    {
+      "start": [
+        12,
+        2,
+        -8
+      ],
+      "end": [
+        16,
+        -3,
+        -10
+      ],
+      "radius": 3.4
+    },
+    {
+      "start": [
+        16,
+        -3,
+        -10
+      ],
+      "end": [
+        20,
+        -8,
+        -13
+      ],
+      "radius": 3.4
+    },
+    {
+      "start": [
+        20,
+        -8,
+        -13
+      ],
+      "end": [
+        18,
+        -13,
+        -11
+      ],
+      "radius": 3.4
+    },
+    {
+      "start": [
+        18,
+        -13,
+        -11
+      ],
+      "end": [
+        10,
+        -19,
+        -3
+      ],
+      "radius": 3.4
+    },
+    {
+      "start": [
+        10,
+        -19,
+        -3
+      ],
+      "end": [
+        -2,
+        -25,
+        4
+      ],
+      "radius": 3.4
+    },
+    {
+      "start": [
+        -2,
+        -25,
+        4
+      ],
+      "end": [
+        -18,
+        -31,
+        9
+      ],
+      "radius": 3.4
+    },
+    {
+      "start": [
+        -18,
+        -31,
+        9
+      ],
+      "end": [
+        -35,
+        -37,
+        14
+      ],
+      "radius": 3.4
+    },
+    {
+      "start": [
+        -35,
+        -37,
+        14
+      ],
+      "end": [
+        -51,
+        -44,
+        16
+      ],
+      "radius": 3.4
+    },
+    {
+      "start": [
+        -51,
+        -44,
+        16
+      ],
+      "end": [
+        -20,
+        -48,
+        -15
+      ],
+      "radius": 4.0
+    },
+    {
+      "start": [
+        -51,
+        -44,
+        16
+      ],
+      "end": [
+        -75,
+        -52,
+        35
+      ],
+      "radius": 4.2
+    },
+    {
+      "start": [
+        -112,
+        45,
+        -24
+      ],
+      "end": [
+        -104,
+        -3,
+        -20
+      ],
+      "radius": 3.6,
+      "type": "western_rift"
+    },
+    {
+      "start": [
+        -104,
+        -3,
+        -20
+      ],
+      "end": [
+        -80,
+        -11,
+        -14
+      ],
+      "radius": 3.6,
+      "type": "western_rift"
+    },
+    {
+      "start": [
+        -80,
+        -11,
+        -14
+      ],
+      "end": [
+        -48,
+        -15,
+        -5
+      ],
+      "radius": 3.6,
+      "type": "western_rift"
+    },
+    {
+      "start": [
+        -48,
+        -15,
+        -5
+      ],
+      "end": [
+        10,
+        -19,
+        -3
+      ],
+      "radius": 3.6,
+      "type": "western_rift"
+    },
+    {
+      "start": [
+        115,
+        45,
+        44
+      ],
+      "end": [
+        108,
+        -4,
+        40
+      ],
+      "radius": 4.5,
+      "type": "eastern_gallery"
+    },
+    {
+      "start": [
+        108,
+        -4,
+        40
+      ],
+      "end": [
+        82,
+        -10,
+        30
+      ],
+      "radius": 4.5,
+      "type": "eastern_gallery"
+    },
+    {
+      "start": [
+        82,
+        -10,
+        30
+      ],
+      "end": [
+        52,
+        -14,
+        12
+      ],
+      "radius": 4.5,
+      "type": "eastern_gallery"
+    },
+    {
+      "start": [
+        52,
+        -14,
+        12
+      ],
+      "end": [
+        18,
+        -13,
+        -11
+      ],
+      "radius": 4.5,
+      "type": "eastern_gallery"
+    },
+    {
+      "start": [
+        -35,
+        45,
+        118
+      ],
+      "end": [
+        -35,
+        -4,
+        118
+      ],
+      "radius": 3.2,
+      "type": "northern_sinkhole"
+    },
+    {
+      "start": [
+        -35,
+        -4,
+        118
+      ],
+      "end": [
+        -39,
+        -15,
+        95
+      ],
+      "radius": 3.2,
+      "type": "northern_sinkhole"
+    },
+    {
+      "start": [
+        -39,
+        -15,
+        95
+      ],
+      "end": [
+        -48,
+        -25,
+        64
+      ],
+      "radius": 3.2,
+      "type": "northern_sinkhole"
+    },
+    {
+      "start": [
+        -48,
+        -25,
+        64
+      ],
+      "end": [
+        -51,
+        -44,
+        16
+      ],
+      "radius": 3.2,
+      "type": "northern_sinkhole"
+    }
+  ],
+  "chambers": [
+    {
+      "center": [
+        -51,
+        -44,
+        16
+      ],
+      "radii": [
+        28,
+        22,
+        24
+      ]
+    },
+    {
+      "center": [
+        -20,
+        -48,
+        -15
+      ],
+      "radii": [
+        13,
+        9,
+        14
+      ]
+    },
+    {
+      "center": [
+        -75,
+        -52,
+        35
+      ],
+      "radii": [
+        18,
+        14,
+        17
+      ]
+    },
+    {
+      "center": [
+        -80,
+        -11,
+        -14
+      ],
+      "radii": [
+        14,
+        7,
+        12
+      ],
+      "type": "dripstone_grotto"
+    },
+    {
+      "center": [
+        82,
+        -10,
+        30
+      ],
+      "radii": [
+        20,
+        8,
+        14
+      ],
+      "type": "mineral_gallery"
+    },
+    {
+      "center": [
+        -39,
+        -23,
+        85
+      ],
+      "radii": [
+        12,
+        14,
+        12
+      ],
+      "type": "vertical_rift"
+    }
+  ],
+  "textures": {
+    "source_atlas": "Cardinal Procedures/assets/atlas_v15_original.png (selected by BaseSystem/circuit_breaker.json)",
+    "tile_pixels": [
+      24,
+      24
+    ],
+    "upper_rock": {
+      "name": "StoneExternal",
+      "tile": 34,
+      "material": "BrownRock"
+    },
+    "depths_rock": {
+      "name": "24x24CrystalCaveWallDarkTileableNospotsV003",
+      "tile": 461,
+      "material": "DepthsBlue"
+    },
+    "depths_top_metres": -20,
+    "mapping": "Original 2-metre periodic Blender rock substances; atlas colors are reference only. Grey rock is reserved for future Nightworld."
+  },
+  "excavation": {
+    "mode": "accepted_material_only",
+    "rock_fracture": "not_implemented",
+    "note": "This cave profile creates geological voids. It does not authorize a brush or gesture to erase solid material."
+  },
+  "formations": {
+    "enabled": true,
+    "spacing_metres": 9,
+    "max_instances": 240,
+    "source": "Art/Terrain/CaveFormations/meshes.json",
+    "placement": "Deterministic floor/ceiling probes in authored chambers; route centerlines remain clear. Brown rock uses the upper cave substance; Depths retain blue rock and add blue/magenta crystal clusters. Ruby/silver inclusions use the existing stone fracture law and drop as physical material, without inventory conversion."
+  }
+}

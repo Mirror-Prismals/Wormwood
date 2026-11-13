@@ -1,0 +1,34 @@
+Mirror living terrain direction
+
+The landscape, exposed geology and living cover must describe the same place. A
+surface's material, slope, soil depth and moisture can guide suitable vegetation.
+The current regional sampler supplies artistic descriptors for those quantities;
+they are not measurements or validated soil and hydrology models.
+
+Grass is rooted cover above a soil layer. Appearance can be instanced and varied
+without making each blade a continuously simulated body. Nearby interaction needs
+a separately bounded mechanical representation. Root mats can contribute cohesion
+when the soil model can represent it. Pulling up turf, cutting vegetation and
+removing roots require persistent material and plant state rather than cosmetic
+deletion. Those mechanics are future work.
+
+Trees need stable identities and authored species, trunk, branch, leaf and root
+representations. Their placement must be deterministic and stable when a region
+returns to view. Near interactions require explicit contact and damage handling.
+Root support, bending, fracture, fallen wood and regrowth are separate capabilities
+to add through contracted Systems. The current broadleaf meshes establish only
+initial placement and appearance; they do not implement a forest simulation.
+
+Clods are coherent aggregates of soil. Their mass and volume belong to the
+material simulation. Plastic deformation, changing moisture, crumbling, merging
+and compaction require a material model and accounted transfers between forms.
+The new shovel trial uses a pre-separated elastic clod to study tool contact.
+Decorative ground clods and the dynamic trial clod remain different declared
+capabilities until persistent surface-to-material interaction is implemented.
+
+High detail requires a distinction between visible detail and active mechanical
+work, while preserving a common material identity. Distant plants can use cheaper
+appearances; detailed mechanics can activate around interactions. Exact budgets,
+render instancing, authored asset sets, spatial storage and activation criteria
+remain to be designed and measured. New work must not introduce untracked native
+rendering or physics paths, or enter the real-time audio callback.

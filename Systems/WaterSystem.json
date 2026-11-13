@@ -1,0 +1,216 @@
+{
+  "system": "WaterSystem",
+  "layer": 5,
+  "functions": {
+    "Configure": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "TideSystem.Configure",
+        "OceanWaveSystem.Configure",
+        "WaterFlowSystem.Configure",
+        "WaterSlideSystem.Configure",
+        "FloodGateSystem.Configure",
+        "SoftBodyWaterSystem.Configure",
+        "TerrainSurfaceHydrologySystem.Configure",
+        "WaterRenderSystem.Prepare",
+        "WaterRenderSystem.Close",
+        "FloodGateSystem.Close",
+        "SoftBodyWaterSystem.Close",
+        "TerrainSurfaceHydrologySystem.Close",
+        "WaterSlideSystem.Close",
+        "WaterFlowSystem.Close",
+        "OceanWaveSystem.Close",
+        "TideSystem.Close",
+        "AudicleSystem.Fail"
+      ]
+    },
+    "Step": {
+      "calls": [
+        "TerrainSurfaceHydrologySystem.Update",
+        "TideSystem.Step",
+        "OceanWaveSystem.Step",
+        "WaterFlowSystem.Step",
+        "FloodGateSystem.Step",
+        "SoftBodyWaterSystem.Step",
+        "WaterRenderSystem.Update",
+        "WaterRenderSystem.Close",
+        "AudicleSystem.Resume",
+        "FloodGateSystem.Close",
+        "SoftBodyWaterSystem.Close",
+        "TerrainSurfaceHydrologySystem.Close",
+        "WaterSlideSystem.Close",
+        "WaterFlowSystem.Close",
+        "OceanWaveSystem.Close",
+        "TideSystem.Close",
+        "AudicleSystem.Fail",
+        "PlanetSurfaceSystem.CollisionSnapshot"
+      ]
+    },
+    "Frame": {
+      "calls": [
+        "AudicleSystem.Resume"
+      ]
+    },
+    "Sample": {
+      "calls": [
+        "TerrainSurfaceHydrologySystem.Sample",
+        "WaterFlowSystem.Sample",
+        "SoftBodyWaterSystem.Sample",
+        "AudicleSystem.Resume"
+      ]
+    },
+    "Disturb": {
+      "calls": [
+        "SoftBodyWaterSystem.Disturb",
+        "AudicleSystem.Resume"
+      ]
+    },
+    "Edit": {
+      "calls": [
+        "TerrainSurfaceHydrologySystem.Raycast",
+        "WaterSlideSystem.Edit",
+        "TerrainSurfaceHydrologySystem.Update",
+        "AudicleSystem.Resume",
+        "FloodGateSystem.Configure"
+      ]
+    },
+    "Pause": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Resume"
+      ]
+    },
+    "Close": {
+      "calls": [
+        "WaterRenderSystem.Close",
+        "FloodGateSystem.Close",
+        "SoftBodyWaterSystem.Close",
+        "TerrainSurfaceHydrologySystem.Close",
+        "WaterSlideSystem.Close",
+        "WaterFlowSystem.Close",
+        "OceanWaveSystem.Close",
+        "TideSystem.Close",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Resume",
+        "AudicleSystem.Fail",
+        "WaterSlideSystem.Snapshot"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "water_application_event",
+        "description": "A layer-five water Audicle owns tide/wave/parcel/source/editor effects and continuous shader animation, including while player input is idle. Tracked presentation Entities have explicit preparation, pause/resume and close lifetimes; named computational hooks are not Audicles.",
+        "retention": "experimental",
+        "selection": "The configured water application is active; pause retains frozen persistent appearance and resumes under a new tracked water event.",
+        "implements": [
+          "Configure",
+          "Step",
+          "Frame",
+          "Sample",
+          "Disturb",
+          "Edit",
+          "Pause",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/WaterSystem.rs",
+          "Water/mod.rs",
+          "Water/config.rs",
+          "Procedures/Water/settings.json",
+          "Procedures/Water/bodies.json",
+          "Procedures/Water/slides.json",
+          "Physics/WaterSnapshot.rs",
+          "Physics/planet.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "Render/window.rs"
+        ],
+        "checks": [
+          {
+            "id": "water_application_event_routes",
+            "kind": "declared_calls",
+            "expectation": "Required cross-System routes are explicit.",
+            "targets": [
+              "AudicleSystem.Create",
+              "AudicleSystem.Fail",
+              "AudicleSystem.Finish",
+              "AudicleSystem.Go",
+              "AudicleSystem.Ready",
+              "AudicleSystem.Resume",
+              "FloodGateSystem.Close",
+              "FloodGateSystem.Configure",
+              "FloodGateSystem.Step",
+              "OceanWaveSystem.Close",
+              "OceanWaveSystem.Configure",
+              "OceanWaveSystem.Step",
+              "SoftBodyWaterSystem.Close",
+              "SoftBodyWaterSystem.Configure",
+              "SoftBodyWaterSystem.Disturb",
+              "SoftBodyWaterSystem.Sample",
+              "SoftBodyWaterSystem.Step",
+              "TerrainSurfaceHydrologySystem.Close",
+              "TerrainSurfaceHydrologySystem.Configure",
+              "TerrainSurfaceHydrologySystem.Raycast",
+              "TerrainSurfaceHydrologySystem.Sample",
+              "TerrainSurfaceHydrologySystem.Update",
+              "TideSystem.Close",
+              "TideSystem.Configure",
+              "TideSystem.Step",
+              "WaterFlowSystem.Close",
+              "WaterFlowSystem.Configure",
+              "WaterFlowSystem.Sample",
+              "WaterFlowSystem.Step",
+              "WaterRenderSystem.Close",
+              "WaterRenderSystem.Prepare",
+              "WaterRenderSystem.Update",
+              "WaterSlideSystem.Close",
+              "WaterSlideSystem.Configure",
+              "WaterSlideSystem.Edit",
+              "WaterSlideSystem.Snapshot",
+              "WaterSlideSystem.Course"
+            ]
+          },
+          {
+            "id": "water_application_event_behavior",
+            "kind": "behavior",
+            "expectation": "A layer-five water Audicle owns tide/wave/parcel/source/editor effects and continuous shader animation, including while player input is idle. Tracked presentation Entities have explicit preparation, pause/resume and close lifetimes; named computational hooks are not Audicles.",
+            "procedure": "Exercise real application Configure/Step/Frame/Sample/Disturb/Edit/Pause/Close routes, disabled selection, idle animation, pause clock stability, resume attribution, errors and complete Entity/native cleanup. Verify locomotion/submergence and disturbance/editor consumers are actually wired, accepted terrain/soil revision reaches collision and reflection/refraction scene passes run on each selected graphics backend. Do not substitute helper inventory for the full connected port. WaterSystem.Edit operation source accepts a positive start tie or null, validates authored open courses, and clear-all clears selection. Authored graph/source selection save atomically on normal Close to output water-editor.json and restore at Configure; missing save uses procedural graph, malformed saves are preserved and reported. An unchanged procedural graph is not written. No parcel or natural river placement persistence is claimed."
+          }
+        ]
+      },
+      {
+        "id": "waterpark_authored_basins",
+        "description": "Install measured outdoor and grotto pool volumes and shallow flume films in native continuous water rendering. Includes four lazy-river reaches, a separate funnel catch basin and a third Sunspin funnel film course.",
+        "retention": "experimental",
+        "selection": "Theatre waterpark configured; Cardinal cyberworld course is shape reference only.",
+        "implements": [
+          "Configure",
+          "Step"
+        ],
+        "sources": [
+          "Water/bodies.rs",
+          "Water/surface_mesh.rs",
+          "BaseSystem/LayerFive/WaterSystem.rs",
+          "Theatre/Waterpark.rs"
+        ],
+        "checks": [
+          {
+            "id": "waterpark_authored_basins_behavior",
+            "kind": "behavior",
+            "expectation": "Each basin has a measured bed and exact surface boundary. Water membership rejects points above the surface or outside the basin. Both basins and films fit native water budgets. Lazy-river reaches carry a slow circulating current, with a dry central island. Three independently gated courses share the bounded film solver.",
+            "procedure": "Run cargo test --offline --locked --lib waterpark. Review Blender overview and WORMWOOD_CHECK_WATERPARK=1 native theatre exterior captures. Manual full-game traversal remains separate validation."
+          }
+        ]
+      }
+    ]
+  }
+}

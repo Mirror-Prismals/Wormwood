@@ -1,0 +1,57 @@
+{
+  "system": "MonasterySystem",
+  "layer": 5,
+  "functions": {
+    "Input": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel"
+      ]
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Close": {
+      "calls": [
+        "AudicleSystem.Cancel"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "monastery_incense",
+        "description": "A walkable Zen monastery and raked gravel garden stand west of the residential lane. F picks up/returns the altar lighter; hold F while aiming at incense for two seconds to ignite it. One 14 cm stick consumes over 1800 real elapsed seconds, leaves ash, then stops emitting smoke after five seconds. F replaces a spent stick. Ignition may be interrupted; a lit stick keeps burning during absence, pause and embedded DAW use. The session ends on Close. Smoke is a bounded analytic visual approximation, not fluid or combustion chemistry simulation.",
+        "selection": "Normal Wormwood overworld with the monastery configured. Interactions are blocked by menus and held tools.",
+        "retention": "supported",
+        "implements": [
+          "Input",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "Theatre/Monastery.rs",
+          "BaseSystem/LayerFive/MonasterySystem.rs",
+          "ModSources/prismals/src/gameplay/MonasterySystem.rs",
+          "BaseSystem/LayerFour/MonasteryRenderSystem.rs",
+          "ModSources/prismals/src/render/MonasteryRenderSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "incense_lifecycle",
+            "kind": "behavior",
+            "expectation": "Proximity and occlusion gate interaction, ignition requires a sustained hold, stick length halves at 15 minutes, ash remains at 30 minutes, smoke dissipates, no held-key repeat or duplicate event, Close cancels ownership. Monastery doors and path support walking within scene budgets.",
+            "procedure": "Run monastery focused tests, registered Host lifecycle and complete-town budget/contact tests; review native monastery exterior, garden, ignition, midpoint and spent-stick captures; playtest F interaction and pause/DAW return."
+          }
+        ]
+      }
+    ]
+  }
+}

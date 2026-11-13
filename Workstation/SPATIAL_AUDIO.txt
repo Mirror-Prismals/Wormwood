@@ -1,0 +1,80 @@
+Spatial audio spheres
+
+Tab switches between the arrangement and spatial view when the piano roll is
+closed. Each observed audio source track has a glossy metallic sphere in the
+spatial view's open background. The Swift reference supplies metalness 0.9,
+roughness 0.2, a gray environment, white directional light and independently
+moving theme-colored and cool-blue lights. Native analytic ellipsoid geometry
+uses the existing shared OpenGL/GLES/Vulkan/WebGPU optical renderer. No hall,
+walls, grid, extra background plane or sphere shadows are added.
+
+The camera remains the workstation's orthographic camera. Sphere size and
+position create the perspective illusion; shallow geometric depth handles
+overlap. There is one sphere per track, not a duplicate for every overlapping
+clip. Stable track identity determines color. Stereo balance moves the source
+left/right, correlation and channel-energy overlap determine its horizontal
+stretch, and log-frequency spectral centroid determines height. The stereo
+image is the track's source image before the L/S/FF/R routing fold and master
+gain. It is not a visualization of downstream speaker or room processing.
+
+Distance has two inputs: the source's pre-gain RMS and its effective fader gain.
+Quiet passages recede even with the fader untouched. Lowering the fader also
+moves the source back. Attack/release smoothing keeps the image readable.
+The reference amplitude pulse scales the sphere with the current signal.
+Silence has no invented spectrum or motion; quiet handles remain selectable.
+Unobserved sources and MIDI without a connected synthesis path report their
+unavailable measurement state without drawing placeholder balls. Playback
+cessation ages out the observation.
+
+Click and drag a sphere upward/back to lower its manual track gain, or
+downward/near to raise it. The wheel provides a fine gain adjustment over a
+sphere. Gain uses SetTrackMix and its normal finite 0..16 linear-gain bounds.
+Stereo and frequency remain measurements; these gestures do not introduce a
+pan control or an EQ. Gain updates use the document revision and refresh the
+authoritative snapshot. Changing signal amplitude cannot change the pointer's
+gain baseline during a grab. Active CC gain automation blocks manual sphere
+gain changes and reports why. Escape, lost pointer/focus, removal or conflicting
+document edits cancel capture. Arrangement, piano-roll and sphere gestures keep
+separate ownership. Switching views never transfers an already held click.
+
+The normal playback producer requests measurements during its existing
+RenderRange calls, including synthesized and plugin-processed PCM. It retains
+up to 128 small observation packets without PCM. EnvironmentAudioSystem.Status
+selects the newest fully consumed block matching the current transport
+generation, document revision and sample rate. AudioWorkstationSystem.Step
+uses that selected packet instead of the producer's future observation.
+The UI never re-renders a range or advances a stateful plugin for visualization.
+A seek waits for new-generation audio; pause ages the last display toward silence.
+This is source analysis, not hardware loopback. Block completion, UI scheduling
+and hardware buffering limit synchronization; display is not sample-accurate.
+
+All source ownership, FFT, JSON and System calls stay on the control thread.
+The native callback is unchanged by this feature. Ordinary RenderRange calls
+skip analysis; analyze_visualization:true requests measurement without publication and
+publish_visualization:true also publishes it. The cached small
+revision/sequence-tagged visualization is exposed by Snapshot; it retains no
+PCM. The renderer receives validated bounded packets for up to 64 sources.
+
+Validation
+
+--check-audio-spheres BACKEND opens a finite native diagnostic using three real
+generated PCM tracks with different levels, stereo images and frequencies.
+It exercises the same document ingestion, range renderer, observation,
+projection and shaders as playback. It does not start a device, populate normal
+sessions or establish live-audio correctness. Source analysis, controller,
+packet validation, native captures and live interaction are separate checks.
+See output/checks/spatial-audio-* for recorded evidence when validation runs.
+Phone and live hardware behavior require separate playtesting.
+
+October 30 validation: output/checks/spatial-audio-20261030-100002 records
+47 passing focused tests (analysis, controller, packet validation, playback,
+registered gain-drag integration, lifecycle, transport and consumed-observation
+cache), a successful desktop build, and GL/GLES/Vulkan shader checks. Native
+WebGPU, Vulkan and OpenGL runs each submitted three measured spheres and
+released all Entities without errors. Their 640x480 captures were visually
+reviewed: a larger low-frequency blue sphere, middle red stereo oval and small
+high-frequency yellow sphere occupy the existing gray field. Material highlights
+and geometry are consistent across the three backends. This establishes the
+finite diagnostic appearance, not live audio synchronization, physical pointer
+feel, performance at scale or phone behavior. Concurrent workspace edits are
+listed in the evidence; later unrelated style-system changes are not covered.

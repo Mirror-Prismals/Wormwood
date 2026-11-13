@@ -1,0 +1,118 @@
+{
+  "system": "WorkshopSystem",
+  "layer": 5,
+  "functions": {
+    "Benchmark": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "PhysicsSystem.Configure",
+        "PhysicsSystem.Advance",
+        "PhysicsSystem.Release"
+      ]
+    },
+    "Run": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "PhysicsSystem.Configure",
+        "PhysicsSystem.Advance",
+        "PhysicsSystem.Mesh",
+        "PhysicsSystem.Release",
+        "EntitySystem.Create",
+        "EntitySystem.Update",
+        "EntitySystem.Remove",
+        "AppearanceSystem.Prepare",
+        "AppearanceSystem.View",
+        "AppearanceSystem.Pump",
+        "AppearanceSystem.Release",
+        "GraphicsConnectionSystem.Caption"
+      ]
+    }
+  },
+  "init_steps": [
+
+  ],
+  "entry_steps": [
+    "Benchmark",
+    "Run"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "mobile_soil_workshop",
+        "description": "The iOS title screen retains the automatic material showcases: dirt, established rooted turf, fine sand, pebbles, a generated trunk split along grain, the same trunk chopped across grain, stone, loose stone, and broad bucket contact against stone, plus a coupled turf/soil/bedrock excavation sequence. Finite-force spade, bucket, axe and pick trajectories act through their material solvers. Turf reports severed roots, pieces and lifted tissue; wood reports directional failures and contact work. Native controls observe, pause, single-step, reset or exit. Sparse seedling growth and the earlier soil fixtures remain separately selectable on desktop. The workshop shows measured wall-clock FPS, simulation speed relative to real time, CPU physics, mesh and render/present cost. Fixed 1/60-second physical frames are scheduled by wall time with bounded catch-up. Pause and unchanged frames do not rebuild meshes. The mobile Compare forces selector runs three fresh specimens at different actuator limits; the desktop catalog exposes corresponding _compare cases. Trial captions retain measured results and distinguish commanded force from actual contact. The iOS bridge validates choices against the engine case registry. Five additional entries expose a third-person worker digging, a worker chopping a standing tree, worker snow shoveling, ice in warm water and ice in air. Worker captions show measured contact and effort; thermal captions label accelerated heat time. Force-comparison variants remain limited to the previous supported specimens. Combined workshop appearance has a bounded 32768-triangle envelope for worker, tool and material; this does not increase physics mesh budgets.",
+        "retention": "experimental",
+        "selection": "Material workshop choices on the iOS title screen, or matter_* desktop workshop cases. The mobile and Mac workshop selectors provide WebGPU (default), Vulkan and OpenGL explicitly; there is no silent backend fallback.",
+        "implements": [
+          "Run"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/WorkshopSystem.rs",
+          "Platform/iOS/App.m",
+          "Platform/iOS/Bridge.rs",
+          "Platform/iOS/Touch.rs",
+          "BuildSupport/macOS/Launcher.m",
+          "Physics/matter/mod.rs",
+          "Physics/matter/tools.rs",
+          "Physics/matter/solid.rs",
+          "Physics/matter/turf.rs",
+          "Physics/matter/growth.rs",
+          "Render/ios.rs",
+          "BaseSystem/LayerFive/WorkshopPerformance.rs",
+          "Physics/matter/trials.rs",
+          "Physics/matter/layered.rs",
+          "Physics/matter/sand.rs",
+          "SimulationWorkshop/author_cases.json",
+          "Physics/matter/worker.rs",
+          "Physics/matter/thermal.rs",
+          "Physics/matter/muscle.rs",
+          "BaseEntity.rs",
+          "Render/mod.rs"
+        ],
+        "checks": [
+          {
+            "id": "mobile_soil_workshop_review",
+            "kind": "behavior",
+            "expectation": "The selected automatic material scene is visible and distinguishable, with functioning camera, pause, step, reset, background/resume and exit. Soil extraction leaves a cavity and released matter persists. Stage captions report requested motion separately from measured state. Failures retain the last valid state.",
+            "procedure": "Compile the iOS target. The user performs runtime and visual playtesting: observe insertion, fracture, lift, release, reset, background/resume and exit. The new fracture showcase remains behaviorally unverified until that playtest; the prior contact-only phone observation does not verify it."
+          },
+          {
+            "id": "workshop_performance",
+            "kind": "behavior",
+            "expectation": "All three explicitly selected backends render material scenes. The counter distinguishes render throughput from simulation throughput; bounded desktop and headless runs write timing summaries including frame percentiles and material/contact/skin costs. Fixed physical substeps and iteration counts are retained.",
+            "procedure": "Run release-mode before/after headless benchmarks and bounded WebGPU/Vulkan/OpenGL workshop runs on macOS. Compile iOS and UIKit. Phone timing remains a user playtest."
+          }
+        ]
+      },
+      {
+        "id": "headless_workshop_measurement",
+        "description": "Measure the same material advancement used by the visual workshop, excluding window and rendering costs. Report the requested and completed simulation work, CPU timing and real-time factor; errors or halted physics remain failures.",
+        "retention": "experimental",
+        "selection": "--simulate CASE --frames N",
+        "implements": [
+          "Benchmark"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/WorkshopSystem.rs",
+          "BaseSystem/LayerFive/WorkshopPerformance.rs"
+        ],
+        "checks": [
+          {
+            "id": "headless_workshop_timing",
+            "kind": "behavior",
+            "expectation": "The output contains finite wall and simulated time, step percentiles and halt state. Headless steps per second are not claimed as display FPS.",
+            "procedure": "Run bounded release-mode material cases and inspect the written JSON summaries."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,516 @@
+{
+  "system": "WorkstationPanelSystem",
+  "layer": 4,
+  "functions": {
+    "Load": {
+      "calls": []
+    },
+    "View": {
+      "calls": [
+        "GraphicsConnectionSystem.SetView",
+        "TheatreSystem.Mesh",
+        "AppearanceSystem.View",
+        "AudioRayVisualizerSystem.Frame"
+      ]
+    },
+    "Release": {
+      "calls": []
+    },
+    "Suspend": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "blank_gem_panel_appearance",
+        "description": "Present four resizable 3D Origami gem panels with authored decorative transport buttons on top and three fader/stereo-meter pairs below. Keep GLB component geometry and materials; controls have no input or audio functionality. Embedded SSLE-style decorative browser/settings text uses the original font with three internal microfracture layers.",
+        "retention": "experimental",
+        "selection": "Explicit workstation scene. The requested replacement retires the fixed model composition and CPU vertex-color studio approximation; Origami controls the physical cut and dedicated native optical shaders render it.",
+        "implements": [
+          "Load",
+          "View",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Workstation/GemMesh.rs",
+          "Workstation/PanelLayout.rs",
+          "Workstation/FloorLight.rs",
+          "Workstation/DeferredFloor.rs",
+          "Workstation/PanelScene.txt",
+          "Art/AudioWorkstation/GemPanels/GemPanels_runtime.json",
+          "Render/Workstation.rs",
+          "Procedures/Shaders/workstation.shared.glsl",
+          "Procedures/Shaders/workstation_abi.txt",
+          "BuildSupport/Blender/prepare_gem_panels.py",
+          "BuildSupport/Blender/render_workstation_reference.py",
+          "Workstation/DecorativeControls.rs",
+          "Art/AudioWorkstation/DecorativeControls/controls.json",
+          "BuildSupport/Blender/export_workstation_controls.py",
+          "Workstation/Engraving.rs",
+          "BuildSupport/Blender/make_laser_engraving.py",
+          "Art/AudioWorkstation/LaserEngraving/engraving.json",
+          "Host/WorkstationPerformanceTests.rs",
+          "Host/Host.rs",
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Workstation/RubyResponsePlan.rs",
+          "Workstation/RubyResponseShader.rs",
+          "Render/webgpu.rs",
+          "BuildSupport/Workstation/release_approved_ruby.py",
+          "BuildSupport/Workstation/release_ruby_transport.py",
+          "BuildSupport/Workstation/export_ruby_motion.rs",
+          "Workstation/Lightbox.rs",
+          "Workstation/CameraBackdrop.rs"
+        ],
+        "checks": [
+          {
+            "id": "real_meshes_and_ruby",
+            "kind": "behavior",
+            "expectation": "Strip/top, Broad/bottom, Tall/left and Compact/right inherit Origami opening-order corner ownership, fixed-top default, adaptive sizes and original slide/tap motion. Resizing re-evaluates the authored 26-plane cut. Dedicated WebGPU, Vulkan and OpenGL/GLES shaders evaluate Fresnel, refraction, internal reflections, RGB volume extinction, GGX and exported Blender studio lighting. The exact native AgX transform is retained. Vertex-color material approximation is retired. Bounded integration, approximate floor lighting and absent focused caustics must remain explicit until addressed. The user-approved fast WebGPU appearance reuses ruby response maps and resolves exterior reflection/refraction rays directly against studio lights and the floor; inter-object exterior occlusion is omitted. Primary scene visibility remains geometric. The requested sharper WebGPU text uses the actual screen sample and first refracted engraving segment; later internally reflected text is omitted, while the 128-square panel and 64-square control caches contain glass transport only. Translation and light/label changes reuse intrinsic paths, with current lighting resolved before every draw; shape, scale and material changes invalidate them. Other native backends retain the full scene reference. The requested desktop full-view expansion now extends the gem face at the normal panel cut thickness rather than increasing bevels with the fullscreen minor axis. Content safe rectangles, engraved text and plugin mounts share that bounded cut.",
+            "procedure": "Run focused workstation tests for source rectangles/order, expansion, shape normals/manifold geometry and real asset/optical-frame consistency. Validate every shader frontend, render each backend, compare captured optical frame against the matching Blender reference and measure performance. Test portrait/landscape and touch controls on the phone before claiming device appearance verified. For the approved WebGPU path, compare the generated native response output against the accepted omit-exterior-occlusion preview, verify default selection and motion invalidation, and report warm versus rebuilding GPU cost separately. WORMWOOD_RUBY_RESPONSE=0 retains the comparison path. For the live-text revision, compare the production preview to the validated diagnostic, check held-cache motion and changed lights against fresh baking, review localized floating-point edge differences and sharp labels, and measure the native app against the installed approved build including bake and lighting-resolve time."
+          },
+          {
+            "id": "native_submission",
+            "kind": "declared_calls",
+            "expectation": "Panel geometry goes through the registered graphics connection.",
+            "targets": [
+              "GraphicsConnectionSystem.SetView"
+            ]
+          },
+          {
+            "id": "origami_geometry",
+            "kind": "behavior",
+            "expectation": "Corner ownership persists through close, changes with reopening order, and is shared by geometry and mobile rim hit-testing. Logical points determine the source 18-point inset; physical framebuffer size determines optical sampling. Full-size and overview layouts use the same 3D cut. In overview, left/right inner slide endpoints follow the centered design canvas, while opening widens each panel outward to fill the margin and meet the full-width bottom panel at the window edge; explicit overview hiding moves retracted side rims to the outer screen edges. Explicit origami/fixed_top View fields carry the selected right-panel mode, defaulting to the existing Fixed Top geometry when omitted.",
+            "procedure": "Run the PanelLayout and PanelMotion source-reference cases; visually exercise different opening orders, close/reopen, expansion, resize, overview and swaps."
+          },
+          {
+            "id": "decorative_control_placement",
+            "kind": "behavior",
+            "expectation": "Transport order is rewind, stop, record, play on the top table. Each bottom strip has the meter left of the fader. All models fit uniformly and follow Origami motion in portrait, landscape, overview and swapped layouts; the four top controls receive managed pressure from AudioWorkstationSystem, which owns their actions. After final furniture assembly, pressure moves actual authored pose X/Z (Cardinal lateral travel plus inward depth) and final instance bounds; row13/14 stays the conservative top AABB. Retained RGB is unchanged while depth follows the captured/current pose; the former overwritten pressure metadata is retired. Bottom specimens retain their existing behavior.",
+            "procedure": "Run workstation_decorative_controls_follow_panel_tables_without_stretching, inspect the authored asset source hashes, and review native captures from all three backends. Exercise panel slides on the phone before claiming device appearance verified."
+          },
+          {
+            "id": "embedded_ssle_specimen",
+            "kind": "behavior",
+            "expectation": "Browser specimens on the left and settings on the right use original font sizing, remain fully inside the moving/resizing panel halfspaces, and are seen through refracted glass with no 2D overlay or functional controls. Native density slices approximate the actual Blender fracture meshes; no Cycles parity claim. Match the requested fine-grained appearance with a narrow primary stroke, stable fracture variation and faint depth layers; retain panel layout, original font advances, text sizes/baselines and transport models. The requested lighter engraving uses a0.008em inward outline inset and a finer96-cell fracture lattice; immutable mip-filtered density fields accelerate the interior-ray sampling. Author-approved November 12 presentation update: the left browser displays uppercase bright bold engraved labels. Right page selectors match the 43.2-pixel mini switch height, and selectors and switches share bright bold labels above their baked gems. Page-three settings labels have persistent ruby button backgrounds at their existing targets. These display changes do not change source names, search queries, document text or audio behavior.",
+            "procedure": "Run make_laser_engraving.py authoring containment checks and workstation_ssle_stays_inside_animated_panels. Render all native backends and review normal-size text appearance. Inspect the saved Blender mesh and editable sources. Compare the current capture with the user-provided style reference; verify original font advances, sizes and example baselines are unchanged, and review the deliberately lighter outlines. Check the baked density hash/packing and capture both logical and Retina drawable sizes; report rendering cost rather than assuming higher resolution is free. Check numbered selector hit regions and uppercase browser packets; visually inspect all three right pages and the left search browser in the baked renderer."
+          },
+          {
+            "id": "numeric_optical_transport",
+            "kind": "behavior",
+            "expectation": "Native numeric optical rows and the retained JSON SetView adapter produce the same finite frame bits and rendered pixels. The registered route, prepared Entity, active Audicle, circuit breaker, capture and redraw behavior remain enforced.",
+            "procedure": "Run workstation_numeric_view tests and the explicit workstation_packet_transport_benchmark; compare frozen baseline/candidate deterministic bubble-note captures and fixed-input workstation benchmarks on WebGPU, Vulkan and OpenGL with BuildSupport/benchmark_runtime_paths.py. Report CPU update wall time separately from actual GPU timestamps; no art, shader, resolution or optical-budget changes are part of this transport optimization."
+          },
+          {
+            "id": "editable_studio_emitters",
+            "kind": "behavior",
+            "expectation": "Validated lightbox values transform the three actual area emitters before floor visibility and retained lighting are resolved; the default rig orbits only the cool fill away from the right ruby. Gem materials, exposure, sample budgets and optical shaders remain unchanged.",
+            "procedure": "Run lightbox tests for default fill placement, basis/distance preservation, finite bounds, radiance disable and retained lighting invalidation. Manually verify glare movement and cancellation on native WebGPU."
+          }
+        ]
+      },
+      {
+        "id": "edison_socket_demo",
+        "description": "Present upright authored Edison sockets in the selected desktop track's bottom insert row with adjacent page/track navigation, Cardinal face scale and vertical centering. Instrument first, ordered effects after it; native editor visibility controls the connected plug silhouette. Release toggles editors, drag reorders effects with a marker, Delete removes the selected insert, and continuous scrolling clips inserts beside navigation.",
+        "retention": "experimental",
+        "selection": "User explicitly requested Cardinal placement/functionality and clarified that the old painter's angle was only a 2D depth illusion. Retire the baked 20/-25 degree presentation tilt, fake extrusion spacing, shrinking face fit, open-only press action, whole-slot scrolling and invented empty socket. Preserve the approved 56 mm rounded cube, 34 mm plug, cavities, mating origin and immutable meshes. The mixer specimens remain on a separate page; hosting is excluded from mobile. Native catalog-menu loading remains; legacy browser drag-loading is not claimed.",
+        "implements": [
+          "Load",
+          "View",
+          "Release"
+        ],
+        "sources": [
+          "Workstation/EdisonDemo.rs",
+          "Art/AudioWorkstation/EdisonHardware/make_edison_hardware.py",
+          "Art/AudioWorkstation/EdisonHardware/runtime.json",
+          "BuildSupport/Blender/export_edison_demo.py",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Render/Workstation.rs",
+          "Procedures/Shaders/workstation.shared.glsl",
+          "Workstation/PluginInserts.rs",
+          "Art/AudioWorkstation/EdisonHardware/connected.json"
+        ],
+        "checks": [
+          {
+            "id": "rounded_socket_and_demo_placement",
+            "kind": "behavior",
+            "expectation": "The approved 56 mm socket and 34 mm plug retain their geometry and cavity fit without presentation tilt. The selected-track row follows Cardinal face scale, vertical centering and instrument/effect ordering. Page/track arrows share draw/pick bounds. Release toggles editors; release outside cancels. Drag changes effect order only, and insert Delete cannot delete a clip or note. Continuous scrolling is clipped beside navigation. Plug visibility follows native close without moving sockets. Hidden controls do not receive clicks; mobile has no plugin interaction.",
+            "procedure": "Generate the Blender model and runtime packet, inspect the preview and original slot alignment, compile native shaders/Rust, and playtest open/closed, expanded, swapped, portrait and landscape panel layouts on Mac and mobile. Compilation and model-authoring checks alone do not establish native appearance."
+          }
+        ]
+      },
+      {
+        "id": "input_monitor_appearance",
+        "description": "Show the existing authored traffic-light model beside actual ordered Audio/MIDI tracks in the central timeline's right 57 px gutter. Preserve CC row spacing without a signal, follow scrolling and consider at most 32 fully visible 64 px rows. Real tracks display Off/red as appearance only; null or empty timelines clear signals. Explicit monitor_preview retains the separate three-state example. No monitor clicks, state changes or audio routing are added.",
+        "retention": "experimental",
+        "selection": "Explicit workstation scene using input.timeline. The user requested visual integration only and rejected the earlier bottom-mixer placement. Retire that placement and normal-scene fixed preview tracks in favor of actual timeline rows; keep the old preview behind explicit monitor_preview. Actual-track WebGPU/Vulkan/OpenGL captures were visually reviewed; 72 focused tests passed. Evidence: output/checks/input-monitor-20261030-060431/visual-review.json. Shared source changes stopped the final fingerprint guard before packaging; full-checkout and phone validation are not claimed.",
+        "implements": [
+          "Load",
+          "View",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Workstation/InputMonitor.rs",
+          "Workstation/Arrangement.rs",
+          "Workstation/DecorativeControls.rs",
+          "Render/Workstation.rs",
+          "Procedures/Shaders/workstation.shared.glsl",
+          "Procedures/Shaders/workstation_abi.txt",
+          "BuildSupport/Blender/export_input_monitor.py",
+          "BuildSupport/Blender/validate_input_monitor.py",
+          "Art/AudioWorkstation/InputMonitor/runtime.json",
+          "Art/AudioWorkstation/InputMonitor/README.txt",
+          "BuildSupport/macOS/build_app.py",
+          "BuildSupport/iOS/build_ios.py"
+        ],
+        "checks": [
+          {
+            "id": "authored_traffic_light_geometry",
+            "kind": "behavior",
+            "expectation": "Keep all 128450 authored triangles, normals, three exclusive emitting palettes, emission strength and authored metal/coat parameters. Upload one shared geometry packet per native session; frame updates contain poses, palette addresses and separate monitor bounds/clip. The existing ten controls and engraved text retain their addresses. Use uniform front-facing model geometry without claiming to reproduce Cardinal's sheared 2D projection. Native direct-light GGX remains an approximation of the Blender studio.",
+            "procedure": "Run export_input_monitor.py to check identical GLB geometry and semantic palette mapping. Run workstation_input_monitor_preserves_geometry_and_exclusive_lamp_palettes. Compile shader frontends and inspect actual WebGPU, Vulkan and OpenGL captures; source inspection alone does not verify GPU rendering."
+          },
+          {
+            "id": "traffic_light_strip_placement",
+            "kind": "behavior",
+            "expectation": "Actual ordered Audio/MIDI tracks use the right 57 px gutter shared with Arrangement.clip_body; CC rows keep their spacing without a light. Scrolling considers at most 32 complete 64 px rows below the 32 px ruler. Every real signal uses Off/red as appearance only; null or empty timelines clear signals. Live poses occupy engraving::BASE+368 through +432 exclusive, with header247=[base,count,0,0] and shader IDs29..60. Preview poses226..231 require explicit monitor_preview. Group238/239 is preserved; Edison IDs13..28 and row12's legacy-plus-plugin count remain independent of live lane count. No monitor click or audio behavior is added.",
+            "procedure": "Run the focused monitor and arrangement checks for actual track ordering, CC gaps, scrolling, complete-row and 32-row bounds, null/empty clearing, shared clip/picking gutter, explicit preview behavior and preservation of unrelated headers. Inspect actual native timeline captures and verify local Mac package contains runtime.json/bin. Native MIDI/CC fixture captures passed scoped placement review on all three backends; focused tests cover scrolling/order/clearing. Evidence: output/checks/input-monitor-20261030-060431/visual-review.json. Shared source drift prevented the final guard and packaging. Earlier bottom-panel captures are not placement evidence. Phone appearance remains unverified until device testing."
+          }
+        ]
+      },
+      {
+        "id": "authored_floating_bubbles",
+        "description": "Present the authored BubbleNotes Short topology as duration-adapted closed 3D membranes, including source placement deformation, smooth normals and air/film/air optics. The field has no visible grid or backing panel. Runtime materials use uniform optical film thickness and no procedural texture/noise or painted rainbow.",
+        "retention": "experimental",
+        "selection": "AudioWorkstationSystem supplies a visible piano-roll field. Existing gem panels, controls and SSLE specimens retain their asset offsets and materials.",
+        "implements": [
+          "Load",
+          "View",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Workstation/BubbleNotes.rs",
+          "Workstation/BubbleNotesKernel.glsl",
+          "Workstation/PianoRollScene.rs",
+          "BuildSupport/Blender/export_bubble_notes.py",
+          "Art/AudioWorkstation/BubbleNotes/BubbleNotes_runtime.json",
+          "Render/Workstation.rs",
+          "Procedures/Shaders/workstation.shared.glsl",
+          "Procedures/Shaders/generate_workstation.py",
+          "Workstation/BUBBLE_PIANO_ROLL.txt"
+        ],
+        "checks": [
+          {
+            "id": "authored_duration_mesh",
+            "kind": "behavior",
+            "expectation": "Exported source descriptors reproduce original Short mesh vertices and both shape keys. Variable duration preserves the authored min(length*.46,height*.28) shoulder law. The same actual triangles provide hit geometry, and deformation normals follow the changed surface. Native tessellation and optical approximation are explicit, not claimed Cycles parity.",
+            "procedure": "Run exporter validation and bubble_notes tests. Compare native captures with the Blender source at original dimensions and short/long durations; inspect placement settling and fixed X coordinates."
+          },
+          {
+            "id": "texture_free_film",
+            "kind": "behavior",
+            "expectation": "Uniform film thickness drives angle-dependent interference with air inside, no bulk water refraction, emission, procedural texture or noise. Thin membranes participate in reflected/transmitted scene paths; direct-shadow omission is an explicit approximation.",
+            "procedure": "Compile generated frontends and inspect WebGPU/Vulkan/OpenGL captures. Verify notes appear floating between real panels with no visible grid; inspect alpha/reflections/selection and bounded performance. Phone appearance requires separate device review."
+          }
+        ]
+      },
+      {
+        "id": "spatial_audio_sphere_appearance",
+        "description": "Present up to64 source ellipsoids on the existing plain workstation background, using the supplied Swift sphere material and moving colored/cool lighting. The controller supplies audio-derived center, radii, color and clipping; no sphere analysis or mixer gesture runs in the render System.",
+        "retention": "experimental",
+        "selection": "Requested spatial audio visualization. Add independent opaque analytic ellipsoids without retiring or changing the existing gem panels, decorative controls, bubble-note membranes, floor or background lighting. Do not add visible hall geometry.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "Workstation/AudioSpheres.rs",
+          "Workstation/AudioSpheresKernel.glsl",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Procedures/Shaders/workstation.shared.glsl",
+          "Procedures/Shaders/generate_workstation.py",
+          "Procedures/Shaders/workstation_abi.txt"
+        ],
+        "checks": [
+          {
+            "id": "bounded_sphere_frame_packet",
+            "kind": "behavior",
+            "expectation": "Validate every instance before writing any frame rows. Up to64 sources occupy four rows each after BubbleNotes::DYNAMIC_END, with headers240..243. Null presentation clears stale spheres only. Existing background, asset addresses, bubble geometry and native buffer dimensions remain unchanged.",
+            "procedure": "Run audio_spheres focused tests for capacity, preserved neighboring rows, finite bounds, invalid input atomicity and clearing stale instances."
+          },
+          {
+            "id": "metallic_audio_ellipsoids",
+            "kind": "behavior",
+            "expectation": "All generated native frontends intersect exact analytic ellipsoids with gradient normals, clip to the controller field, and shade metalness0.9/roughness0.2 using GGX, white directional light and the Swift colored/cool omni orbits. Sphere-only lighting changes no background rows and casts no floor shadows. Constant environment, finite-radius light attenuation and absent general sphere reflections are explicit appearance approximations, not SceneKit parity.",
+            "procedure": "Regenerate shader frontends, validate GL/GLES/Vulkan/WGSL, inspect actual WebGPU/Vulkan/OpenGL captures of mono and wide stereo sources at several depths, and compare background pixels outside spheres against an empty frame. Inspect amplitude motion, grabbing, overlap and panel clipping. Measure performance; phone rendering needs separate device validation."
+          }
+        ]
+      },
+      {
+        "id": "user_panel_styles",
+        "description": "Load an explicitly selected versioned user panel package. Static GLB triangle meshes may be open or solid and retain UVs and lit or unlit materials. Authors choose stretch, contain or snapped target layouts; model content surfaces drive host content placement and interaction.",
+        "retention": "experimental",
+        "selection": "Explicit --style package or WORMWOOD_STYLE for a workstation session. Built-in gem remains the default and the only built-in panel style. User request supersedes the earlier proposed closed-shell/contain-only restrictions. Unsupported glTF features fail with diagnostics.",
+        "implements": [
+          "Load",
+          "View",
+          "Release"
+        ],
+        "sources": [
+          "Workstation/UserStyle.rs",
+          "Workstation/UserStyleGlb.rs",
+          "Workstation/UserStyleTests.rs",
+          "Workstation/UserStyleKernel.glsl",
+          "Workstation/StyleAuthoring.txt",
+          "Workstation/PanelLayout.rs",
+          "Workstation/DecorativeControls.rs",
+          "Workstation/Browser.rs",
+          "Workstation/Engraving.rs",
+          "Workstation/PluginInserts.rs",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Render/Workstation.rs",
+          "Platform/Desktop.rs",
+          "BuildSupport/Workstation/make_style_samples.py",
+          "BuildSupport/Workstation/validate_user_styles.py"
+        ],
+        "checks": [
+          {
+            "id": "imported_surface_and_resize",
+            "kind": "behavior",
+            "expectation": "Bound and validate package and GLB data before upload; preserve original triangles and UVs including zero-depth planes. Upload mesh data once, update poses during layout changes. Custom panels disable only their own analytic gem body. Rendering and host content use the same resolved surface; mesh face gestures exclude geometric holes. Explicit invalid imports fail without silently using gem. CPU hit tests do not evaluate shader alpha, so authors keep the content region opaque.",
+            "procedure": "Run user_style tests including malformed bounds/paths/GLB, transforms, fitted surfaces, holes and snap behavior. Run validate_user_styles.py, inspect provenance and packet flags, then visually review carved-metal, wood and flat-ui captures on WebGPU/Vulkan/OpenGL, portrait and contain/snap/stretch cases. Device compilation is not appearance evidence."
+          }
+        ]
+      },
+      {
+        "id": "user_style_shaders",
+        "description": "Compile bounded resource-free WGSL surface and background functions using Naga. Material UV/local position/fitted size/time are explicit inputs. User backgrounds are evaluated in the 3D scene, including rays through gems, without a ChucK VM or frame streaming.",
+        "retention": "experimental",
+        "selection": "A selected user package declares shader api 1. Colors are scene-linear and pass through the existing display transform. An unlit thin plane can present flat UI art. Surface alpha below 0.5 cuts out geometry; alpha blending and custom GPU displacement are outside this profile.",
+        "implements": [
+          "Load",
+          "View",
+          "Release"
+        ],
+        "sources": [
+          "Workstation/StyleShader.rs",
+          "Workstation/UserStyleKernel.glsl",
+          "Procedures/Shaders/workstation.shared.glsl",
+          "Procedures/Shaders/generate_workstation.py",
+          "Render/webgpu.rs",
+          "Render/opengl.rs",
+          "Render/ios_gl.rs",
+          "Render/vulkan.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/StyleAuthoring.txt"
+        ],
+        "checks": [
+          {
+            "id": "portable_shader_and_lifecycle",
+            "kind": "behavior",
+            "expectation": "Validate required signatures, reject resources, entry points, loops and excessive expanded helper cost before device compilation. Generate GLSL/GLES libraries and runtime Vulkan SPIR-V through Naga; preserve the default native shaders when no user shader is selected. Animated styles advance on a layer-five Audicle and request redraw at a bounded 30Hz ceiling when otherwise idle. Static styles preserve retained-frame behavior. No compilation or file work runs in audio callbacks.",
+            "procedure": "Run style_shader tests, including actual combined workstation module and Vulkan SPIR-V. Compile generated native frontends and compare custom shader captures on all desktop backends. Verify time-dependent output, stationary static reuse, and clean release after failure. iOS device rendering remains independently unverified."
+          }
+        ]
+      },
+      {
+        "id": "document_track_gems_and_tape",
+        "retention": "experimental",
+        "description": "Present actual ordered document lanes as authored gem track handles, SSLE labels and magnetic tape clips. Preserve source mesh/material geometry, perforation pitch and clip elapsed-time extents; keep track editing in the application System.",
+        "selection": "WorkstationPanelSystem.View timeline object; null hides arrangement when the piano roll or spatial mix owns the open field. Up to32 fully visible rows and128 projected tapes, with overflow filtered consistently by the controller. The physical ruler marks elapsed time, and the playhead follows the supplied native transport time. Every lane has one unlabelled vertical handle. The former title/M/S/gain button layout is explicitly retired by the author; mute/solo belong to Track IO page one and gain to the bottom panel or enabled track faders.",
+        "implements": [
+          "Load",
+          "View",
+          "Release"
+        ],
+        "sources": [
+          "Workstation/TimelineScene.rs",
+          "Render/WorkstationRetainedContent.rs",
+          "Render/WorkstationPrerender.rs",
+          "Workstation/TimelineBarKernel.glsl",
+          "Workstation/Arrangement.rs",
+          "Workstation/TimelineKernel.glsl",
+          "Workstation/TimelineEngravingKernel.glsl",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Render/Workstation.rs",
+          "BuildSupport/Blender/export_timeline.py",
+          "BuildSupport/Workstation/validate_arrangement.py",
+          "Procedures/Shaders/workstation.shared.glsl",
+          "Procedures/Shaders/generate_workstation.py",
+          "Art/AudioWorkstation/Timeline/runtime.json",
+          "Workstation/ARRANGEMENT.txt"
+        ],
+        "checks": [
+          {
+            "id": "authored_tape_and_gem_bounds",
+            "kind": "behavior",
+            "expectation": "Tape geometry stays uniformly scaled and tiled/cropped to duration, retaining original perforation phase when panning. No example waveform is presented as source data. Handles reuse the ruler optical cut and existing gem material, with no name or mix-control engraving. Document overlap order matches picking; selection does not lift an older tape above a later clip. Invalid packets cannot partially mutate presentation rows.",
+            "procedure": "Run timeline_scene tests for geometry packets, source hashes, projection, scrolling, CC controls, tape phase and overlapping selection height. Compile all generated shader frontends and inspect a native arrangement capture separately."
+          },
+          {
+            "id": "live_timeline_navigation",
+            "kind": "behavior",
+            "expectation": "Pan and zoom update tape positions, track handles, ruler ticks and waveform windows in the current presented frame throughout the gesture. Retained rendering must not defer changed timeline content until pointer release or an idle frame. Playhead-only motion retains its independent live compositor path.",
+            "procedure": "Run retained content, zoom-bar and timeline scene regressions. In the native WebGPU workstation drag the zoom bar horizontally and vertically with clips present, including while panels move; check continuous alignment and responsiveness. Native gesture appearance and frame rate require separate observation."
+          },
+          {
+            "id": "native_arrangement_appearance",
+            "kind": "behavior",
+            "expectation": "The actual scene visibly contains unlabelled 13 px vertical gem handles spanning each lane, with a 12 px lane inset and no left-side track name, mute, solo or gain controls, the authored tape silhouettes and a physical elapsed-time ruler. Switching editor views clears those instances; phone aspect ratios and panel movement retain aligned hit targets.",
+            "procedure": "Run --check-arrangement BACKEND for each backend being verified. Review saved captures visually, then exercise browser creation, handle reorder, clip movement and editor transitions. A structural inspector, test pass or successful process does not establish appearance or audio."
+          }
+        ]
+      },
+      {
+        "id": "complete_gem_image_composition",
+        "description": "Compose completed native-format output for every standalone macOS WebGPU gem shader family, including the original fallback renderer, without changing optical shading or samples.",
+        "retention": "supported",
+        "selection": "Explicit WORMWOOD_WORKSTATION_REFERENCE_OPTICS=1 research alternative only. Superseded for production by offline_component_artwork; complete-packet optical freshness is not a production requirement.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "Render/webgpu.rs",
+          "Render/WorkstationFinalRetention.rs",
+          "Render/WorkstationPlayheadDamage.rs",
+          "Render/WorkstationChangedUploads.rs",
+          "Render/WorkstationPrerender.rs",
+          "Render/WorkstationPrerenderAtlas.rs",
+          "Render/WorkstationRetainedContent.rs",
+          "Workstation/RenderDefaults.rs"
+        ],
+        "checks": [
+          {
+            "id": "completed_original_pixels",
+            "kind": "behavior",
+            "expectation": "Render changed output through the existing optical pipelines into the same native color format, then present by unfiltered texel copy. Reuse only completed images with bit-identical complete packets, geometry, clear color, selected programs, resources and auxiliary state. No pose quantization, quality reduction, excluded live fields or synthetic replacement artwork. External texture writes, failed submissions and resize invalidate or replace the image. Existing content invalidation and immediate refresh behavior remain enforced. Changed-block uploads reconstruct exact packed GPU data; atlas capacity reuse preserves logical capture rectangles and both samples. In-game overlays and other native backends retain their existing paths.",
+            "procedure": "Run complete-composition invalidation, packed-upload reconstruction, retained-content and atlas-reservation checks. Compare native current-input reference images pixel by pixel in ordinary panels, controls, populated arrangement, spheres, piano/bubbles and resize; run separate before/after DAW-only motion and settled benchmarks without validation readbacks. Record unsupported scenarios and remaining refresh costs explicitly."
+          }
+        ]
+      },
+      {
+        "id": "component_image_motion",
+        "description": "Transform original cached gem panel and independent control images during DAW motion, refreshing original optical output when settled.",
+        "retention": "supported",
+        "selection": "Explicit WORMWOOD_WORKSTATION_REFERENCE_OPTICS=1 research alternative only. Superseded for production by offline_component_artwork; optical freshness is not a production requirement.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "Render/WorkstationFurniture.rs",
+          "Render/WorkstationFurniture.wgsl",
+          "Render/WorkstationPrerender.rs",
+          "Render/WorkstationPrerender.wgsl",
+          "Render/WorkstationIncrementalBake.rs",
+          "Render/WorkstationRetainedContent.rs",
+          "Workstation/RenderDefaults.rs"
+        ],
+        "checks": [
+          {
+            "id": "independent_control_capture_and_settle",
+            "kind": "behavior",
+            "expectation": "Keep each control captured pose distinct from the panel transform so resizing panels does not stretch controls. Preserve original material samples; compose ownership-tested pixels with transformed depth over a captured bare panel. Refresh changed content groups and migrate both AA samples when atlas packing changes. Refresh body, owner and RGB together on settling. Motion lighting is carried by cached images, as authorized; no fresh-trace identity is claimed during motion. Content refresh masks include panel controls and the stationary timeline layer with Panel detail enabled; timeline movement must not synchronously recapture unchanged gem panel groups. Malformed or unsupported content falls back to a complete capture.",
+            "procedure": "Run furniture pose/identity and generated shader validation, retained-content invalidation and atlas checks. Review moving control proportions, compare final settled images byte for byte to the full-render reference, and run matched readback-free motion benchmarks. Report remaining content refresh costs and unsupported layouts."
+          }
+        ]
+      },
+      {
+        "id": "offline_component_artwork",
+        "description": "Compose independently baked disk artwork without runtime gem lighting; author explicitly accepts fixed surrounding reflections and refraction.",
+        "retention": "supported",
+        "selection": "Normal macOS WebGPU DAW, including the in-game workstation. Explicit reference optics is a research alternative.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "Render/WorkstationBaked.rs",
+          "Render/WorkstationBaked.wgsl",
+          "Render/webgpu.rs",
+          "BuildSupport/Workstation/bake_daw_art.py",
+          "BuildSupport/macOS/build_app.py",
+          "Art/AudioWorkstation/Baked/manifest.json"
+        ],
+        "checks": [
+          {
+            "id": "no_live_optics",
+            "kind": "behavior",
+            "expectation": "Normal DAW entries cannot reach optical lighting, reflection/refraction or shadow calculation. Panel motion, buttons, faders, text, meter, clip and zoom edits reuse disk artwork and perform zero runtime optical bakes/resolves, including after settling. Artwork geometry variants remain independent; missing disk assets never silently enable optical fallback. Track I/O mute uses the shared ivory casing palette while latched on and its original red mini gem while off, selecting immutable baked artwork.",
+            "procedure": "Validate the generated shader and its transitive entry call graph, validate the packaged artwork bounds, run native motion/content/settling and populated clip/zoom/meter checks with zero optical bakes and resolves, review appearance, and measure native timing separately from image readback."
+          },
+          {
+            "id": "readable_composited_engraving",
+            "kind": "behavior",
+            "expectation": "Offline transport button art retains rewind/stop/record/play engraving at the isolated object pixel scale. Live text uses one front density coverage layer and never superimposes shifted interior layers as screen-space copies. Compact/right panel labels retain their small font size, spacing and fracture texture, with bright ivory ink, stronger coverage and a fractional-pixel stroke expansion for readability. No live optical lighting is restored.",
+            "procedure": "Regenerate offline artwork; review all four transport symbols and browser/track labels in native embedded-game captures at multiple panel sizes. Run transitive no-live-optics validation and real in-game motion benchmark. Keep authoring camera footprint tied to the image bounds rather than the original whole-DAW camera."
+          },
+          {
+            "id": "transparent_panel_cut_corners",
+            "kind": "behavior",
+            "expectation": "Projected facet misses have zero RGBA in color and auxiliary coverage; all four panel cut corners reveal the game/background while covered interiors remain opaque. A positive panel ID with negative hit distance is a miss, not artwork coverage.",
+            "procedure": "Run panel_cut_corners_are_transparent_and_centers_covered against baked disk assets. Observe its failure on prior assets, rebuild offline, then review native in-game expanded and smaller panel silhouettes without runtime optics."
+          }
+        ]
+      },
+      {
+        "id": "resident_panel_assets",
+        "description": "Suspend invalidates observer-dependent rows while retaining loaded panel kits. Only final Release unloads assets.",
+        "retention": "supported",
+        "selection": "Resident in-game DAW focus switches.",
+        "implements": [
+          "Load",
+          "Suspend",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "resident_panel_lifetime",
+            "kind": "behavior",
+            "expectation": "Idempotent preload loads assets once. Focus transitions never reset the panel kit; final close releases it.",
+            "procedure": "Run computer_focus_preserves_game_texture_document_and_workstation_layout and inspect repeated native focus traces for no asset reload or workstation Entity replacement."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_2d_theme_alternative",
+        "description": "Offer opt-in Cardinal 2D preset presentation while retaining 3D gem ruby as the main/default theme. Reuse Wormwood control geometry and document/audio behavior; theme loading and explicit offline crystal artwork are separate from audio callbacks.",
+        "retention": "supported",
+        "selection": "Settings Workspace Theme, --theme or WORMWOOD_THEME on the desktop WebGPU compositor. Without an explicit or saved choice, 3D gem ruby remains selected.",
+        "implements": [
+          "Load",
+          "View",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/CardinalTheme.rs",
+          "Workstation/CardinalThemes.txt",
+          "Workstation/Settings.rs",
+          "Render/CardinalTheme.wgsl",
+          "Render/CardinalThemeAtlas.rs",
+          "Render/WorkstationBaked.rs",
+          "Render/WorkstationBaked.wgsl",
+          "Render/BubbleArt.rs",
+          "Platform/Desktop.rs",
+          "BuildSupport/Workstation/bake_cardinal_themes.py"
+        ],
+        "checks": [
+          {
+            "id": "cardinal_theme_data_and_renderer",
+            "kind": "behavior",
+            "expectation": "Bundled Cardinal JSON data remains unchanged. Validate RGBA, gradients, effect ranges and palette shapes; load only matching offline crystal artwork. The 2D entry must never call optical lighting. Changing theme preserves document, playback and input ownership. Main/default theme remains 3D gem ruby.",
+            "procedure": "Run cardinal tests and interactive_sprite_entries_cannot_reach_optical_lighting; run Settings tests. In a native WebGPU DAW choose Default, RubyDaw and 3D gem ruby through Settings Apply/Cancel while audio plays; inspect unchanged document, meter response, piano/drum navigation and retained embedded world. Review glyphs, original/jelly/crystal surfaces, controls and clip waveforms. Measure image memory and frame cadence separately. Unsupported legacy editor/backdrop effects remain listed in CardinalThemes.txt."
+          }
+        ]
+      }
+    ]
+  }
+}

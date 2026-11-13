@@ -1,0 +1,134 @@
+{
+  "system": "InverseKinematicsSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": []
+    },
+    "Solve": {
+      "calls": [
+        "PlanetSurfaceSystem.Height"
+      ]
+    },
+    "Active": {
+      "calls": []
+    },
+    "Release": {
+      "calls": []
+    },
+    "SolveChains": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "embodied_locomotion",
+        "description": "Solve Cardinal\u2019s smoothed player control skeleton with input-driven alternating steps, footstep-synchronized arms, independent head/body yaw, and a radial surface adaptation.",
+        "retention": "supported",
+        "selection": "Used by the player body while the navigation Audicle is Go; continues bounded settling after input stops. Flight retains a neutral suspended leg pose.",
+        "implements": [
+          "Configure",
+          "Solve",
+          "Active",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/InverseKinematicsSystem.rs",
+          "BaseSystem/LayerTwo/RigMath.rs",
+          "Procedures/player_body.json"
+        ],
+        "checks": [
+          {
+            "id": "embodied_locomotion_routes",
+            "kind": "declared_calls",
+            "expectation": "The retained behavior has explicit declared routes for its dependencies.",
+            "targets": [
+              "PlanetSurfaceSystem.Height"
+            ]
+          },
+          {
+            "id": "embodied_locomotion_review",
+            "kind": "behavior",
+            "expectation": "Grounded feet plant and swing in alternation; the displayed skeleton preserves bind lengths. Forward input aligns body yaw to the gaze; strafing and backward input retain the head/body turn limit.",
+            "procedure": "Review the FABRIK reach limit and pole solution, radial basis and double precision foot anchors. Manually check start/stop, strafe/backward, turns, excavation under a foot, flight, jumping, reset and pause. Verify settling finishes and release removes IK state. Compare the control skeleton, square-root stride/lift curves, cached FABRIK seeds, response constants, commanded-direction fallback and step-phase arm swing against Cardinal. The previous speed-only oscillator and direct bind-skeleton solver are replaced. Control-plane foot_drop is only a gait seed; final rendered sole support is the presentation retarget responsibility. Solve reports each foot swing lift separately so grade fitting cannot erase the gait arc."
+          }
+        ]
+      },
+      {
+        "id": "physical_tool_grip",
+        "description": "Blend the two player hands onto world-space grips supplied by the physical tool simulation, preserving anatomical reach and reporting achieved hand positions without changing tool collision or pose. While a grip blend remains active, reproject the smoothed arm chain from its actual shoulder onto the already blended grip target with FABRIK, retaining the smoothed elbow seed and pole and caching the final length-preserving solution. Optional tool_posture.lowering_metres accepts a bounded 0 to 0.25 metre low working stance. Leg roots, displayed pelvis, shoulder reach and camera offset share that lowering, with existing leg lengths and foot support retained. A locked equipped grip bypasses pickup blending and resolves onto the accepted physical handle immediately. Unlocked legacy grips retain their blend behavior. Physical handle anchors include a small palm-to-wrist offset; accepted shaft-relative finger directions orient the terminal hand skin.",
+        "retention": "experimental",
+        "selection": "A tool_grip object supplied to Advance/Solve activates two-hand grip; an absent object, null, or active false blends back to locomotion arms.",
+        "implements": [
+          "Configure",
+          "Solve",
+          "Active",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/InverseKinematicsSystem.rs",
+          "Procedures/player_body.json",
+          "BaseSystem/LayerFour/RigRetarget.rs"
+        ],
+        "checks": [
+          {
+            "id": "physical_tool_grip_review",
+            "kind": "behavior",
+            "expectation": "Visible wrists approach the physical shovel grip positions with bounded arm reach. The tool remains simulation-owned. Releasing a grip restores the walking arm pose smoothly, and feedback identifies targets beyond the arm reach.",
+            "procedure": "Manually equip the shovel and inspect both grips through approach, shovel insertion, lifting and dumping; compare reported world wrists with the visible mesh and physical grip points. Place a target beyond maximum reach and near the shoulder; confirm finite output, unchanged tool pose, and appropriate reach/error feedback. Release while stationary, moving, turning and resetting; confirm smooth blend and eventual settling. This behavior is unverified until reviewed in the running game. Check grip error throughout pickup/carry and contact motion after smoothing, along with actual shoulder anchoring, final arm-cache consistency, and fixed bone lengths; retain the existing pickup/release blend and gait rates."
+          }
+        ]
+      },
+      {
+        "id": "reachable_tool_work_posture",
+        "description": "Use a bounded waist bend selected from the manually requested spade pose. The pelvis and feet remain fixed by the existing gait/ground solve; torso, head and camera move coherently, while both hands retain actual bind lengths and accepted-pose grip targets. No crouch mode, timed tool stroke or terrain cut is introduced.",
+        "retention": "supported",
+        "selection": "The player holds/manipulates the spade; posture recovers continuously after release and remains inactive during ordinary untooled movement.",
+        "implements": [
+          "Configure",
+          "Solve"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "BaseSystem/LayerTwo/InverseKinematicsSystem.rs",
+          "BaseSystem/LayerFour/RigRetarget.rs",
+          "BaseSystem/LayerFour/PlayerRigSystem.rs",
+          "Procedures/player_body.json"
+        ],
+        "checks": [
+          {
+            "id": "reachable_manual_penetration_and_lever",
+            "kind": "behavior",
+            "expectation": "Manual lowering, toward-body levering and lifting reach the physical soil while the visible torso bends and both hands remain reachable without arm stretching. Camera follows the same head/torso shift, tool rays use displayed camera position, and release recovers upright posture without a hidden stroke or cut.",
+            "procedure": "Run the production player-controls soil/root/lift/release fixture with actual IK/retarget feedback and check fixed bone lengths, hand errors, measured posture/camera offsets, and accepted tool pose on Mac and phone. Also check ordinary standing/gait, reset, pause/resume and no-HUD touch controls."
+          }
+        ]
+      },
+      {
+        "id": "independent_limb_batches",
+        "description": "Solve bounded caller-owned local two-bone limb batches with the existing FABRIK/pole implementation. Preserve supplied bone lengths, clamp unreachable targets, report endpoint errors and do not read or mutate the player control skeleton or cache.",
+        "retention": "supported",
+        "selection": "Explicit SolveChains calls; deer owns its four limb seeds, hoof anchors and support targets.",
+        "implements": [
+          "SolveChains"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/InverseKinematicsSystem.rs",
+          "BaseSystem/LayerTwo/IKChains.rs",
+          "BaseSystem/LayerFive/DeerPose.rs"
+        ],
+        "checks": [
+          {
+            "id": "limb_batch_lengths_and_isolation",
+            "kind": "behavior",
+            "expectation": "Reachable targets are attained within tolerance, unreachable targets stay finite with fixed bone lengths, malformed batches are rejected, and player IK state is unchanged.",
+            "procedure": "Run ik_chain_batch_preserves_lengths_and_reports_unreachable_targets and registered deer IK/state-isolation checks, including collinear/folded and unreachable targets."
+          }
+        ]
+      }
+    ]
+  }
+}

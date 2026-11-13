@@ -1,0 +1,51 @@
+{
+  "system": "PhoneRenderSystem",
+  "layer": 4,
+  "functions": {
+    "Load": {
+      "calls": []
+    },
+    "Frame": {
+      "calls": [
+        "EntitySystem.Get"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "realistic_phone_presentation",
+        "description": "Render the actual Blender handset, font triangles and interactive screen in one shared depth scene; reproject the accepted player skin for the front camera. Apply an aim-centered phone beam to ordinary RGB scene geometry with bounded adaptive samples and coarse visibility.",
+        "retention": "experimental",
+        "selection": "Physical placed or eye-relative held handset. Metallic/glass PBR is authored in Blender/glTF; the current game pass uses colored geometry and facet lighting.",
+        "implements": [
+          "Load",
+          "Frame"
+        ],
+        "sources": [
+          "Art/Phone/make_phone.py",
+          "BaseSystem/LayerFour/PhoneRenderSystem.rs",
+          "Phone/Flashlight.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Render/FlashlightCheck.rs"
+        ],
+        "checks": [
+          {
+            "id": "phone_model_and_screen",
+            "kind": "behavior",
+            "expectation": "Body and exported game triangles share dimensions; separate dynamic screen and vector text remain above glass. Hit coordinates match projection at portrait/landscape aspects. Camera near/frustum clipping confines the real skin and preserves perspective UVs/depth.",
+            "procedure": "Generate and inspect the saved Blender master and exports; run phone render/model tests and compare native home/light/camera/meter/weather captures."
+          },
+          {
+            "id": "phone_light",
+            "kind": "behavior",
+            "expectation": "Equipped flashlight uses the actual camera aiming ray, intensity 2, 28m range and 22/42degree inner/outer cone. Ordinary RGB and packed-soil triangles receive bounded longest-edge refinement toward 0.5m edges (14 levels, at most16384 extra triangles per scene); illuminated interiors must not require an original lit corner. Each vertex receives its own visibility decision from the bounded17x17 trace grid. Off packets and shader coordinate payloads remain exact. Baked reflectance and shadow edges remain approximate; textured theatre/rock, separate vegetation/water/player shaders are excluded.",
+            "procedure": "Run flashlight regressions for aiming, cone/range, large-face interiors, partial/full shadows, packed-soil UVs, special-material preservation and global refinement/trace budgets. Run --check-flashlight with an explicit native backend and review off/level/down/shadow captures plus CPU cost. Inspect native night/indoor movement separately before claiming live scene performance."
+          }
+        ]
+      }
+    ]
+  }
+}

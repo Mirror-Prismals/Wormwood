@@ -1,0 +1,79 @@
+{
+  "system": "SoftBodyWaterSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": []
+    },
+    "Step": {
+      "calls": [
+        "TerrainSurfaceHydrologySystem.Revision",
+        "TerrainSurfaceHydrologySystem.Snapshot",
+        "WaterSlideSystem.CollisionMesh"
+      ]
+    },
+    "Gates": {
+      "calls": [
+        "TerrainSurfaceHydrologySystem.Revision",
+        "TerrainSurfaceHydrologySystem.Snapshot",
+        "WaterSlideSystem.CollisionMesh"
+      ]
+    },
+    "Sample": {
+      "calls": []
+    },
+    "Disturb": {
+      "calls": []
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Close": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "conserved_continuous_parcels",
+        "description": "Retain parcel gravity, drag, neighbour cohesion/viscosity, three separation passes, speed bounds, interaction samples and impact records. Continuous source volumes and supported rest/wake replace world-block ownership, lattice constraints and settled-block conversion. Swept contact uses immutable accepted terrain/soil and shared trough triangles without acquiring the soil-owned OGC context.",
+        "retention": "experimental",
+        "selection": "Invoked by the tracked WaterSystem application and its presentation/query consumers.",
+        "implements": [
+          "Configure",
+          "Step",
+          "Gates",
+          "Sample",
+          "Disturb",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/SoftBodyWaterSystem.rs",
+          "Water/runtime.rs",
+          "Water/soft_body.rs"
+        ],
+        "checks": [
+          {
+            "id": "conserved_continuous_parcels_routes",
+            "kind": "declared_calls",
+            "expectation": "The retained operation declares each cross-System data route.",
+            "targets": [
+              "TerrainSurfaceHydrologySystem.Revision",
+              "TerrainSurfaceHydrologySystem.Snapshot",
+              "WaterSlideSystem.CollisionMesh"
+            ]
+          },
+          {
+            "id": "conserved_continuous_parcels_behavior",
+            "kind": "behavior",
+            "expectation": "Retain parcel gravity, drag, neighbour cohesion/viscosity, three separation passes, speed bounds, interaction samples and impact records. Continuous source volumes and supported rest/wake replace world-block ownership, lattice constraints and settled-block conversion. Swept contact uses immutable accepted terrain/soil and shared trough triangles without acquiring the soil-owned OGC context.",
+            "procedure": "Check mass/identity ledger across emit/rest/wake/recycle/disable; untouched supported water rests, contact revision/disturbance wakes it. Check thin/sloped/overhanging triangle contact, trough bottom/walls, no tunnelling, no crossing unknown coverage and no block conversion. Check bounded timestep/substeps and capacity. Preserve the force coefficients; measure numerical and performance behavior rather than claim native OGC ownership."
+          }
+        ]
+      }
+    ]
+  }
+}

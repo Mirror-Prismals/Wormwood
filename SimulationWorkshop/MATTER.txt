@@ -1,0 +1,384 @@
+MATERIAL WORKSHOP — OCTOBER 29
+
+Selection
+The iOS title screen offers ten automatic demonstrations. Desktop uses
+--workshop followed by the same case ID and an explicit graphics backend.
+
+matter_dirt: curved pointed spade, cohesive loam, compaction and separation.
+matter_grass: established turf, rooted mat, shallow spade cut, peel and lift.
+matter_seedlings: retained sparse germination/root/shoot experiment (desktop).
+matter_sand: fine frictional sand continuum, open bucket, lift and pour.
+matter_pebbles: retained former sand model with discrete centimetre grains.
+matter_wood: game-generated broadleaf trunk section, grain interfaces and axe.
+matter_wood_chop: same trunk, axe stroke directed across the grain.
+matter_stone: angular rock, light tap then stronger pick strikes.
+matter_rubble: separate loose stones and the curved shovel trajectory.
+matter_stone_blunt: same rock and drive-force limits, broad bucket contact.
+matter_layers: coupled turf, soil and rock; shovel excavation and exposed-rock pick.
+
+Current source changes following build 2493.6.13
+
+Fine sand uses sand.rs, an original bounded explicit MPM adaptation informed by
+Klar et al. (2016). Quadratic B-spline transfers carry mass/momentum to a sparse
+52 mm computational grid. APIC stores affine velocity. A symmetric elastic
+strain tensor provides Hencky stress and a Drucker-Prager return map. Compression
+supports shear up to the frictional yield cone; loose expansion has no tension.
+Plastic dilation is recorded so loose material can close before elastic loading.
+Two explicit internal predictions fit each 1/240-second contact substep; the
+accepted OGC motion, rather than the unrestricted prediction, updates strain
+and affine velocity. This particle-boundary coupling is our reduced adaptation,
+not a reproduction of the paper's implicit grid-boundary solver. Resolution,
+constitutive constants and coupling still need observational calibration.
+Particles represent parcels of many fine grains. The display is a continuous
+bulk skin, not a pile of visible computational octahedra. The original discrete
+model remains unchanged under matter_pebbles. No physical grain is subdivided
+or erased; this patch does not implement an entire beach or grain-level detail.
+
+The new axe has a finite sharpened edge, broad splitting cheeks and a haft along
+the head's eye. Its edge stays aimed into the specimen during the downward arc,
+then holds and rocks the wedge through bounded drive forces. Along-grain aim
+uses a real existing end-grain interface; it does not create or break that seam.
+Crack-front neighbours are recorded from shared material-space edges, preserving
+the path when open faces rotate. Work follows the strongest admissible front,
+paying each interface's remaining energy before progressing. Growth-ring radial
+direction modulates cleavage resistance. Transverse edge cuts retain the same
+stronger fibre law. Crack visibility uses thin face ribbons rather than rods.
+Full log separation is an intended outcome, not a result verified in this pass.
+
+The Compare forces selector appends _compare to a single-material case. The
+three 17-second trials each start with an identical fresh specimen and initial
+tool pose. Actuator limits are 45, 240 and 800 N; motion targets, mass and material
+parameters are identical across trials. Results retain measured force peaks,
+head kinetic energy, contact work, damage, peak lifted material and bucket
+containment. The total simulated clock remains monotonic across resets.
+These limits control the motor, not the instantaneous impact force. No expected
+fracture count is baked into a trial. Reset restarts the entire comparison.
+
+Layered excavation uses layered.rs and shared substep helpers in coupling.rs.
+An 85 mm rooted mat sits above roughly 250 mm of cohesive soil and a 146 mm rock
+bed. The lower rock cells remain anchored. Root constraints carry equal and
+opposite reactions between the mat and upper soil, with slack for settling and
+irreversible tensile rupture. Each iteration solves all three materials against
+one OGC contact response; tool contact work is attributed to the nearest physical
+boundary rather than spent repeatedly in multiple materials. All mass persists.
+The spade cuts/lifts turf, deposits to the side, and repeats soil scoops. Only a
+measured clear patch permits the shovel/rock resistance and pick stages. A tool
+exchange happens outside the specimen. No stage erases cover or resets material.
+Five unsuccessful soil passes report remaining cover and retain the scene.
+The section uses fixed soil resolution and prepared rock interfaces; it is not
+yet installed in the planetary terrain. Its turf has two displayed blades per
+crown. Mesh reconstruction reserves a per-material budget within 8192 triangles.
+The iOS bridge now uses the engine's case registry, including the previously
+omitted cross-grain and blunt-contact cases. All explicit graphics paths remain.
+
+This revision has not been uploaded or run for visual/performance verification.
+The macOS release build, aarch64-apple-ios cargo check and UIKit Objective-C
+syntax check pass. Intent inspection reports zero structural mismatches;
+behavior checks remain pending. Logs are under
+output/checks/materials-sand-force-layers-20261029/. These checks establish
+compilation and declared wiring only; the user performs the playtest.
+
+These are automatic force-driven actions. Stage captions report the commanded
+stroke; they do not certify that material was successfully excavated. Camera,
+pause, step, reset and exit are observation controls. No manual digging is needed.
+
+Implementation
+Physics/matter/mod.rs owns this independent PhysicsSystem material path.
+Turf is a dedicated path in turf.rs, not Kind::Dirt or its implicit skin. It
+contains 96 irregular triangular-prism elements with elastic edge/shear and
+signed volume constraints. Boundary tissue represents its attachment to the
+surrounding lawn; interior lower nodes can lift. Separate cohesive soil seams
+and tensile-only root bundles join adjacent elements. Four root bundles cross
+each seam at different depths. Matrix cracks can open while surviving roots
+still carry load. Root overload and sharp-edge contact work sever the bundles
+permanently; broken ends are carried in their own element's coordinates.
+The mass-bearing root/soil volume and its exposed faces are used by OGC and
+rendering. Contact-neighbour exclusions allow coincident newborn crack faces
+to open before OGC takes over; unilateral support prevents normal overlap
+while opening. Conservative envelope checks cull turf self queries only when
+elements cannot approach within the bounded next iteration's displacement.
+Folded or nearby detached tissue still enables OGC self contact.
+This is a reduced root-reinforced tissue model, not a dirt
+particle pile. It uses a fixed material resolution and uncalibrated strengths.
+Established foliage has 384 crowns, each with four curved tapered blades.
+Those blades are attached geometry, without independent contact or biological
+growth. Crown orientation follows the deforming mat. The old germination
+demonstration remains explicitly selectable as matter_seedlings. Its growth
+obligations are retained rather than asserted for the new established turf.
+
+Wood, stone and rubble now use solid.rs and solid_geometry.rs. Closed game
+trunk/rock volumes are partitioned into irregular weighted Voronoi cells with
+matching shared faces. Every cell has integrated mass and inertia and accepts
+only a rigid transformation, conserving piece shape and volume after fracture.
+Wood's cross-section sites are aligned between axial stations to form continuous
+fibre bundles. Independent 3D seed jitter was retired for wood because it made
+the weak interfaces interlock like an isotropic rock tessellation.
+The wood source is Vegetation::Tree and Geometry::build_seasonal, capped at the
+ends of a 0.62 m trunk section; it is not an entire tree or a brown soil mound.
+Its exterior uses bark shading and its interior uses material-space wood rings.
+
+Rock's compliant interfaces carry tensile/shear load and accumulate fracture work.
+Wood now uses stiff continuous fibre bundles with volume-integrated mass and
+inertia, including parallel-axis contributions. The cross-fibre matrix uses
+brittle cohesive interfaces, with critical opening 2*toughness/strength and
+no damage-dependent stiffness reduction. Accepted excessive opening in a
+loaded or already damaged interface releases
+the remaining interface energy rather than producing a visible elastic tether.
+A broken interface cannot apply a restoring force. The old damage-softened
+wood network is explicitly retired. A whole-connected-component rigidity trial
+was also rejected: it locked partially cracked wood until every connection
+through an entire specimen had failed. Only continuous fibres are now grouped.
+The detached log rests on OGC's table instead of pinning every basal column.
+Longitudinal crack fronts can receive a share of local tool work
+from an existing aligned crack; the work is divided, not copied along it.
+The physical axe plane biases the fracture direction. Cross-grain interfaces require the cutting edge near the interface and the
+higher cross-grain strength/toughness. An additional sideways stroke uses the
+same specimen/law for the chop comparison. This rigid-fibre approximation
+does not model intact wood's small elastic bending or arbitrary cut planes.
+The transverse stroke aims at a prepared axial section and holds its cutting
+plane during the strike. Reusing the splitting stroke's pitch arc raised the
+edge above that section at impact and spent its energy peeling fibres instead.
+Wood interfaces are weaker and less tough along fibres; rock has brittle,
+isotropic interfaces. In rock, partial damage reduces opening stiffness and residual
+strength while retaining compressive support. Local compressive tool contact supplies splitting work
+only above a strength threshold. Pressure uses force over projected incident
+triangle area clipped to the contact band around the material face. Counting
+the whole wedge face incorrectly diluted a cutting edge's pressure. Work uses
+the greater of force-distance work and the contact's share of lost incoming
+head kinetic energy; a stopped strike can load a crack even with little travel.
+Only already-present momentum counts. An evaluated free-prediction energy
+alternative was retired because a stationary blocked actuator could otherwise
+accumulate fictitious impact energy on every substep.
+Kinetic energy uses lumped head mass, not a calibrated impact/contact-patch law.
+These are mesh-dependent estimates, not a continuum
+stress solution. Fracture exposes existing faces; it does not spawn chips or
+delete matter. The same law handles the pick and the broad bucket comparison.
+Local work is weighted by distance, fracture resistance and existing damage,
+so it concentrates in weakened interfaces instead of becoming uniform fatigue.
+Broken interfaces reaching the exterior draw narrow crack seams even when their
+opening is subpixel. Seams depict actual broken connectivity, not timed decals.
+Automatic strikes have 45, 240 and 480 N drive limits. goal() limits actuator
+acceleration; contact projection no longer clamps accumulated momentum as
+though it were additional hand force. These are uncalibrated material presets.
+
+OGC queries the actual exposed solid faces, tool shell and table. Intact
+component self pairs are excluded. Newly separated coincident faces require
+a 3 mm opening before their exclusion retires and OGC contact takes over.
+Before that opening, matching crack faces retain unilateral normal support:
+breaking adhesion must not allow one solid cell to compress into another.
+Partial cracks within an otherwise connected component have this local support,
+but do not have general OGC self-collision after sliding or reopening.
+These are explicit limitations: there is no crack-tip adaptive refinement,
+continuous collision detection, calibrated FEM, or molecular simulation.
+
+Dirt retains material.rs compliant bonds, tensile damage and compressive
+plasticity, with overlapping shape-preserving clusters that follow plastic
+rest lengths. Broken bonds leave those clusters. Pebbles use discrete fixed-size
+grains, normal contact multipliers and static/dynamic Coulomb friction. The
+inertial target stays fixed throughout all coupled iterations for particles,
+solid cells and shoots; contact response is not reapplied as free acceleration.
+
+For dirt/sand, OGC supplies tool/material and table force, Hessian and conservative
+bounds. It queries closed octahedral material proxies plus shoot ribbons, and
+the actual closed tool heads. Material self pressure/friction is the internal
+particle solve. Particle motion reduces contact responses to a shared
+translation; tool motion uses the existing finite-mass rigid OGC solve.
+The implicit display skin is distinct from those contact proxies. Fine local
+samples reduce that approximation near a tool; surface matching is not exact.
+
+adapt.rs splits dirt samples locally before the approaching tool reaches
+them. Each sample becomes eight smaller samples with unchanged total mass and
+linear momentum. Existing bond area is partitioned, and strain, plastic rest
+length and damage are carried forward. Child samples add internal structure.
+The active material budget is 1,000 samples, with two refinement levels.
+Refinement starts between 1.45 and 2.25 sample radii from the physical tool.
+Gravity and bulk movement alone do not cause global refinement. This narrows
+the former eager activation region; it does not reduce the maximum local levels.
+
+Settled compact sibling groups may coarsen away from contact only in the
+interior. External surviving connections are combined without recreating
+failed bonds. Mass, linear momentum and stored angular momentum transfer to
+the parent. Damaged interfaces veto merging. Sand has no permanent bond
+network; frictional load-bearing contacts arise from current proximity. This
+is conservative sibling coarsening, not unrestricted adaptive remeshing.
+
+skin.rs reconstructs dirt's sparse implicit skin with marching tetrahedra and
+analytic field normals. The sampling grid exists only during meshing; it is
+not the material representation. Disconnected cohesive groups are evaluated
+separately, so a nearby detached piece does not gain a bond or become part of
+its neighbour. Reconstruction adapts its output spacing to the existing
+visual triangle budget, while retaining the material particles themselves.
+Pebbles use separate octahedral grain surfaces matching their contact proxies;
+wood and stone use persistent polygonal material faces. Fine sand uses the
+continuous display skin described above, with no permanent cohesive bonds.
+
+Tool heads and bucket interior are closed physical meshes. The spade has a
+pointed planform and a concave blade; the axe has a tapered cutting wedge;
+the pick has a curved finite point; the bucket has an open mouth, continuous
+bottom and end walls. Shafts, grips and bucket bail are display geometry.
+Nothing attaches a clod or sand to a tool, and no scoop is spawned or erased.
+
+Growth is a separate state system. Seeds have finite reserves, moisture gates
+biological time and growth, reserves convert into biomass, roots extend into
+specific material samples, and roots/shoots have mechanical constraints.
+Root attachment transfers reaction into soil and can break under load. Each
+plant now has three curved, tapered leaves with separate mechanical chains.
+The seeded population cap is 32. Shoots
+participate in OGC tool contact; buried roots are embedded constraints, not
+colliding objects inside their host soil. Root bindings survive refinement.
+Biological time runs at 12 hours per simulation second. This first growth law
+has no species calibration, full photosynthesis, nutrient transport or life
+cycle; water material dynamics are not part of these seven scenes.
+
+Performance implementation
+The iterative solver uses the registered OGCConnectionSystem.Respond operation
+with borrowed numeric batches. Contract permission, ownership, circuit-breaker,
+finite-value validation and invocation tracing remain enforced. Configure and
+the legacy Project interface remain available. Unused vertex projection and
+JSON array construction/parsing are removed from this response-only path.
+
+BVH nodes exclude disabled self surfaces before descending, and leaves check
+individual primitive bounds. Small groups of non-self-colliding surfaces cache
+enlarged candidate lists. Every vertex must remain within the cache's movement
+envelope; topology/radius changes or excess movement rebuild candidates. Forces,
+Hessians and conservative bounds are always recalculated at current positions.
+Large contact batches use Apple's worker pool with separate response buffers
+and a deterministic reduction. Serial queries remain available for comparison.
+Streaming self-contact also uses those workers: creating fragments no longer
+switches a material scene back to one worker. Cached and streamed contact are
+checked against serial responses in focused native regressions.
+Parallel accumulation can change floating-point trajectories; it does not
+change material strengths, physical substeps or the contact equations.
+
+The material contact sweep streams pairs from grouped spatial bins. It does not
+construct the old quadratic list of mostly distant pairs. It preserves the
+previous pair visitation order. The skin retains its last successful sampling spacing, avoiding repeated
+over-budget reconstructions; sparse lookup and field evaluation reuse grid samples.
+
+A dynamic radius-search alternative was evaluated and retired in this revision:
+it improved the opening but regressed the full 15-second dirt run to 44.6 ms per
+physics frame, versus 37.9 ms with grouped bins. Its extra per-particle searches
+and grid relocation did not justify replacing the faster retained implementation.
+An early convergence exit was also evaluated and removed: essentially every
+substep still required all five iterations, while the checks added overhead.
+
+Retention and evidence
+October 29 evidence is in output/benchmarks/turf-grain-20261029. Native release,
+iOS Rust and UIKit compilation pass. Two focused OGC checks compare cached
+and streamed parallel queries with serial contact, including actual self-contact.
+A WebGPU capture shows established turf inside the mobile mesh budget.
+The first second without tool contact leaves every seam/root intact. After
+13 seconds the turf run reports 38 cut roots, 19 torn roots, three connected
+pieces and one lifted detached element. Mass is unchanged, volume drift is
+below 0.04%, and mean CPU physics is 9.4 ms/frame on this Mac. This is not FPS.
+The longitudinal wood sequence reports 34 grain-interface failures. The final
+transverse stroke reports two cross-grain failures and one grain split. Both
+remain one connected log after three strikes: large detached splinters and
+complete log separation are not claimed. All three bounded sequences finish
+without halted physics. Phone appearance/performance remains a user playtest;
+that turf/stiff-wood revision was uploaded as 2493.6.13 and playtested by the user.
+
+soil_spade_contact and soil_spade_fracture remain separate legacy cases.
+The uploaded square-cell demo was 2492.20.8. It is not the new material solver.
+Build 2492.22.23 contained the first six material workshops. The user then
+requested performance work and explicitly authorized Mac runtime benchmarking.
+The performance revision was uploaded as 2493.0.19; the user's phone observation
+identified fluid-like solids, active sand, sparse grass and ineffective tools.
+The October 28 structural revision was uploaded as 2493.5.14. User phone
+feedback praised the rock fracture but identified rubbery wood and sparse
+sprouts in dirt. The October 29 turf/stiff-wood changes were uploaded as 2493.6.13.
+The old particle/metaball wood, stone and rubble construction is explicitly
+retired from matter_*; original contact/fracture fixtures remain separate.
+The previous generic adaptive sand subdivision is also retired: tool proximity
+must not change a grain's size or release packing energy by itself.
+
+October 28 observations, before turf/stiff-wood (native Mac; not calibration):
+Reports and WebGPU captures are in output/benchmarks/material-structure-20261028.
+After 13 simulated seconds, the pick case has 30 broken interfaces and three
+connected solid pieces. The broad-bucket comparison has no broken interfaces
+and one piece. Both retain total material volume within 0.001% of initialization.
+The wood case has 70 closed cells, 22 broken interfaces and ONE connected piece.
+It now holds its shape and shows actual crack seams, but substantial detached
+wood splintering remains unfinished. Earlier experimental runs that reported a
+separated wood cell are not evidence for the final aligned-fibre configuration.
+The 550-frame bucket check counts five full grain proxies inside its cavity;
+26 lifted samples alone would have overstated the amount actually carried.
+The 480-frame growth check has 14 germinated plants and three leaves per plant.
+Dirt extraction completes its 780-frame run with lifted samples; its implicit
+surface and adaptive particle approximation still require visual refinement.
+These bounded runs check behavior, not comparative throughput; some ran alongside
+compilation or other scenes, so their timing fields are not performance baselines.
+macOS release compilation, iOS Rust checking, UIKit syntax checking and intent
+structural inspection pass. User phone observation remains outstanding.
+Existing gameplay soil alternatives have not been replaced by this workshop.
+Mac evidence is under output/benchmarks/workshop-20261028. Contact regressions
+compare typed/JSON responses and cached parallel queries against fresh serial
+queries, including movement beyond the cache envelope and ownership rejection.
+Clock regressions cover different render rates, overload and simulation-speed
+reporting. Benchmark completion is not a claim of calibrated material behavior.
+
+Previous performance-revision M1 Pro measurements (not structural-revision timings;
+macOS 15.6.1, 8 CPU cores, 16 GB):
+The 120-step dirt opening averaged 191.1 ms per PhysicsSystem.Advance before
+this work and 12.9 ms after. The old report's step_ms_average was actually its
+last step; the baseline mean comes from invocation traces. Refinement locality
+and floating-point accumulation changed, so trajectories are not identical.
+Full headless runs completed without halting: dirt 40.4 ms/step, sand 32.8,
+wood 4.6, stone 9.5 and loose stone 9.4 over 15 simulated seconds; seeded grass
+averaged 27.9 over 22 seconds, including its growth prelude. All used four
+substeps and five coupled iterations. These values are not displayed FPS.
+The identical 299-step dirt workload with 300 presented frames measured
+WebGPU 26.5 FPS / 44.1% simulation speed, Vulkan 23.6 / 39.2%, and OpenGL
+25.4 / 42.1%. Dense material is still below real time. There is no evidence
+from these Mac measurements that changing graphics API alone fixes the lag.
+summary.json records exact timings and source hashes; final/ holds these runs.
+retired-radius-search/ contains the slower rejected alternative's measurements.
+
+Research informing the design (original implementation, not imported code)
+Drucker-Prager Elastoplasticity for Sand Animation, Klar et al., 2016:
+https://math.ucdavis.edu/~jteran/papers/KGPSJT16.pdf
+Offset Geometric Contact, Chen et al., SIGGRAPH 2025:
+https://ankachan.github.io/Projects/OGC/
+XPBD, Macklin, Mueller and Chentanez, 2016:
+https://mmacklin.com/xpbd.pdf
+Position-based shape matching, Mueller et al., SIGGRAPH 2005:
+https://matthias-research.github.io/pages/publications/MeshlessDeformations_SIG05.pdf
+Unified Particle Physics, Macklin et al., SIGGRAPH 2014 (contact friction):
+https://mmacklin.com/uppfrta_preprint.pdf
+Adaptively Sampled Particle Fluids, Adams et al., SIGGRAPH 2007:
+https://graphics.cs.kuleuven.be/publications/ASPF/index.html
+Interactive Wood Fracture, Haedrich et al., SCA 2020:
+https://wp.faculty.wmi.amu.edu.pl/papers/Hadrich.etal-2020-WoodFracture.pdf
+Adaptive Sampling for Interactive Simulation of Granular Material, 2025:
+https://onlinelibrary.wiley.com/doi/full/10.1002/cav.70062
+
+2026-10-29 actual-game mining performance implementation
+The default surface activation no longer makes the entire geological column
+live on a single shovel stroke. A 0.45 m upper section holds the root mat and
+local soil; deeper unstrained material remains implicit. This retires the
+whole-column activation alternative in gameplay, not the workshop layered
+specimen. Existing regional boundary/coupling approximations remain. The
+selected region still uses four 1/240 s substeps and five coupled iterations.
+
+The rejected initial cache design discarded all broad-phase reuse whenever a
+surface enabled self-contact. Its replacement caches conservative candidates
+per surface pair, including self-contact, under a bounded storage allowance.
+Motion and filter/topology changes invalidate relevant caches. Overflow uses
+complete streaming; it never silently discards contacts. The retained native
+contexts belong to their physical regions rather than being recreated on each
+background/foreground swap. Fixed nodes retain supporting contact geometry.
+
+Compact soil uses counted spatial bins, with sparse fallback for dispersed
+matter and exact reuse until a sample changes bins. Constraint iteration order
+is preserved. Contact multipliers index active samples, so inactive refinement
+history does not cause quadratic allocation. Fully fixed shape clusters skip
+work whose corrections cannot move any sample.
+
+Numeric registered routes replace per-frame mesh JSON round trips for water
+and material presentation. The JSON interfaces remain compatibility adapters.
+Accepted Entity material skins are immutable shared buffers. Coarse visibility
+only rejects presentation; accepted matter and its collision remain. Unchanged
+water triangles retain their spatial memberships. CPU benchmark evidence and
+limits live in output/benchmarks/mining-20261029, with the harness in
+Host/MiningBenchmark.rs. Existing workshop timing results above remain historical,
+not claims about this game benchmark or the current iPhone build.

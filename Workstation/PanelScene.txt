@@ -1,0 +1,142 @@
+Origami 3D workstation panels
+
+Four blank panels use Cardinal's Origami behavior in
+Salamander137/BaseSystem/PanelSystem.cpp: updateOrigamiOrder,
+horizontalOwnsCorner, computePanelSpan and fitSideToHorizontalPanels.
+Simultaneous opens grant corners to the sides; subsequent opening order changes
+ownership. Fixed-top Origami is the default. Horizontal spans and side heights
+resize during transitions. Left/browser and bottom/piano-roll expand to 1.5 times
+their base dimension. Source slide speed and triangular tap retraction remain.
+
+The source 18-unit inset uses logical window pixels/iOS points. Physical backing
+resolution separately controls shader sampling. Apple workstation surfaces use
+one render pixel per logical point to bound optical work on high-density screens;
+the window/view size and all point-based gestures stay the same. Other scenes
+retain device backing density. An orthographic, head-on camera
+preserves source screen rectangles while viewing actual 3D solids. Overview and
+swapped edges use the same layout geometry and gesture hit regions.
+
+Models retain their authored crown, clipped corners and split pavilion by
+re-intersecting the original 26 halfspaces for each width/height. Finished model
+vertices are not stretched. GemPanels_parametric.blend includes editable
+width/height animation with Blender drivers; the source .blend is preserved.
+The four original GLBs remain loaded/validated as the authored asset reference.
+
+The material is exported from the actual Blender graph: white Principled
+transmission, IOR 1.766, roughness 0.018 and RGB volume absorption. The dedicated
+native shader evaluates ray intersections, Fresnel splitting, total internal
+reflection, GGX roughness/multiscatter and Beer extinction per segment. All four
+stones share the exported finite studio emitters. Blender's original AgX57 LUT,
+input matrix/log transform, tetrahedral interpolation and display conversion are
+used directly. CPU vertex-color lighting and the old fixed-layout approximation
+are explicitly retired by the requested Origami/material revision.
+
+This native integrator has explicit sampling/bounce/event limits and prioritizes
+the strongest remaining ray contributions. Terminal rays see the studio directly
+without queue storage; rays that hit another panel retain full transport. It is
+not a Cycles renderer. A dynamic
+64-by-64 field shares each studio light's colored floor visibility across rays,
+using sixteen emitter samples and the actual glass intersections. Floor shading
+still evaluates its view-dependent GGX response per pixel; visibility averaged
+across each emitter and interpolated in space is an approximation. Outside the
+field, visibility uses direct glass intersections. Focused caustics and general
+diffuse indirect lighting are not reproduced. Shader
+compilation and source correctness do not establish visual equivalence or phone
+performance. Matching Blender/native captures are required before release claims.
+
+Entry:
+  wormwood --workstation WebGPU
+  wormwood --workstation Vulkan
+  wormwood --workstation OpenGL
+Optional --frames 1..3600 captures the final optical frame plus native screenshot.
+The frame JSON can be consumed by the Blender reference renderer for comparison.
+The macOS launcher menu and iOS workshop launcher select the same scene/backend.
+Desktop presentation retains the last image when panels settle; input still
+polls each tick. Changed geometry, capture, expose, resize and restore redraw.
+Finite --frames diagnostics explicitly force actual draws, including idle ones,
+so optical performance measurements do not count skipped work as rendered frames.
+
+Desktop: arrows toggle edges; Alt+left/bottom expands; Shift+scroll down enters overview, Shift+scroll up returns;
+Space toggles all; Escape, Cmd+Q or window close exits. API Step also accepts
+canvas_scale and side/horizontal swaps. API SetPanel accepts open or expanded.
+Phone: drag inward from a screen edge to open, or outward from anywhere on a
+blank panel to close. Screen edges and inner rims retain their 20-point activation
+region; swipes require 36-point travel and a dominant panel axis. Face hits take
+priority over nearby screen edges, including in overview and swapped layouts. Two-finger
+left/bottom gestures expand; pinch changes overview. Double-tap with two fingers
+to exit. Gesture bounds come from the actual Origami rectangles. Session entry
+resets pending gestures and overview scale. No workstation HUD is drawn.
+
+Layer four owns authored asset loading, shape/layout realization and optical
+submission. Layer five owns motion, interaction and Entity/Audicle lifetime.
+GraphicsConnectionSystem owns backend resources. Scene closure retains handles
+if cleanup fails. Recording/playback, controls and MIDI content remain separate
+from this four-blank-panel scope.
+
+Decorative controls: top carries rewind/stop/record/play; bottom carries three
+ivory fader/stereo-meter pairs. Components come from the authored GLB meshes,
+packed by BuildSupport/Blender/export_workstation_controls.py with source hashes.
+Uniform instances fit inside the animated table; no control hit targets or audio
+functionality. The meter levels and fader values are the authored static export.
+The packed triangle BVHs follow the floor-light rows; the AgX LUT follows them.
+Control glass shares the dielectric integrator; remaining opaque slider and
+meter components use area lighting. The cached floor shadows remain panel-only.
+
+An optional ordered instance BVH skips control groups before entering their
+unchanged authored triangle trees. Header12.zw holds its root/end; zero keeps
+the original linear instance search. Up to129 two-row nodes occupy the last260
+rows of the existing decorative-control allocation. Each node stores world
+min/escape then world max/instance, with -1 marking an interior node. Bounds
+come from the actual mesh root packets and final uniform poses; conservative
+padding admits extra candidates without replacing triangle intersections.
+Ordered surface-area splits preserve ascending instance order and exact-distance
+material ownership, including monitor clipping and connected Edison geometry.
+If a future authored control packet needs this reserved tail, packing leaves the
+header zero rather than overwriting that geometry. Optical sampling, authored
+materials and all immutable storage addresses remain unchanged.
+
+The ControlEngraving derivative kits replace raised transport symbols and fader
+well liners with three layers of internal SSLE microfractures. The Blender files
+contain actual fracture geometry. Native packets omit those display triangles
+and integrate the matching filtered density along interior refracted rays,
+using the panel lettering's fracture style. Physical fader recesses, caps,
+indices and stems are preserved. The separate immutable density packet uses
+square transport maps and a longer rectangular map for the fader track.
+The source kits remain unchanged. These controls are still decorative.
+
+SSLE decorative specimen: the left browser and right settings panel carry sample
+text in the original Alegreya Sans font and source logical-pixel typography.
+The separate LaserEngraving/GemPanels_engraved.blend contains editable FONT sources
+and actual three-layer internal fracture meshes, parented to the parametric gems.
+Runtime character poses are independent of the panel meshes. The glyph occupancy
+packet is sampled from Blender's filled font geometry. The shader integrates
+filtered microfracture density at three depths along refracted interior rays,
+with glass attenuation, studio illumination and continuation transmission.
+This is a bounded scattering approximation, not per-fracture Cycles transport.
+It draws no overlay text. The examples follow panel position, uniform fitting,
+overview and resizing; all fracture bounds must remain inside the26halfspaces.
+No sample browser or settings action is connected. Printable ASCII is supported
+by this demonstration packet; changing text can reuse it without recutting gems.
+
+The user-reference style revision narrows the primary point reconstruction,
+varies individual point size/position with stable deterministic noise, and gives
+the deeper layers lower opacity with a small downward offset. This replaces the
+first prototype's broad, equally strong layers. The later schema3 refinement
+below lightens the glyph outlines while retaining source typography metrics,
+panel layout and decorative controls. Mip filtering replaces the earlier small
+Gaussian neighborhood and its truncated support.
+
+SSLE schema3 keeps the original font metrics and text placement but insets glyph
+outlines by0.008em for the requested lighter appearance. The96-cell glyph lattice
+has half-sized fracture points. A128-to-1 mip chain of analytically integrated
+fracture density is baked once, loaded after the AgX LUT and filtered inside the
+existing refracted-ray evaluation. This replaces runtime point hashing and
+Gaussian evaluation; lighting, depth layers and gem optics remain runtime3D.
+
+The approved rounded Edison hardware now serves the desktop selected-track FX
+row. Its connected silhouette follows native editor visibility. Header row232
+points to at most16 two-row poses at engraving BASE+448, after glyph descriptors
+and before the bubble region. Socket, bubble, control-engraving and timeline
+immutable addresses remain stable; the connected mesh follows the timeline
+packet. Plugin actions and page selection belong to PluginInserts and the
+layer-one PluginConnectionSystem. See Audio/Plugins/README.txt.

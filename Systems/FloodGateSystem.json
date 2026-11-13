@@ -1,0 +1,59 @@
+{
+  "system": "FloodGateSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": [
+        "WaterSlideSystem.Course"
+      ]
+    },
+    "Step": {
+      "calls": [
+        "WaterSlideSystem.Course",
+        "SoftBodyWaterSystem.Gates"
+      ]
+    },
+    "Close": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "course_emission_recycling",
+        "description": "Retain four generator planes, source-slot cadence, initial speed, target count and final exit-plane recycling on a continuous authored trough course. Gates remain emitters and recycling boundaries. An explicit floodgate.course_start tie selects the authored source course; unset, missing, or cyclic source courses do not invent an emitter location.",
+        "retention": "experimental",
+        "selection": "Invoked by the tracked WaterSystem application and its presentation/query consumers.",
+        "implements": [
+          "Configure",
+          "Step",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/FloodGateSystem.rs",
+          "Water/runtime.rs",
+          "Water/floodgate.rs"
+        ],
+        "checks": [
+          {
+            "id": "course_emission_recycling_routes",
+            "kind": "declared_calls",
+            "expectation": "The retained operation declares each cross-System data route.",
+            "targets": [
+              "SoftBodyWaterSystem.Gates",
+              "WaterSlideSystem.Course"
+            ]
+          },
+          {
+            "id": "course_emission_recycling_behavior",
+            "kind": "behavior",
+            "expectation": "Retain four generator planes, source-slot cadence, initial speed, target count and final exit-plane recycling on a continuous authored trough course. Gates remain emitters and recycling boundaries. An explicit floodgate.course_start tie selects the authored source course; unset, missing, or cyclic source courses do not invent an emitter location.",
+            "procedure": "Verify original generator path fractions, bounded spawn budget and blocked-source handling, identity/mass accounting on recycle, final-plane crossing, escape return and disable/close. Inspect the single-exit retained behavior explicitly; do not pretend unused legacy multi-gate progression was connected. Verify an explicit start selects only its authored chain, invalid/terminal ties and cycles are unavailable, and unset source selection emits no parcels. Recycling must apply the same accepted-coverage, triangle-contact and parcel-clearance checks as new emission; if no source candidate is safe, retain existing material identity/position/velocity and request missing coverage. Run recycling_preserves_existing_material_when_source_is_blocked_or_unknown. Configure operation select_course validates an open authored course before changing its source, null clears it, and targeted source changes preserve existing enabled/count/speed settings."
+          }
+        ]
+      }
+    ]
+  }
+}

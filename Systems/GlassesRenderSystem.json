@@ -1,0 +1,41 @@
+{
+  "system": "GlassesRenderSystem",
+  "layer": 4,
+  "functions": {
+    "Load": {
+      "calls": []
+    },
+    "Frame": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "authored_eyewear",
+        "description": "Load independently authored Blender VR and AR meshes at metric scale; render placed or held pairs in the shared depth scene. Hide worn hardware from first-person view, retaining passthrough. Current runtime uses diffuse facet shading; full glass/metal materials remain in Blender and GLB. No per-frame optical work is introduced.",
+        "retention": "supported",
+        "selection": "New Mirror VR and AR eyewear; both provide passthrough and identical DAW entry.",
+        "implements": [
+          "Load",
+          "Frame"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/GlassesRenderSystem.rs",
+          "Art/Glasses/make_glasses.py",
+          "BaseSystem/LayerFour/AppearanceSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "glasses_assets",
+            "kind": "behavior",
+            "expectation": "Load independently authored Blender VR and AR meshes at metric scale; render placed or held pairs in the shared depth scene. Hide worn hardware from first-person view, retaining passthrough. Current runtime uses diffuse facet shading; full glass/metal materials remain in Blender and GLB. No per-frame optical work is introduced.",
+            "procedure": "Inspect Blender review and runtime exports; run focused glasses regressions. Manually check both pairs in the theatre: F pickup/place with obstruction and range, B wear/remove, E opens the existing embedded DAW, exit returns to the retained world. Check held tool suspension, phone arbitration, pause, held-key edges and cleanup. Native interaction remains unverified until actually exercised."
+          }
+        ]
+      }
+    ]
+  }
+}

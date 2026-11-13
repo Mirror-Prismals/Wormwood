@@ -1,0 +1,92 @@
+{
+  "system": "LaboratorySystem",
+  "layer": 5,
+  "functions": {
+    "Step": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "EntitySystem.Create",
+        "EntitySystem.Remove",
+        "AudicleSystem.Cancel"
+      ]
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Close": {
+      "calls": [
+        "EntitySystem.Remove",
+        "AudicleSystem.Cancel"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "prismasqueek_laboratory_gift",
+        "description": "Entering the town laboratory starts a paused-control introduction with the placeholder researcher and the authored Blender crystal mouse. The researcher gives the player Prismasqueek and explains temporary zoo custody until the player has an enclosure. Prismasqueek approaches the player, walks through the red-yarn portal and remains in the zoo. The completed gift is saved atomically outside packaged assets and is not repeated on reentry.",
+        "selection": "LaboratorySystem enabled in normal overworld gameplay. Pausing gameplay pauses all cutscene time.",
+        "retention": "supported",
+        "implements": [
+          "Step",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/LaboratorySystem.rs",
+          "ModSources/prismals/src/gameplay/LaboratorySystem.rs",
+          "Theatre/Laboratory.rs",
+          "BaseSystem/LayerFour/LaboratoryAppearance.rs",
+          "ModSources/prismals/src/render/LaboratoryAppearance.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "Host/Host.rs",
+          "BaseSystem/LayerFive/PlayerControls.rs",
+          "ModSources/prismals/BuildSupport/Laboratory/export_prismasqueek.py",
+          "Render/LaboratoryCheck.rs"
+        ],
+        "checks": [
+          {
+            "id": "gift_and_custody",
+            "kind": "behavior",
+            "expectation": "One gift, visible portal departure, zoo custody, bounded follow and no duplicate on reentry or restart; no controls move the player during the scene, and pause freezes time.",
+            "procedure": "Run laboratory state-machine and registered-host lifecycle tests. Inspect the real lab entrance, cutscene, paused/resumed cutscene, and persisted zoo visit in a native game session."
+          }
+        ]
+      },
+      {
+        "id": "yarn_link",
+        "description": "A straight red-yarn tangent installation bounds a circular portal aperture. Same-world paired endpoint traversal rotates position and facing by 180 degrees, checks full-body aperture clearance and rearms only outside both endpoints. An aperture-clipped view shows the destination site, including its visible actors, without recursive portal rendering.",
+        "selection": "After Prismasqueek is given to the player.",
+        "retention": "supported",
+        "implements": [
+          "Step",
+          "Snapshot"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/LaboratorySystem.rs",
+          "ModSources/prismals/src/gameplay/LaboratorySystem.rs",
+          "BaseSystem/LayerFour/LaboratoryAppearance.rs",
+          "ModSources/prismals/src/render/LaboratoryAppearance.rs",
+          "Theatre/Laboratory.rs",
+          "ModSources/prismals/BuildSupport/Laboratory/build_laboratory.py",
+          "Host/Host.rs",
+          "BaseSystem/LayerFive/PlayerControls.rs",
+          "ModSources/prismals/BuildSupport/Laboratory/export_prismasqueek.py",
+          "Render/LaboratoryCheck.rs"
+        ],
+        "checks": [
+          {
+            "id": "traversal_view",
+            "kind": "behavior",
+            "expectation": "Both directions work without immediate bounce; the circular frame rejects out-of-aperture entry; remote site imagery does not escape the aperture.",
+            "procedure": "Run endpoint and clipping math tests, then check native views and traversals at both portals."
+          }
+        ]
+      }
+    ]
+  }
+}

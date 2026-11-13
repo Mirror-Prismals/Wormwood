@@ -1,0 +1,49 @@
+{
+  "system": "TideSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": []
+    },
+    "Step": {
+      "calls": []
+    },
+    "Sample": {
+      "calls": []
+    },
+    "Close": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "continuous_cosine_tide",
+        "description": "Continuous high/low cosine tide retains the Cardinal period/phase and world-clock resynchronization. Physical water remains continuous; no cell activation, remeshing ownership or block relocation is inherited.",
+        "retention": "experimental",
+        "selection": "Invoked by the tracked WaterSystem application and its presentation/query consumers.",
+        "implements": [
+          "Configure",
+          "Step",
+          "Sample",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/TideSystem.rs",
+          "Water/runtime.rs",
+          "Water/tide.rs"
+        ],
+        "checks": [
+          {
+            "id": "continuous_cosine_tide_behavior",
+            "kind": "behavior",
+            "expectation": "Continuous high/low cosine tide retains the Cardinal period/phase and world-clock resynchronization. Physical water remains continuous; no cell activation, remeshing ownership or block relocation is inherited.",
+            "procedure": "Check high/low ordering, period/phase, rising/falling, pause/resume and integral-clock resync; compare numeric samples to the legacy cosine equation."
+          }
+        ]
+      }
+    ]
+  }
+}

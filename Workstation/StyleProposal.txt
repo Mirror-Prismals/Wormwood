@@ -1,0 +1,284 @@
+Mirror workstation styles — initial proposal
+Precis, 2026-10-30
+
+Superseded implementation details: see StyleAuthoring.txt. The author has since
+authorized open/thin geometry, custom WGSL and author-selected stretching or
+snapping; the closed-shell and contain-only suggestions below are not requirements.
+
+Status: original design for discussion. This file does not change runtime behavior,
+approve an implementation contract, or claim that user-style import exists.
+Scope: Mirror in Wormwood. Salamander137/Cardinal is reference material;
+the separate Martin game is outside this work.
+
+Direction
+
+Gem remains the sole built-in panel style. Other panel styles are user assets.
+A style package binds models to the four logical panels, supplies a small
+semantic palette, and optionally selects a WGSL background. Background and
+panel choices should also be independently selectable.
+
+Keep the useful parts of Cardinal: stable style IDs, versioned data, shared
+defaults with optional role overrides, and separate saved selection. Do not
+reproduce its entire theme settings structure or its ChucK background worker.
+Start with text, accent and selection colors; expand semantic keys only when a
+real control needs them. Preserve host-owned state feedback and readable labels.
+
+The model supplies the panel's physical appearance. Mirror owns its content,
+live labels, controls, actions, layout, visibility and opening animation.
+An artist should not have to model a complete working DAW to change its casing.
+User control models can follow later, with separate pivot, travel, state and
+hit-target contracts. A decorative knob is not automatically a working control.
+
+What the existing code actually provides
+
+Workstation/GemMesh.rs loads a deliberately restricted four-model gem kit.
+BaseSystem/LayerFour/WorkstationPanelSystem.rs validates that kit, then uses
+Workstation/PanelLayout.rs to reconstruct the original 26-plane cut for each
+changing Origami rectangle. Replacing GLB filenames cannot render arbitrary
+panel models through this path.
+
+There is reusable triangle/BVH work in the decorative-control exporter and
+shader, but it currently uses fixed asset identities, material tables and
+buffer addresses. General user-model import needs its own validated preparation
+path. The generic surface mapping in Workstation/Panel.rs is a useful starting
+point; some current control placement and hit tests still compute gem-specific
+safe dimensions directly.
+
+First model format
+
+Use a self-contained glTF 2.0 binary file (.glb), accompanied by style.json.
+Keep .blend files as editable authoring sources, not runtime dependencies.
+The initial model profile is static geometry with opaque scalar materials.
+This deliberately small profile is proposed, not current general glTF support.
+
+The creator-facing rules would be:
+
+1. Use metres. In the supplied Blender template, +X is screen-right, +Y is
+   screen-up and +Z points toward the viewer. The mounting face is Z=0.
+   Its origin is the centre of the model's projected outer bounds.
+   Choose actual reference dimensions and record the content rectangle in
+   those same metres; the model need not have a prescribed absolute size.
+
+2. Export using Blender's standard glTF axis conversion. The resulting GLB
+   panel axes are +X right, -Z up and +Y toward the viewer. Mirror converts
+   GLB coordinates (x,y,z) to panel coordinates (x,-z,y), including normals.
+   Other authoring tools must produce that same exported orientation. The
+   importer preview must show the axes rather than relying on a filename.
+
+3. Export one panel root with applied identity transforms. Bake modifiers
+   into the exported mesh. Multiple material primitives are allowed. Use
+   triangles, valid outward-facing geometry and authored unit normals.
+   Smooth normals are allowed; gem-specific flat shading is not a universal
+   requirement. Omit cameras, lights, scripts, animation, skins and morphs.
+
+4. Make a closed, consistently wound shell without degenerate triangles or
+   self-intersections. Concave outlines are allowed: a custom opaque panel
+   need not be a convex gem. The initial profile has one flat mounting face.
+   Curved interactive surfaces would need a different mapping contract.
+
+5. Declare a rectangular content area on Z=0 as [xmin,ymin,xmax,ymax].
+   That entire rectangle must be covered by the flat mounting face, with no
+   holes or cutouts. Reserve a clear prism above it for host-owned controls;
+   declare its height as content_clearance_m. The shell is behind the face
+   there. Raised ornaments outside this rectangle are allowed, provided
+   they remain inside the model's declared/import-verified visual bounds.
+   A rectangle inside an AABB alone does not prove these requirements.
+
+6. Keep labels, waveforms, note lanes, meters and functional controls out of
+   the panel mesh. Mirror places its own live 3D content on the mounting
+   surface. Opaque user panels need a surface-label treatment; the gem's
+   subsurface laser engraving cannot simply be applied to every material.
+
+7. For the first prototype, use opaque glTF metallic-roughness factors:
+   baseColorFactor (alpha 1), metallicFactor, roughnessFactor and
+   emissiveFactor. Use single-sided surfaces with valid winding. Accept no
+   material extensions or textures in this initial profile. This enables
+   shaped metal, colored ceramic and similar objects with a small renderer
+   contract. Textured wood/stone and user glass need additional supported
+   material profiles; do not silently discard textures or transmission.
+   Arbitrary Blender node graphs are not an interchange promise.
+
+8. Aim for roughly 2,000 triangles and four materials or fewer per panel
+   for the first experiments. These are authoring targets, not measured
+   frame-rate guarantees. The importer must enforce explicit byte, decoded
+   geometry, material and GPU-memory caps before allocation. Final supported
+   limits require measurements with custom panels on the actual targets.
+
+The content rectangle is independent of a mesh's texture UVs. Content UV (0,0)
+means its lower-left corner. If the content rectangle is off-centre, resolve
+its centre into the surface origin before using the existing Panel.rs mapping.
+
+The important resize decision
+
+First milestone: resize = contain. Preserve all three proportions with one
+uniform scale. If the allocated slot has width W and height H, and the model's
+complete projected bounds have width w and height h, use min(W/w,H/h).
+Centre the model in that slot and transform its content rectangle identically.
+Use the complete bounds, including ornaments, not only the mounting face.
+
+Origami still owns the allocated slot and its movement. Its changing shape can
+leave visible gaps around a rigid model. A wide transport model and a tall
+browser model are therefore preferable to forcing one shape into every role.
+Authors can reuse a model for several roles; four different models are optional.
+The logical top/bottom/left/right identities persist when physical edges swap.
+
+Do not create invisible panel-face gesture targets in the gaps. Face gestures
+use the fitted model/surface; existing screen-edge reopen gestures stay owned
+by Mirror. Do not solve small content areas by shrinking controls indefinitely.
+Keep host minimum control sizes, reflow and scrolling where appropriate, and
+report layouts that cannot expose essential controls. Preview portrait,
+landscape, expansion, overview, swaps and transitions before applying a pack.
+
+Later option: an explicitly resizable 3D frame kit. Corners stay rigid, edge
+pieces extend or repeat on their declared axis, and a centre mounting surface
+fills the interior. The kit needs seam locations, minimum dimensions and UV
+rules. Geometry must be divided at those seams so ornaments do not stretch.
+This should be a separate resize profile with an authoring template. A static
+GLB does not carry Blender Geometry Nodes' resizing behavior into the engine.
+
+If filling every Origami rectangle without gaps is a first-release requirement,
+the frame-kit profile must be part of that release. Contain fitting proves
+custom-model import but does not solve adaptive panel authoring by itself.
+
+Example package and manifest
+
+  StudioSkin/
+    style.json
+    panels/header.glb
+    background.wgsl             optional
+
+Proposed JSON, not accepted by the current runtime:
+
+  {
+    "format": "mirror.workstation.style",
+    "version": 1,
+    "id": "example.studio-skin",
+    "name": "Studio Skin",
+    "models": {
+      "header": {
+        "file": "panels/header.glb",
+        "profile": "opaque-factors-v1",
+        "resize": "contain",
+        "content_rect_m": [-0.45, -0.08, 0.45, 0.08],
+        "content_clearance_m": 0.02
+      }
+    },
+    "panels": {
+      "top": { "model": "header" },
+      "bottom": { "builtin": "gem" },
+      "left": { "builtin": "gem" },
+      "right": { "builtin": "gem" }
+    },
+    "background": {
+      "file": "background.wgsl",
+      "api": 1,
+      "surface": "emissive-backdrop",
+      "animated": false
+    }
+  }
+
+For this example, author a 1.0 x 0.2 m panel with the given 0.9 x 0.16 m flat
+content face. Geometry supplies the true outer bounds. Missing background
+means keep Mirror's studio. Missing panel mappings mean built-in gem; unknown
+explicit references are errors. A broken selected pack must not silently
+become a different style. Keep the last valid selection when a new import fails.
+All package paths resolve within the package; GLBs contain their own buffers.
+
+Lightweight backgrounds
+
+Expose one WGSL function plus ordinary helper functions:
+
+  fn background(input: BackgroundInput) -> vec3<f32>
+
+Mirror supplies BackgroundInput with uv (0,0 lower-left), resolution (render
+texture pixels), time_seconds (elapsed animation time; zero for static art),
+and four vec4<f32> parameter values from validated manifest settings, default
+zero. Return finite nonnegative scene-linear RGB. Mirror owns entry points,
+bindings, render targets, color management and display encoding.
+
+Compile this small shader into a separate GPU-to-texture pass. Sample that
+texture from a host-owned physical backdrop plane behind the panels, including
+refracted/reflected rays. Define its UV mapping and outside-rectangle behavior
+in the preview; a first version can map the full viewport and clamp at its
+borders. Merely drawing a background quad behind the final image would not
+make it visible through the existing optical scene.
+
+The proposed initial surface is self-lit art, not a floor albedo. It participates
+in ray visibility and display color management but does not promise diffuse
+illumination of other objects. Replacing the lit studio floor changes its shadow
+response; a later lit-floor mode must state that difference explicitly.
+
+Start with static shaders and cache their textures. Animated backgrounds need
+an explicit rate ceiling and invalidate the optical image as well as their own
+texture. No 60 fps promise follows from removing ChucK: current gem rendering
+is still expensive. Audio-reactive inputs can later use bounded snapshots
+prepared outside the real-time callback, without giving shader code audio access.
+
+Use a real parser/validator and a deliberately bounded WGSL profile: no custom
+resource bindings, compute stages, feedback passes or storage writes. Initially
+allow no loops, or only loops with an importer-proven constant small bound.
+Validation and execution budgets are separate; legal shader code can still be
+too expensive. Report source locations and preserve the active style on failure.
+
+Naga is a candidate for WGSL translation to SPIR-V and GLSL/GLES. It would be
+new integration, including runtime Vulkan shader loading. The current tiny
+GLSL-to-WGSL generator is not a general user-shader compiler. Validate and render
+the same example independently on WebGPU, Vulkan and OpenGL/GLES; a successful
+translation is not proof of device support or matching appearance.
+
+Import experience and implementation order
+
+The creator chooses a package folder. Mirror validates it and previews all
+four roles with actual labels, controls and gestures. Show the mounting plane,
+content bounds, orientation, fitted gaps and unsupported features. Apply only
+after complete preparation succeeds; save selection separately from the assets.
+No shader compilation, file loading or model conversion belongs in audio work.
+
+1. Introduce a resolved panel surface shared by visual placement, content,
+   labels and hit testing. Adapt gem to supply it without altering its cut.
+2. Prepare one opaque custom GLB, render its real triangles and fit it into
+   one logical panel. Generalize the existing BVH work without retaining fixed
+   control counts/addresses as the public model format. Cache immutable geometry;
+   panel movement changes its instance transform, not its uploaded triangles.
+3. Add package validation, preview and selection; exercise the resizing cases.
+4. Add one static WGSL backdrop through the 3D scene and verify all backends.
+5. Consider textures, resizable frame kits, animation and control-model packs
+   separately, driven by the next actual authoring requirement.
+
+Layer four owns asset preparation and resolved presentation surfaces; layer five
+owns selection/application events and interaction; the graphics connection owns
+backend resources. New hooks and intended behaviors need their normal Salamander
+contracts. Animated appearances remain attributed to their application Audicles.
+
+An author/AI brief for the first experimental model
+
+"Create a static panel shell for Mirror's proposed opaque-factors-v1 profile.
+In Blender use metres, width 1.0 and height 0.2, X right, Y up and Z toward the
+viewer. Centre the projected bounds at the origin. Make a closed shell with a
+flat front at Z=0 and the body behind it. Keep X=-0.45..0.45, Y=-0.08..0.08
+fully covered by that flat face, and leave the 0.02 m above that rectangle empty
+for live controls. Do not model text, buttons or meters. Aim for at most 2,000
+triangles and four opaque scalar metallic-roughness materials; use no textures,
+material extensions, animation, cameras or lights. Bake modifiers, apply object
+transforms, preserve normals, and export a self-contained GLB with the standard
+Blender glTF axis conversion. Keep the editable .blend separately. Supply the
+content rectangle and clearance in style.json. This model will be uniformly
+fitted, so do not assume it can stretch to arbitrary aspect ratios."
+
+Source trail
+
+Cardinal: Host.h (DawThemePreset); Host/DawGemMaterial.h (PanelFaceRect);
+Host/ChuGLBackgroundWorker.cpp and BaseSystem/DawChuGLBackgroundSystem.cpp.
+Wormwood: Workstation/{GemMesh,Panel,PanelLayout,DecorativeControls}.rs;
+BaseSystem/LayerFour/WorkstationPanelSystem.rs;
+BaseSystem/LayerFive/AudioWorkstationSystem.rs;
+BuildSupport/Blender/export_workstation_controls.py;
+Procedures/Shaders/{workstation.shared.glsl,generate_workstation.py,workstation_abi.txt}.
+
+External format/compiler references, consulted 2026-10-30:
+https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html
+https://www.w3.org/TR/WGSL/
+https://docs.rs/naga/latest/naga/
+
+Verification for this note: source inspection only. No runtime implementation,
+custom-model import, shader compilation, build or device rendering was performed.

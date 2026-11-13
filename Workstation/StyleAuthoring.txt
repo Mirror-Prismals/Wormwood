@@ -1,0 +1,239 @@
+Mirror user style authoring, version 1
+
+This is the implemented package contract. It supersedes the closed-shell,
+contain-only first proposal in StyleProposal.txt. The 3D gem ruby remains the main/default panel
+appearance. Cardinal 2D presets are separate opt-in alternatives documented in
+CardinalThemes.txt. The packages in Art/AudioWorkstation/StyleExamples are external,
+opt-in examples read by the same importer as an author's own work.
+
+A panel may be carved wood, an ornate metal frame, a thin sheet, or a single
+rectangle made from two triangles. From Mirror's head-on orthographic camera,
+an unlit thin model can look like a conventional flat interface. Closed volume,
+convexity, gemstone cuts, and physical thickness are not import requirements.
+Mirror still owns panel layout, live controls, text, gestures and audio behavior.
+Labels on custom surfaces select light or dark ink from the shaded surface
+brightness. Built-in gemstone labels retain their volume engraving.
+
+Package and selection
+
+Place style.json, self-contained .glb model files, and an optional .wgsl file in
+one folder. Subfolders are allowed. Referenced assets must be ordinary files
+inside that folder; absolute paths, parent traversal, and escaping symlinks are
+not package references. No downloads or external texture resources occur.
+
+From the Wormwood directory:
+
+  ./target/debug/wormwood --workstation WebGPU --style "/absolute/path/to/package"
+  ./target/debug/wormwood --check-style "/absolute/path/to/package"
+
+WORMWOOD_STYLE="/absolute/path/to/package" is the equivalent environment option.
+The selection may instead name the package's style.json. Vulkan and OpenGL are
+also selectable backends. Leave WORMWOOD_STYLE unset or empty to use gems.
+The selected package is cached; restart the app after editing its files.
+Invalid geometry, manifest data or shaders produce an error; they do not
+silently select a gem substitute. The first implementation uses explicit launch
+selection; this document does not imply a library browser or hot reload.
+
+Minimum manifest with one model shared by all four panel roles:
+
+  {
+    "format": "mirror.workstation.style",
+    "version": 1,
+    "id": "my.name",
+    "name": "My panel style",
+    "models": {
+      "frame": {
+        "file": "panel.glb",
+        "axes": "blender-gltf",
+        "resize": "stretch",
+        "content_rect_m": [-0.43, -0.08, 0.43, 0.08],
+        "content_z_m": 0.0,
+        "shader": true
+      }
+    },
+    "panels": {
+      "top": { "model": "frame" },
+      "bottom": { "model": "frame" },
+      "left": { "model": "frame" },
+      "right": { "model": "frame" }
+    },
+    "shader": {
+      "file": "style.wgsl",
+      "api": 1,
+      "animated": false,
+      "panel": true,
+      "background": true
+    }
+  }
+
+Omit the entire shader object to use the model's imported material factors.
+Omitted panel roles keep the gem; {"builtin":"gem"} also selects it explicitly.
+Different roles may select different models. Model shader:false opts a model
+out of the shared panel shader. The shader's panel/background flags choose
+which hook is used; both function definitions are required if a shader is
+provided. Models and panel mappings may be empty for a background-only package.
+Unknown manifest fields are rejected to catch spelling mistakes.
+
+Model orientation and working surface
+
+Author in metres using panel coordinates: X right, Y up, Z toward the viewer.
+Centre the projected panel bounds around the origin. A useful starter is width
+1.0 and height 0.25; these are sample dimensions, not a required aspect ratio.
+Keep your functional content on a flat surface parallel to XY. Put a solid
+backing behind controls and leave space in front of that rectangle for them.
+Keep authored decoration away from the declared content rectangle.
+
+For ordinary Blender glTF export, use axes:"blender-gltf" (the default).
+Blender's conversion writes the panel coordinates (x,y,z) as glTF (x,z,-y):
+glTF X is screen right, glTF -Z is screen up, glTF +Y faces the viewer.
+Do not apply this conversion twice. Directly generated GLBs may instead use
+axes:"panel" and write X right, Y up, Z forward directly.
+
+Apply object transforms and bake modifiers. Export static triangle meshes with
+finite positions, usable normals, and TEXCOORD_0 when the shader needs authored
+UVs. Keep the editable Blender/project file separately. Node transforms must
+be identity. Triangles may be indexed or unindexed. Normals determine shading;
+wind front-facing triangles counterclockwise when viewed from the front, or
+select a double-sided material. A two-triangle rectangle at Z=0 is valid.
+
+content_rect_m is [minimum X, minimum Y, maximum X, maximum Y], measured in panel
+coordinates before fitting. content_z_m is the height of the working plane.
+Both must lie inside the imported bounds. The importer checks bounds, not that
+every point of the rectangle is backed by a flat opaque surface. The author is
+responsible for backing, control clearance, legibility, and fit under resizing.
+Shader cutouts do not change CPU gesture coverage: keep functional surfaces
+opaque. A decorative hole belongs outside the live content region.
+
+The central editor, ruler and arrangement use the visible models' projected
+outer bounds with an 8-pixel margin. That canvas remains one conservative
+rectangle; it does not fill side gaps around concave or short models.
+content_rect_m describes the controls owned by the panel, not this central area.
+
+Resizing belongs to the author
+
+stretch independently fits X and Y to the current Origami panel rectangle.
+Depth uses the smaller scale. The panel follows continuous layout animation.
+This is the default, and intentionally permits distorted ornament or a flat
+shader-painted interface. Mirror does not automatically redesign your carving.
+
+contain uses one uniform scale for X, Y and depth. It preserves proportions,
+centres the model in the available rectangle, and may leave large gaps. Live
+content follows the declared, fitted working surface. A single wide model may
+be a poor choice for a tall side panel; use a separate model for that role.
+
+snap stretches to the target open/closed layout instead of traversing each
+opening fraction. Expansion and overview transitions use discrete states. This
+can give a thin unlit model a conventional snapping interface appearance.
+Changing viewport dimensions changes available geometry; snap is not pixel
+locking. The current desktop host has fixed-size windows: live window-edge
+dragging is disabled independently of this model policy. Panel opening,
+expansion and overview still use the selected fit policy.
+
+These are explicit first-version policies. Arbitrary vertex animation, bones,
+blend shapes, author-defined deformation shaders and nine-part frame kits are
+not implemented. A package cannot currently provide its own resize algorithm.
+
+Material and GLB subset
+
+Use ordinary glTF metallic-roughness scalar factors: base color, metallic,
+roughness and emission. KHR_materials_unlit is supported for flat appearance.
+Set alphaMode OPAQUE. Custom panel shaders can cut out pixels as described
+below, but transmissive glass, fractional blending and texture samplers are
+not part of the imported-material profile. Gems retain their own built-in
+optical material path. Do not assume Blender material nodes will export as
+runtime shader code; author the supported factors and optional WGSL instead.
+
+Limits are 16 declared models, 6,000 total triangles across those models,
+64 material slots per model (including the glTF default if used), 8 MiB per
+GLB, and 64 KiB for the manifest. Reusing one
+model for several panels does not duplicate its geometry budget. Aim below
+2,000 triangles for a first model and avoid details smaller than a screen pixel.
+The importer rejects unsupported glTF features instead of silently ignoring
+animation, skins, texture resources or external buffers. Use a self-contained
+GLB and bake geometry before export.
+
+WGSL author contract
+
+Supply these functions, without a shader entry point:
+
+  fn style_color(uv: vec2<f32>, position: vec3<f32>,
+                 size: vec2<f32>, time: f32) -> vec4<f32> {
+      return vec4<f32>(0.12, 0.08, 0.035, 1.0);
+  }
+
+  fn style_background(uv: vec2<f32>, time: f32) -> vec3<f32> {
+      return vec3<f32>(0.01, 0.02, 0.03);
+  }
+
+Panel uv is interpolated TEXCOORD_0. The supplied examples use (0,0) at the
+upper left and (1,1) at the lower right. position is the original local model
+point in panel metres. size is the fitted full model width and height in
+metres. The panel result multiplies the imported baseColorFactor; use white
+base color to let the shader choose the complete color. RGB is linear light.
+Alpha below 0.5 cuts the fragment out; values at or above 0.5 are opaque.
+There is no fractional transparency in this profile. Lit materials use the
+scene lighting; KHR_materials_unlit makes color independent of that lighting.
+
+The background hook receives coordinates across the scene floor, with (0,0)
+at its lower left, and returns linear RGB for the backdrop. It participates
+in the rendered scene, so built-in gems can see its color through their optical
+path. It is not an additional CPU-rendered window or a ChucK VM stream.
+
+time is seconds of workstation animation when animated:true. With false,
+time is zero and a settled scene can remain idle. Enable animation only when
+the shader depends on time: it asks the scene to render continuously and adds
+GPU work. The clock remains tied to the workstation application event.
+
+Helper functions and constants are allowed. Source is at most 64 KiB, with
+32 functions, 4,096 intermediate expressions and 8,192 expanded operations
+per function including repeated helper calls. Use f32/i32/u32/bool scalar,
+vector and matrix values.
+No resource declarations, texture access, bindings, global variables, entry
+points, overrides, arrays, structs, pointers, loops, screen derivatives
+(dpdx/dpdy/fwidth), or discard are supported.
+The shader is validated independently and translated for the supported native
+backends before use. Compilation is not evidence that a driver renders the
+intended image; inspect actual captures on every backend you intend to support.
+
+Reproducible examples and validation
+
+BuildSupport/Workstation/make_style_samples.py writes three ordinary packages:
+
+  carved-metal  A beveled bronze plate with actual raised scrollwork triangles,
+                procedural patina, lit materials, stretch resizing.
+  wood          A beveled walnut plate with raised moulding, procedural growth
+                grain, lit materials, stretch resizing.
+  flat-ui       Exactly two triangles, zero depth, procedural color bands,
+                an unlit material, snap resizing.
+
+The script is dependency-free Python; no Blender installation is required to
+reproduce these samples. Edit their style.json/WGSL or replace their GLB to
+start your own package. No example becomes a built-in renderer preset.
+
+BuildSupport/Workstation/validate_user_styles.py generates the samples, runs
+focused importer and shader tests, builds the desktop executable, inspects
+intent, freezes the binary/runtime assets, and captures bounded native runs.
+Landscape captures cover selected backends; portrait captures use WebGPU when
+selected. Extra copies exercise contain and stretch author choices, and a gem
+baseline checks the default path. Output/checks evidence includes source and
+asset hashes, shader/device logs, optical frame JSON, PPM and PNG images.
+The report leaves graphical review and live resize gestures pending. Review
+those images and interact with the panel before calling the appearance tested.
+
+An AI or human modeling brief
+
+"Create a Mirror version-1 panel package, not a screenshot. Author a 1.0 by
+0.25 metre panel with X right, Y up and Z toward the viewer. Use either a static
+carved solid or a two-triangle thin surface. Keep a flat opaque content region
+X=-0.43..0.43, Y=-0.08..0.08 at Z=0, with no ornament above that region. Put
+depth behind it and decoration around the outside. Do not model live text,
+buttons, meters or audio controls. Use fewer than 2,000 triangles, correct
+normals, and UVs with upper-left origin for the supplied shader convention.
+Apply transforms and export a self-contained GLB using Blender glTF axes.
+Use supported scalar materials, or white base color plus a resource-free WGSL
+style_color/style_background pair. For a flat interface choose an unlit material
+and resize snap; for flexible carved decoration choose stretch; choose contain
+only when preserving the original aspect ratio matters more than filling space.
+Supply style.json with the actual content rectangle/height and panel mappings.
+Test landscape, portrait and panel transitions, and adjust the model or choose
+separate role-specific models if distortion makes the design unreadable."

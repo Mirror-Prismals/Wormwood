@@ -39,7 +39,11 @@
         "JackConnectionSystem.Start",
         "JackConnectionSystem.Release",
         "EntitySystem.Remove",
-        "AudicleSystem.Cancel"
+        "AudicleSystem.Cancel",
+        "IOSAudioConnectionSystem.Prepare",
+        "IOSAudioConnectionSystem.Start",
+        "IOSAudioConnectionSystem.Release",
+        "PlayerRigSystem.Prepare"
       ]
     },
     "Advance": {
@@ -50,14 +54,19 @@
         "EntitySystem.Remove",
         "AudicleSystem.Finish",
         "JackConnectionSystem.RouteChanged",
-        "AudicleSystem.Cancel"
+        "AudicleSystem.Cancel",
+        "IOSAudioConnectionSystem.Complete",
+        "IOSAudioConnectionSystem.Stop",
+        "IOSAudioConnectionSystem.Release",
+        "IOSAudioConnectionSystem.RouteChanged"
       ]
     },
     "Cancel": {
       "calls": [
         "JackConnectionSystem.Release",
         "EntitySystem.Remove",
-        "AudicleSystem.Cancel"
+        "AudicleSystem.Cancel",
+        "IOSAudioConnectionSystem.Release"
       ]
     },
     "Close": {
@@ -65,7 +74,9 @@
         "JackConnectionSystem.Release",
         "EntitySystem.Remove",
         "AudicleSystem.Cancel",
-        "AppearanceSystem.Release"
+        "AppearanceSystem.Release",
+        "IOSAudioConnectionSystem.Release",
+        "PlayerRigSystem.Release"
       ]
     },
     "Status": {

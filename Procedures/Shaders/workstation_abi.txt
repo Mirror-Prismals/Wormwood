@@ -1,0 +1,495 @@
+WORKSTATION OPTICAL FRAME ABI, revision 1
+
+workstation.shared.glsl is the single numerical source. Run generate_workstation.py
+beside it to update WGSL, desktop GL 330, GLES 300, and Vulkan 450 frontends.
+
+All positions and distances are metres in a shared +Z-up optical scene. The
+visible control table faces +Z. All optical RGB values are scene-linear Rec.709.
+Only final display output is sRGB encoded. Do not apply another gamma transform.
+
+Vertex input remains two vec4s: clip position and unused generic scene data.
+The geometry submitted for this pipeline is a fullscreen quad. Primary and
+secondary rays intersect the actual deformed panel planes from the frame; this
+is a 3D material evaluation, not a shaded flat panel image.
+
+WGSL group0 binding0: existing SceneVertex storage (vertex stage).
+WGSL group0 binding1: readonly array<vec4<f32>> optical frame and immutable LUT.
+Vulkan set0 binding1: existing SceneVertex storage (vertex stage).
+Vulkan set0 binding0: optical frame/LUT storage (fragment stage).
+GL/GLES: existing position/vertexData attributes; workstationData sampler2D is
+RGBA32F, 256 texels wide. Integer texelFetch maps index to (index%256,index/256).
+
+First 256 vec4 rows are the optical frame. Three dynamic floor visibility fields
+follow, each EDGE squared vec4 rows (EDGE=64 gives 12288 field rows).
+Immutable native OCIO LUT follows the frame plus fields; row7 gives its offset.
+Rows (all numbers are float32; integral fields are exactly represented):
+  0 enabled, panelCount<=4, samples1..4, exposureStops
+  1 cameraOrigin.xyz, projection(0 orthographic;1 perspective)
+  2 cameraRight.xyz, halfWidthMetres
+  3 cameraUp.xyz, halfHeightMetres
+  4 cameraForward.xyz, perspectiveFocalDistanceMetres
+  5 worldRadiance.rgb, floorZ
+  6 floorBaseColor.rgb, floorRoughness
+  7 LUTbaseRow=49408, LUTedge=57, log2DomainMinimum, log2DomainMaximum
+  8 viewportWidth, viewportHeight, maxSurfaceBounces<=16, maxRayEvents<=64
+  9 lightCount<=3, floorEnabled, liveSceneBackgroundAdmission, desktopEditorCover
+ 10 floorFieldBaseRow=256, EDGE=64 (0 disables), minimumX, minimumY
+ 11 floorFieldSpanX, floorFieldSpanY, reserved, reserved
+
+Floor fields store one cosine/emitter-weighted RGB visibility per light, with
+sixteen actual area-light connections at each grid point. Grids are consecutive,
+row-major, x fastest; sample positions include both domain endpoints:
+  x=minimumX+spanX*column/(EDGE-1), y=minimumY+spanY*row/(EDGE-1).
+The shader bilinearly filters each light's visibility and applies it to the
+four view-dependent area-BRDF quadrature points. This aggregate visibility is an
+explicit lighting approximation; it retains the floor's authored roughness and
+gem material. Outside the field, direct visibility intersections remain active.
+The field must update whenever its panel/light/floor geometry changes.
+
+The host seals row255.w after all packet writers (including timeline).
+Optional retained-image host protocol: row255.w=-8192 requests deferred CPU
+floor-field construction; rows256..12543 are finite placeholders in that host
+packet. Every original-renderer/backend consumer resolves the exact current
+field before shading. The retained WebGPU compositor may defer while drawing
+only resident radiance; before a bake, explicit lighting refresh, unsupported
+state fallback or no-input settle refresh, it resolves the most recent packet.
+Shaders do not read this marker. Captured optical evidence always materializes
+the field. WORMWOOD_WORKSTATION_DEFER_FLOOR=1 selects this optional protocol.
+
+Three area lights start at row16, stride5:
+ +0 emitterCenter.xyz, unused
+ +1 unitTangentU.xyz, halfWidth
+ +2 unitTangentV.xyz, halfHeight
+ +3 emittingNormal.xyz, unused
+ +4 radiance.rgb, unused
+The exact authored area transforms and emission power/(pi*area) are exported
+in Art/AudioWorkstation/GemPanels/GemPanels_runtime.json.
+
+Four panels start at row32, stride40:
+ +0 enabled, IOR, roughness, transmission
+ +1 Beer extinction sigmaPerMetre.rgb, unused
+ +2 world AABBcenter.xyz, unused
+ +3 world AABBhalfExtent.xyz, unused
+ +4 actual material BaseColor.rgb (white in the authored gem). Left panel W
+    (row116.w) is the paused-browser display flag; only the baked compositor
+    uses it to grey the existing image. It does not alter optical material RGB.
+ +5 reserved
+ +6..31 twenty-six actual WORLD-space unit-outward halfspaces (normal.xyz,d).
+ Interior satisfies dot(normal,position)<=d. For a rigid transform R,t of
+ local planes, normal'=R*normal and d'=d+dot(normal',t).
+ +32..35 Cycles ggx_glass_E[16], four consecutive samples per row.
+ +36..39 Cycles ggx_glass_inv_E[16], four consecutive samples per row.
+ These are the exact table slices in material.ggx_multiscatter. All samples must
+ be positive. The runtime must reject missing energy data instead of silently
+ changing the surface to a different GGX closure.
+
+The layout/shape owner re-cuts resized stones and updates all AABB/plane data.
+Uniformly stretching four original model silhouettes is insufficient. Extinction
+must be expressed consistently in world metres at the new cut's local scale.
+
+AgX data is Blender's native 57-cube, RGBA float32; index=(b*57+g)*57+r,
+relative to the LUT base row provided by row7.
+workstation.shared.glsl applies the exact extracted input matrix, logarithm,
+tetrahedral interpolation, LUT output power, and sRGB display curve. Original
+OCIO GPU source and provenance are in GemPanels_AgX_reference.glsl and runtime
+JSON beside the .blend. It does not use a fitted/replaced display curve.
+
+Material evaluation references
+- Art/AudioWorkstation/GemPanels/GemPanels.blend and GemPanels_runtime.json:
+  Principled white dielectric; IOR1.766; roughness0.018; transmission1;
+  Volume Absorption color/density; three finite area emitters and world lighting.
+- Salamander137/Procedures/Shaders/DawGem.frag.wgsl and original Blender geometry
+  builder: original faceted cut. Runtime shader consumes the resulting planes.
+- Blender5.0.1 intern/cycles/kernel/closure/bsdf_microfacet.h: isotropic GGX,
+  visible-normal sampling and correlated Smith masking. Primary source:
+  https://github.com/blender/blender/blob/v5.0.1/intern/cycles/kernel/closure/bsdf_microfacet.h
+- Eric Heitz, Sampling the GGX Distribution of Visible Normals, JCGT7(4),2018:
+  https://jcgt.org/published/0007/04/01/
+
+Integrator limits
+This is a bounded deterministic real-time transport integrator using the authored
+material. It is not Cycles pixel equivalence. It traces all four stones, exact
+Fresnel reflection/refraction, total internal reflection, and per-segment volume
+absorption. The sample and bounce/event limits are explicit. Terminal exterior leaves are
+resolved at their parent surface to avoid allocating/scanning a pending ray.
+The event budget therefore counts retained transport work, not those terminal
+studio lookups. Surface-depth and minimum-throughput cutoffs remain unchanged.
+The16-entry queue remains available for branches that hit other stones; states
+are48bytes with scalar cached priority. Energy below the
+cutoff or beyond the path budget is discarded, never replaced with painted light.
+The floor uses correlated GGX plus diffuse direct area quadrature, constant world
+illumination, and approximate transmission shadows. Shadow attenuation and
+exit Fresnel use the actually refracted interior path; connection back to the
+sampled emitter still omits the specular boundary-value solve. Focused caustics and general
+scene diffuse global illumination are not reproduced. Actual device visual and
+performance validation are separate from shader compiler validation.
+
+Decorative control extension (schema 2):
+Row12: instance count (13 with traffic-light examples), material base (12544), reserved, reserved.
+Rows13/14 and 15/31: top/bottom control group world AABB center/half extent.
+Rows192..211: ten instances, two rows each: world translation.xyz/uniform scale,
+then absolute BVH root/end row indices. Instances 0..3 are rewind/stop/record/play;
+4..9 are three meter/fader pairs. Original triangles and normals are retained.
+Instance tree row Z optionally points to a meter-band acceleration descriptor;
+zero retains the complete original BVH. The descriptor stores reduced root/end,
+channel-record base and channel count. Each channel occupies two rows:
+minimumXYZ/band count, maximumXYZ/band-record base. Each band occupies four rows:
+minimumY/maximumY/reserved/reserved, then twelve original triangle-row pointers.
+The reduced BVH retains the housing, liner and window triangles, with original
+triangle-row identity in edge row+2.w to preserve equal-distance tie ownership.
+Band intervals only select candidates; all hits use original triangle equations,
+normals and materials. The complete original packet remains available, including
+as fallback for tiny nonzero ray components. This extension adds no art changes.
+Rows12544..45311: 32768 reserved control rows, after the unchanged floor field.
+Materials start at12544, stride40 matching panel surface rows; row+5 is emission.
+Control extinction is per authored metre and divided by the instance scale.
+BVH nodes occupy three rows: minimum.xyz/escape absolute row, maximum.xyz/first
+triangle absolute row, triangle count/reserved. Count zero means interior; next
+child is node+3. Leaves have at most four triangles. A triangle occupies six rows:
+anchor vertex (first w is material index), two edge vectors, then three authored
+vertex normals. Edge row+1.w=1 marks precomputed float32 edges; zero retains the
+legacy three-position interpretation. Normal row+3.w=1 marks three identical
+flat normals, allowing one normal fetch. All source normal vectors remain stored.
+Precomputed edges match float32 subtraction of the original packed positions.
+Traversal stops at the asset's end; escape skips a complete subtree.
+Hit IDs >=4 encode 4+instance*256+material, keeping glass media instance-local.
+The4096-row engraving block starts at45312; the57-cube AgX LUT follows at49408.
+The full dynamic packet has49408 RGBA32F rows. Floor visibility remains panel-only.
+
+Schema 2 reserves material row+2 for the interior traversal: root, end, convex
+plane count, reserved. A nonzero plane count selects validated closed convex
+planes at material rows+6..31; otherwise root/end select a material-only BVH.
+BVH node row+2 contains triangle count, minimum material ID, maximum material ID.
+These bounds prune unrelated surfaces without removing any triangles. The exporter
+uses binned surface-area splits; opaque/transparent source meshes are unchanged.
+Terminal ray queries stop at the first obstruction; normal path queries retain
+nearest-hit behavior and the same depth/event/sample limits. Interior media
+dispatch directly to their known instance and material, avoiding a scene/group
+search for each internal bounce. Failed BVH boxes skip metadata and triangle
+loads. Concave housings retain their exact triangle BVHs.
+
+SSLE specimen (schema3)
+Frame rows212..224 describe the embedded text. Row212 is density base, character
+record base, count<=160, enabled. Row213 is glyph lattice pitch, originXY, dot
+radius in font-em units. Row214 is scatter colorRGB and opacity. Row215 contains
+layer1/2 depths in em in XY and opacity weights in ZW; layer0 has weight1.
+Row216 packs layer1/2 XY shifts in lattice cells. Row217 holds left/right
+character ranges; rows218/219 and220/221 their AABBs. Row222 is line-record
+base/count<=16. Row223 is authoring jitter/radius limits and native scatter gain.
+Row224 is immutable density base234601, edge128, domain width1.2em and21846 texels
+per glyph. Domain lower corner is row213.yz; layer shifts apply before lookup.
+
+The4096 dynamic rows begin at45312. Character records start there: baselineXYZ /
+em-size-metres; glyphIndex / panel /0/0. Line records start at45632 after160
+reserved character records: centerXYZ/firstChar; extentXYZ/charCount; panel/emSize.
+The96x96 occupancy packet (95glyphs,144RGBA rows each,218880bytes) is CPU-only,
+used for geometry bounds. Its16-bit float masks still describe the actual
+Blender fracture centres; no occupancy packet is uploaded each frame.
+
+The immutable density atlas follows the57-cube AgX LUT: row234601,1037685 rows.
+Each glyph stores mips128,64,32,16,8,4,2,1 in that order, x fastest, y ascending,
+then one padding texel. A texel's RGB are the three interior layers' densities,
+quantized to8bits after analytic Gaussian texel-area integration and float mip
+averaging. Two floats encode [R+256*G,B]; two texels occupy one RGBA32F row.
+There are16602960 bytes. Bilinear/trilinear reconstruction uses the physical
+pixel footprint. Densities exclude layer displacement, opacity, layer weights,
+lighting and scatter gain; all remain runtime operations on refracted 3D rays.
+The original panel/control/text storage occupies20357120bytes after alignment.
+The input-monitor extension below enlarges native storage, uploaded once per session.
+
+Schema3 lightens the original Alegreya outlines by0.008em while retaining the
+original font advances, strings, sizes, baselines and panel geometry. Its96-cell
+lattice doubles source sampling with half-size dots (.00375em base radius).
+Stable point jitter and facet/glint seeds are authored from:
+n=(x*73+y*151+glyph*199+layer*283+salt*317)mod997;
+h=((n*n*157+n*313)mod1009)/1009. Salts1/2 jitterXY,3radius,4facet/glint.
+The corresponding field is now baked rather than recomputing9 Gaussians per
+character, layer and ray. The earlier equal-strength layers and truncated broad
+filters are retired. Native direct-scatter gain remains an artistic
+approximation; the existing gem transport and sample/bounce/event budgets stay
+unchanged. No screen-space text overlay or temporal noise is introduced.
+
+Input-monitor appearance extension (schema1)
+Live poses occupy engraving::BASE+368 through +432 exclusive (rows45680..45743):
+at most32 signals, two rows each, with shader instance IDs29..60. Row247 holds
+[poseBase,count,0,0]. Pose is translationXYZ/uniform scale; tree is absolute
+root/end, zero band descriptor, absolute material palette base. Every actual
+Audio/MIDI track uses the Off/red palette as appearance only. Edison instance
+IDs13..28 are unchanged. Row12 remains the legacy base plus plugin instance
+count, independent of live lane count. SSLE descriptors212..224 are unchanged.
+Rows226..231 retain the three Off/Auto/In preview poses (IDs10..12) only for
+explicit monitor_preview. Normal append_lanes clears those preview rows.
+For existing instances0..9 a zero tree.w retains row12.y as material base.
+Rows238/239 independently bound the monitor group: centerXYZ/minimum worldY,
+halfExtentXYZ/maximum worldY. Their W values are the vertical clip interval in
+world coordinates; reject monitor hits outside it. The bottom group AABB does
+not include monitors. Its meter/fader and Edison demo layout remains separate.
+input.timeline provides canvas bounds, actual ordered tracks and scroll_tracks.
+Consider at most32 complete64px rows below the32px ruler. CC rows preserve their
+index/spacing without a signal. Null/empty input clears count, poses and bounds.
+The right57px gutter is shared with Arrangement.clip_body for drawing/picking.
+For canvas(left,top,width,height), set s=min(1.5*clamp(60/404,.025,.20),60/358):
+x=left+width-28.5+10*s;
+y=top+32+(trackIndex-scroll_tracks)*64+32+4*s.
+Uniform scale converts0.5mm source units to pixels. Geometry remains front-facing;
+Cardinal's sheared projection is not reproduced. Convert screen clip
+top+32..top+height to ascending worldY for rows238.w/239.w. These64px rows differ
+from Cardinal's inherited60px/new180px rows. The explicit three-state preview
+retains the earlier60px layout; it does not supply actual document tracks.
+
+The immutable packet starts at row1272286, after the existing density atlas.
+It reserves1310720 rows; the prefix through the monitors requires41328640bytes
+after alignment (256x10090 RGBA32F). Other immutable control extensions may
+follow this prefix. The full dynamic frame remains49408 rows. Three39-material
+palettes precede one shared BVH and all128450 source triangles. Material rows
+retain the control ABI, with metallic in+5.w, coat weight in+2.w and coat
+roughness in+3.w. Emission includes KHR_materials_emissive_strength. The monitor
+opaque shader consumes these weights using direct GGX/conductor-Fresnel and a
+layered dielectric coat approximation, with the existing studio lighting.
+Other control and floor shading keep zero metal/coat weights.
+
+The shader allows131072 BVH node visits for monitors; the exporter and loader
+reject trees exceeding that bound. Other controls retain their4096 limit. The
+manifest validates base, capacities, material/triangle ranges and source hashes;
+startup rejects invalid lengths, nonfinite rows and out-of-range BVH addresses.
+The lamp state is decorative and no input or audio function is registered.
+Native actual-track captures on WebGPU/Vulkan/OpenGL were visually reviewed:
+the right-gutter monitor aligns with the MIDI lane; the CC lane has none.
+The72 focused tests passed (one CPU benchmark ignored). See
+output/checks/input-monitor-20261030-060431/visual-review.json. Concurrent
+shared-source changes stopped the final fingerprint guard before packaging;
+this is scoped monitor evidence, not certification of the entire checkout.
+Earlier rejected bottom-panel captures are not placement evidence.
+
+Edison socket demo extension (schema1)
+Rows232..233 hold instance13, after the three monitor poses. The existing
+instance-pose mapping and explicit palette base in tree.w apply. Row12.x is14.
+The socket's immutable packet starts at2583006 after the monitor reservation,
+with32768 reserved rows and21247 used rows. Four opaque material records precede
+the1729-node BVH and2650 original GLB triangles. The rigid20/-25-degree pose is
+baked during packing, including normals. The4096-node traversal bound applies.
+Native allocation grows by524288bytes; existing dynamic frames and all previous
+packet addresses stay unchanged. The bottom group bounds include the socket;
+the whole mixer fits uniformly with its added specimen. No new input target.
+
+Audio sphere appearance extension (schema1)
+Rows240..243 and the first256 rows after BubbleNotes::DYNAMIC_END carry up to64
+source ellipsoids. The dynamic base is48128 with the current bubble capacity;
+AudioSpheres.rs derives that address from BubbleNotes rather than duplicating it.
+No native allocation, immutable asset offset, existing geometry or background
+lighting changes. Header240 is count<=64, instance base, stride4, elapsed seconds.
+Row241 is the ascending world-space XY clip rectangle xmin,ymin,xmax,ymax.
+Rows242/243 are the aggregate world AABB center and half extent. The four rows
+per source are centerXYZ/selected, positive radiiXYZ/activity0..1,
+linear baseColorRGB/metallic0.9, and linear themeLightRGB/roughness0.2.
+Null presentation clears only this header and its own256 dynamic rows. All input
+validation finishes before changing the frame; malformed and excess instances
+are errors, not silently dropped tracks. Layer five owns the audio-derived
+projection and amplitude scaling; these rows already contain final geometry.
+
+Hit IDs90000..90063 select exact analytic ellipsoid intersections and gradient
+normals. They participate in nearest and terminal reflected/transmitted scene
+rays without entering the control-material address range or bubble film IDs.
+World XY clipping keeps the visible field inside its controller-provided bounds.
+The reference Swift sphere's metallic0.9/roughness0.2 is evaluated with direct
+GGX, Schlick conductor Fresnel and Smith masking. A white directional light,
+the reference theme-color and cool-blue omni orbits, and a constant gray
+environment approximation shade only these surfaces. SceneKit light intensity
+is mapped to bounded radiance rather than claimed numerically equivalent.
+Omni distance attenuation has a finite-radius bound. Selected sources receive
+a small base-color lift. Audio activity is retained for diagnostics; the shader
+does not apply a second amplitude scale or derive audio state.
+
+The existing floor, background and studio rows remain unchanged. Sphere shadows
+are intentionally absent, and the sphere material does not trace a general
+reflected environment; these are explicit real-time appearance approximations.
+No hall, floor, grid, backing plane, textures or new visible lights are added.
+The same kernel generates desktop GL, GLES, Vulkan and WGSL frontends. Actual
+backend captures and performance are separate evidence from shader compilation.
+
+Floating bubble extension
+Rows234..237 describe visible note count/height/depth/Z, field XY clipping,
+immutable BVH/vertex/triangle addresses, and dynamic note/pitch group addresses.
+Notes at45824: up to2048 vec4(onsetX,pitchY,length,age+4*selected).
+Pitch groups at47872:128 pairs(minimumXYZ/first,maximumXYZ/count).
+All dynamic rows end before engraving block end49408. No original LUT, density,
+control or input-monitor/Edison address changes. Immutable bubble rows start
+at2615808 with capacity32768; validated node/vertex/index strides are4/6/1.
+Workstation/BubbleNotesKernel.glsl is expanded by generate_workstation.py.
+Its actual indexed triangles use authored boundary/ring geometry, analytic
+deformation normals, and both membrane sides. Optical material is a uniform
+450nm air/film/air RGB spectral approximation, no texture/noise or bulk absorption.
+
+Control SSLE extension (schema1)
+Row244 is immutableDensityBase/usedRows/0/0. Density starts at2648576 with262144
+reserved RGBA32F rows, following the aligned BubbleNotes reservation. Existing
+immutable offsets and dynamic row ranges do not move. Five pattern fields use
+packed8-bit RGB layer densities: each texel occupies two floats [R+256*G,B].
+Two texels share a row, with one zero texel padding odd pattern lengths. Mips
+run from128x128 for transport or128x1024 for the track down to1x1.
+
+For transmissive materials in original instances0..9 only, material+2.w holds
+an absolute descriptor address in the control packet. Its three rows are
+originXY/extentXY, layerZ0/layerZ1/layerZ2/unitMetres, and
+densityOffsetRows/mipCount/absoluteMipTableRow/0. Each mip row is
+width/height/relativeTexelOffset/0. Pattern density offsets are relative to
+row244.x. Extended palettes retain their existing material+2.w semantics.
+Density is unshifted; panel SSLE layer offsets, opacity, weights and lighting
+are applied at runtime in unchanged control-local metres. Internal illumination
+uses the control material's own exit geometry, including the concave fader well.
+Workstation/ControlEngravingKernel.glsl generates all shader frontends.
+
+Document timeline extension (schema1)
+Rows248..255 are reserved for the arrangement. Row248 is instance count<=256,
+dynamic instance base48384, label base49152, handle count<=128. Row249 is the
+world XY clipping rectangle. Row250 is rulerLeftX/rightX/centerY/enabled. Row251
+records authored tape dimensions. Row252 is playheadX/minimumY/maximumY/enabled
+and row253.x is metres per logical pixel. Row254 is the first elapsed-time tickX,
+tick spacing in metres, half tick height and tick count<=32.
+Unused header fields stay zero. Null presentation clears only these header rows
+and the timeline's last1024 dynamic engraving rows, ending at49408.
+
+Each instance occupies three rows: translationXYZ/uniform scale; absolute BVH
+root/end/material base/tape flag; local width/height/depth/world label em size.
+For tape, the last component instead records the original onset's tile phase
+in local metres modulo0.22. Windowing preserves that phase as the view pans.
+Handles precede clips. Each handle's corresponding two label rows store up to
+eight printable ASCII codes with zero termination. Glyphs sample the existing
+panel SSLE atlas on three interior depth planes, following the same Beer/Fresnel
+and studio-light calculations. These labels do not mutate the shared gem asset.
+
+Timeline immutable rows start at2910720 after ControlEngraving, capacity262144,
+with144875 used rows. Authored GemButton_Wide and Mini retain76 triangles each;
+TapeClip_Long retains18324 triangles and its three materials. The tape importer
+explicitly selects its flat zero-weight morph base and excludes the separate
+illustrative audio waveform asset. Material stride40 and BVH/triangle strides3/6
+match the control packet. BVH traversal is bounded at16384 nodes per query.
+
+Durations uniformly tile the authored220mm tape geometry and crop at projected
+elapsed-time edges. This preserves perforation size, source thickness, normals
+and material, with repeated end seams and cropped ends as presentation limits.
+It does not claim to regenerate a continuous closed tape at arbitrary length.
+Large offscreen spans are windowed before float32 projection. All tapes retain
+the same elevation, including selected clips, to preserve document overlap order.
+CC rows have title/type gems and omit unavailable mute/solo buttons. Tiny clips have a
+six-pixel minimum hit/display width; document timing remains unchanged.
+
+Hit IDs700000..704095 select timeline instance/material, distinct from bubbles,
+audio spheres and user styles.719999 identifies the small extruded playhead,
+ruler rail and elapsed-time ticks. They share the existing opaque studio shading;
+the ruler makes the32px seek area visible without adding a background or grid.
+Timeline objects participate in scene/reflected/refracted intersections. Their
+floor shadows are not part of the existing panel-only cached visibility field.
+The source shaders are Workstation/TimelineKernel.glsl and
+Workstation/TimelineEngravingKernel.glsl; generate_workstation.py expands both.
+Document rows use32px ruler height,64px lane height and128px left furniture
+reserve. At most32 whole rows and128 clips are presented in one view.
+The fixed monitor examples now require View.monitor_preview=true; normal
+arrangement rendering clears those preview poses and supplies actual-lane Off
+appearances through row247. This does not connect input monitoring or audio.
+
+Edison insert row: header232.x points to engraving BASE+448, with up to16
+pose/tree pairs. It replaces the old single specimen pose at232..233. Instance
+IDs13..28 use that region; zero-scale mixer instances are skipped on the FX
+page. The connected packet follows timeline immutable storage, preserving all
+previous packet addresses. Editor visibility selects the socket-only or
+connected BVH at the same parent pose. No mobile plugin backend is linked.
+The source meshes retain their authored axes (no presentation rotation).
+Header232.z enables four page/track navigation gems, instances61..64; their
+poses occupy BASE+480..487. Tree.z carries their ASCII glyph, sampled from
+the existing font density. Edison tree.z is selection/hover/bypass flags.
+BASE here is engraving BASE. BASE+488 holds the row's world XY clip bounds;
+BASE+489..490 hold the drag insertion marker and surface height. These fit
+the existing64-row Edison reservation. Navigation uses the immutable timeline
+Mini gem. Instance29..60 remains reserved for actual lane monitors.
+
+User panel style extension (experimental v1)
+Frame row245: selected package enabled, animated, background enabled, elapsed
+seconds (zero for static). Row246: immutable style BASE, used rows, reserved x2.
+BASE aligns after BOTH the control-engraving and connected-Edison allocations.
+Capacity is65536 vec4 rows. Imported geometry is prepared once per session.
+An overridden panel's original40-row block has enabled=0 at row0.x, disabling
+its analytic gem body. Row0.yzw are BVH root/end/materialBase; row1 is world
+translation.xyz/enabled=1; row2 is nonuniform scale.xyz/user-shader-enabled;
+rows3/4 are model-local min/max; row5 is the local content rectangle.
+The per-package BVH has3-row depth-first nodes with escape pointers, matching
+UserStyle.rs. Triangles have8rows: three positions (material ID,unlit,two-sided
+in their w components), three normals, packed uv0/uv1 and uv2. Materials have
+2rows: base.rgb/roughness, emission.rgb/metallic. UserStyleKernel.glsl transforms
+rays to local space without normalization and normals by inverse transpose.
+Hit IDs200000+logicalPanel*100000+(triangleRow-BASE) avoid other scene IDs.
+WGSL style functions are inserted between USER_STYLE_FUNCTIONS markers after
+Naga validation; no user bindings or entry points. Alpha below0.5 rejects a hit;
+shadows test both sides even for a single-sided visible panel. Background output
+is directly evaluated on the studio floor plane for primary and secondary rays;
+this initial bounded implementation does not allocate a separate backdrop texture.
+Generic surface labels reuse authored glyph density as face coverage, with no
+assumed gem interior. GPU cutouts do not alter CPU content/gesture hit geometry.
+
+Physical top transport travel, Cardinal managed-button port:
+The former pressure/DPI use of rows13/14 is retired: those rows are the top
+group's conservative world AABB, written by decorative assembly. The final
+transport poses192/194/196/198 move inward in Z by0.023*0.5*pressure*scale,
+and left in X by10*pressure*(1.3/logical viewport height), matching Cardinal's
+5 logical pixel full press. Their actual 3D instance poses carry both motions.
+with pressure0..0.5 ramping at0.5/0.15 per second. Descriptors193/195/197/199.w
+store neutral Z; their XYZ geometry/material fields are unchanged. Instance
+bounds are rebuilt after physical movement. No RGB tint is added. Original
+backends trace the moved geometry. Dynamic rows45754..45759 (engravingBASE+442)
+between lane furniture and Edison poses are reserved
+by transport_pose::META_BASE/META_ROWS for four neutral poses, pressure and a
+tagged metres/logical-pixel value. Compile-time checks protect the adjacent
+lane and Edison allocations; total frame size is unchanged.
+Retained metadata49..52 stores capture bounds,53..56 actual captured poses,
+and57.x capture camera Z. Under the supported axial orthographic camera, the
+isolated button layer maps current poses to capture coordinates and transforms
+depth from captured to current Z/scale. Identity preserves sample bits; RGB is
+unchanged. Bit-validated pose-only travel and its verified derived BVH do not rebake.
+Available local mesh bounds are checked; separately loaded static-mesh leaf
+bounds and descriptors must remain unchanged, and the complete tree must match.
+Other geometry/material/camera changes remain dependencies; unsupported cameras
+use the original renderer. Input/actions remain controller-owned.
+
+Desktop full-view cover (row9.w)
+
+A positive cover hides the retained stationary editor layer while an expanding
+panel owns the desktop. This field is independent of studio lighting and is
+excluded from lighting-change detection. The plain-background retained path
+resolves uncovered pixels from the live background; other optical backends
+ignore this presentation field. No frame size or existing asset address changes.
+
+Compact retained metadata, panel group rows5+4*group.zw
+
+These formerly unused lanes carry captured/current bevel-band widths in pixels.
+The compositor stretches only the interior while retaining the physical crown
+and clipped corners. Texture origins remain in xy. Depth-consistent bilinear
+RGB sampling preserves the nearest depth winner and exact identity texels.
+
+
+Matched physical-key bubble heights (version 2)
+
+Bubble header row237.w remains1 for legacy uniform-height packets. Version2
+allows height_m on notes, with one height and center per pitch. The existing
+pitch-group Y bounds enclose center +/-0.6*height; the shader recovers that
+pitch's height from (high.y-low.y)/1.2. Header234.y remains the maximum height
+for whole-field bounds. Dynamic and immutable addresses/capacity do not move.
+PianoKeyLayout.rs supplies the physical projection and key-front dimensions.
+Piano camera composition preserves row9.z, retains opaque toolbar/keys and
+uses bounded film transmittance for source-over composition inside the field.
+
+OFFLINE ANIMATED BUBBLE ART (macOS baked compositor):
+An additional2048 rows follow the existing dynamic piano/browser-label packet
+at bubble_notes::IDENTITY_BASE (piano_scene::END+4096). Each sorted note has a
+64-bit optional stable identity encoded as four16-bit integer words. The dynamic
+FRAME_ROWS and GPU upload capacity grow by32KiB; all previous field addresses
+remain fixed. The last packet writer appends this data after furniture/browser
+writers finish resizing. No identity data is placed in immutable mesh storage.
+Legacy optical shaders ignore the new tail.
+The baked compositor binding4 holds packed display reflection RGB plus transmission-occlusion alpha
+flipbooks from the authoritative Blender material, independently of the static
+float artwork buffer. Its sprite mode7 uses row6 for four frame image addresses
+and row7 for temporal/loop blend and image dimensions. It bilinearly samples and
+interpolates reflected RGB and alpha independently, then uses premultiplied
+E+(1-alpha)*background blending. Source specular energy may exceed alpha;
+never attenuate that reflected light by transmission alpha again.
+Placement and idle film clocks are independent; no shader optical work is added.

@@ -1,0 +1,78 @@
+{
+  "system": "SilverSpiderCrabSystem",
+  "layer": 5,
+  "functions": {
+    "Step": {
+      "calls": [
+        "CaveSystem.Sample",
+        "PlanetSurfaceSystem.Frame",
+        "WaterSystem.Sample",
+        "EntitySystem.Create",
+        "EntitySystem.Remove",
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "AudicleSystem.Resume"
+      ]
+    },
+    "Close": {
+      "calls": [
+        "EntitySystem.Remove",
+        "AudicleSystem.Cancel"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "depths_predator_escape",
+        "description": "One bright silver eight-legged crab spawns in connected Depths air below -22 metres, approaches on land or through water, and follows cave surface normals onto walls. Close contact starts a camera-facing grab. Twenty-four fresh W/A/S/D press edges release the player; holding keys does not progress. Escape starts five seconds of retreat then passivity until approached within 2.8 metres. Pause freezes encounters; session close cancels owned Audicles and removes the Entity.",
+        "retention": "supported",
+        "selection": "Mirror planet navigation with SilverSpiderCrabSystem and CaveSystem enabled; noclip and laboratory encounters suppress new grabs.",
+        "implements": [
+          "Step",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/SilverSpiderCrabSystem.rs",
+          "BaseSystem/LayerFour/SilverSpiderCrabRig.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BuildSupport/Blender/build_silver_spider_crab.py",
+          "Art/Wildlife/SilverSpiderCrab/SilverSpiderCrab.blend",
+          "Procedures/Assets/Wildlife/silver_spider_crab.bin"
+        ],
+        "checks": [
+          {
+            "id": "escape_lifecycle",
+            "kind": "behavior",
+            "expectation": "A visible silver crab scuttles on floor, swims through cave water, attaches to walls, grabs at close range, releases after fresh key presses, retreats and stays passive until approached; all resources clean up.",
+            "procedure": "Run silver spider crab behavior, model and registered integration tests. Review Blender render and native cave encounters including walls, water, paused and resumed grabs, held versus tapped keys, retreat and reapproach. Native checks remain pending until actually performed."
+          },
+          {
+            "id": "declared_routes",
+            "kind": "declared_calls",
+            "expectation": "Creature queries and lifetime use declared System hooks.",
+            "targets": [
+              "CaveSystem.Sample",
+              "PlanetSurfaceSystem.Frame",
+              "WaterSystem.Sample",
+              "EntitySystem.Create",
+              "EntitySystem.Remove",
+              "AudicleSystem.Create",
+              "AudicleSystem.Ready",
+              "AudicleSystem.Go",
+              "AudicleSystem.Finish",
+              "AudicleSystem.Cancel",
+              "AudicleSystem.Resume"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

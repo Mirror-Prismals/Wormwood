@@ -1,0 +1,38 @@
+{
+  "system": "PlayerModelSystem",
+  "layer": 2,
+  "functions": {
+    "Load": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "prismals_skin_loading",
+        "description": "Load the original rigged Prismals GLB with its indexed geometry, UVs, four-joint influences and inverse-bind skeleton.",
+        "retention": "supported",
+        "selection": "The planet application prepares the model before its first navigation presentation.",
+        "implements": [
+          "Load"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/PlayerModelSystem.rs",
+          "BaseSystem/LayerTwo/RigMath.rs",
+          "Procedures/Assets/Player/prismal_player_welded_rigged.glb",
+          "Procedures/Assets/Player/PROVENANCE.txt"
+        ],
+        "checks": [
+          {
+            "id": "prismals_skin_loading_review",
+            "kind": "behavior",
+            "expectation": "The model loads without substituting geometry or art; malformed or unsupported data fails explicitly.",
+            "procedure": "Review GLB chunk/accessor bounds, joint parent cycles, bind-matrix inversion and skin normalization. Inspect the imported model and compare the asset SHA256 to provenance."
+          }
+        ]
+      }
+    ]
+  }
+}

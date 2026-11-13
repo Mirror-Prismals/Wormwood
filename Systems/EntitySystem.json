@@ -10,7 +10,53 @@
     },
     "Remove": {
       "calls": []
+    },
+    "Update": {
+      "calls": []
     }
   },
-  "init_steps": []
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "appearance_data",
+        "description": "Entities contain validated appearance data without behavior or dependencies on other Entities. Their creation, updates and removal are accounted for. JSON material_surface appearances allow up to 32768 triangles so workshop worker, tools and specimens can be composed; other visual appearances keep the existing 8192-triangle bound. Numeric material updates retain their existing independent bound.",
+        "retention": "supported",
+        "selection": "Available to declared callers throughout application lifetime, independently of which game event is active.",
+        "implements": [
+          "Create",
+          "Get",
+          "Update",
+          "Remove"
+        ],
+        "sources": [
+          "BaseEntity.rs",
+          "BaseSystem/LayerTwo/EntitySystem.rs",
+          "Host/Host.rs",
+          "Water/presentation.rs"
+        ],
+        "checks": [
+          {
+            "id": "entity_boundary",
+            "kind": "behavior",
+            "expectation": "Entity data remains independent; native resources are released before the owning Entity is removed.",
+            "procedure": "Review BaseEntity and EntitySystem for Entity dependencies; exercise accepted and rejected payloads and removal while native resources are still prepared. Check both cleanup and failure paths."
+          },
+          {
+            "id": "numeric_material_skin",
+            "kind": "behavior",
+            "expectation": "A native immutable material skin preserves the JSON Entity/Get/Update representation and projects the same accepted vertices on every graphics backend. Updates retain shader checks, finite vertex validation and the material appearance budget.",
+            "procedure": "Run native_material_entity_keeps_immutable_skin_and_json_compatibility and numeric_material_skin_projects_identically_to_json. Compare the release mining mesh transport and CPU terrain-presentation timings separately from GPU FPS."
+          },
+          {
+            "id": "shared_immutable_render_snapshot",
+            "kind": "behavior",
+            "expectation": "Numeric render reads share immutable accepted Entity storage. Updates publish a replacement while existing readers retain their original data; JSON Get and owned snapshot compatibility, shader validation and removal errors remain unchanged.",
+            "procedure": "Run scene_cpu_shared_entity_reads_reuse_storage_and_preserve_old_snapshots, native_material_entity_keeps_immutable_skin_and_json_compatibility and registered scene-instance integration checks."
+          }
+        ]
+      }
+    ]
+  }
 }

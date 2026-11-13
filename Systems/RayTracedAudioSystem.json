@@ -1,0 +1,87 @@
+{
+  "system": "RayTracedAudioSystem",
+  "layer": 2,
+  "functions": {
+    "Advance": {
+      "calls": []
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Invalidate": {
+      "calls": []
+    },
+    "AdvanceMicrophone": {
+      "calls": []
+    },
+    "AdvanceTerrain": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "listener_ray_propagation",
+        "description": "Port the original twenty-ray six-bounce listener batch and transmission/echo estimator through immutable current-scene geometry.",
+        "retention": "experimental",
+        "selection": "Authorized Mirror restoration; shared integration and native validation pending.",
+        "implements": [
+          "Advance",
+          "Snapshot",
+          "Invalidate",
+          "AdvanceMicrophone",
+          "AdvanceTerrain"
+        ],
+        "sources": [
+          "Audio/acoustic.rs",
+          "Audio/geometry.rs",
+          "BaseSystem/LayerTwo/RayTracedAudioSystem.rs",
+          "BaseSystem/LayerTwo/TerrainAudio.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "restoration_review",
+            "kind": "behavior",
+            "expectation": "Port the original twenty-ray six-bounce listener batch and transmission/echo estimator through immutable current-scene geometry.",
+            "procedure": "Rewrite owns validation: compare retained Cardinal formulas/scripts, run new unit checks, wire registered hooks into Mirror, verify native macOS and iOS output, source movement/removal, failure cleanup and callback underrun telemetry. Source presence and compilation alone are not audible verification."
+          },
+          {
+            "id": "immutable_visibility_reuse",
+            "kind": "behavior",
+            "expectation": "The twenty-ray work budget and live head/source response remain unchanged. Only identical visibility queries through the same immutable geometry revision may reuse results; endpoint/distance changes and geometry revisions invalidate reuse. Terrain invocation borrows the full accepted geometry under the same contract and Audicle attribution.",
+            "procedure": "Run audio::acoustic::tests including counting-query invalidation, existing reflection/transmission and moving-source checks; benchmark the real embedded game with audio enabled. Caching is off the audio callback."
+          },
+          {
+            "id": "nearest_hit_terrain_bound",
+            "kind": "behavior",
+            "expectation": "A closer accepted surface or venue hit bounds terrain traversal without changing the original sample spacing, crossing bracket, normal or closest-hit ordering; acoustic ray budgets remain unchanged.",
+            "procedure": "Run bounded_terrain_trace_matches_full_grid_near_venue_and_excavation against full-grid reference results, then real game and embedded audio benchmarks."
+          }
+        ]
+      },
+      {
+        "id": "doorway_wind_placement",
+        "description": "Wind uses direct upper-hemisphere outdoor escape solid angle to lower and angle its omni emitter toward openings, eases over 0.35 seconds, and retains above-roof suppression with no openings. Player and microphone retain independent worker-side state.",
+        "retention": "supported",
+        "selection": "Mirror environment session with outdoor wind enabled.",
+        "implements": [
+          "AdvanceTerrain"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/TerrainAudio.rs"
+        ],
+        "checks": [
+          {
+            "id": "doorway_wind_placement_behavior",
+            "kind": "behavior",
+            "expectation": "Wind uses direct upper-hemisphere outdoor escape solid angle to lower and angle its omni emitter toward openings, eases over 0.35 seconds, and retains above-roof suppression with no openings. Player and microphone retain independent worker-side state.",
+            "procedure": "Run wind_cover_tests for open and shut doors, deep interior, local up, roofs, independent receivers and easing; listen while crossing real theatre doorways."
+          }
+        ]
+      }
+    ]
+  }
+}

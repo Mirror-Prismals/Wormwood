@@ -22,7 +22,46 @@
     },
     "RouteChanged": {
       "calls": []
+    },
+    "Attach": {
+      "calls": [
+        "ChuckConnectionSystem.AttachOutput"
+      ]
+    },
+    "Info": {
+      "calls": []
     }
   },
-  "init_steps": []
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "managed_coreaudio_duplex_device",
+        "description": "Prepare separated macOS microphone and speaker UIDs through the supported CoreAudio aggregate API before starting managed JACK. Keep OS defaults unchanged, preserve channel selection, follow original device changes, and release the owned aggregate after JACK stops. Reclaim only generated aggregate devices with demonstrably dead owners.",
+        "retention": "supported",
+        "selection": "macOS managed JACK with different input and output UIDs; single-device, output-only and external JACK connections retain their own device paths.",
+        "implements": [
+          "Prepare",
+          "Info",
+          "Release",
+          "RouteChanged"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/JackAudio.rs",
+          "BaseSystem/LayerOne/MacAudioRoute.rs",
+          "BaseSystem/LayerOne/MacAudioAggregate.m",
+          "build.rs"
+        ],
+        "checks": [
+          {
+            "id": "duplex_channel_selection",
+            "kind": "behavior",
+            "expectation": "Aggregate output selects the requested speaker interface, capture skips any input channels on that output interface, and same-device/output-only arguments remain explicit.",
+            "procedure": "Run duplex_routing_tests; verify a native bounded Mirror launch has physical input ports and releases its aggregate after stopping JACK, including failed startup."
+          }
+        ]
+      }
+    ]
+  }
 }

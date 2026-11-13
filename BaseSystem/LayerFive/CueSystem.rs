@@ -88,6 +88,8 @@ pub(crate) struct State {
     started: Option<std::time::Instant>,
     finished: u64,
     cancelled: u64,
+    player_preparation_attempted: bool,
+    player_prepared: bool,
 }
 impl State {
     fn status(&self) -> Value {
@@ -99,9 +101,9 @@ impl State {
         }
         if let Some(sound) = &self.sound {
             if !cancel {
-                host.invoke("JackConnectionSystem.Stop", sound.clone())?;
+                host.invoke(&format!("{}.Stop",audio_system()), sound.clone())?;
             }
-            host.invoke("JackConnectionSystem.Release", sound.clone())?;
+            host.invoke(&format!("{}.Release",audio_system()), sound.clone())?;
             host.invoke("EntitySystem.Remove", sound.clone())?;
             self.sound = None;
         }
@@ -146,18 +148,23 @@ pub(crate) fn dispatch(host: &mut Host, hook: &str, input: &Value) -> Result<Val
                         host.invoke("AppearanceSystem.Prepare", visual)?;
                         state.procedure = Some(name.into());
                     }
+                    if name == "planet_surface" && !state.player_prepared {
+                        state.player_preparation_attempted = true;
+                        host.invoke("PlayerRigSystem.Prepare", state.visual.clone().unwrap())?;
+                        state.player_prepared = true;
+                    }
                     if host.audio_enabled() && !definition["sound"].is_null() {
                         let sound =
                             host.invoke("EntitySystem.Create", definition["sound"].clone())?;
                         state.sound = Some(sound.clone());
                         let data = host.invoke("EntitySystem.Get", sound.clone())?;
-                        host.invoke("JackConnectionSystem.Prepare", data)?;
+                        host.invoke(&format!("{}.Prepare",audio_system()), data)?;
                     }
                     let cue = state.cue.clone().unwrap();
                     host.invoke("AudicleSystem.Ready", cue.clone())?;
                     host.invoke("AudicleSystem.Go", cue)?;
                     if let Some(sound) = &state.sound {
-                        host.invoke("JackConnectionSystem.Start", sound.clone())?;
+                        host.invoke(&format!("{}.Start",audio_system()), sound.clone())?;
                     }
                     state.started = Some(std::time::Instant::now());
                     Ok(())
@@ -170,7 +177,7 @@ pub(crate) fn dispatch(host: &mut Host, hook: &str, input: &Value) -> Result<Val
             "Advance" => {
                 if state.cue.is_some() {
                     if let Some(sound) = &state.sound {
-                        if host.invoke("JackConnectionSystem.RouteChanged", sound.clone())? == true
+                        if host.invoke(&format!("{}.RouteChanged",audio_system()), sound.clone())? == true
                         {
                             state.end(host, true)?;
                             return Ok(state.status());
@@ -178,7 +185,7 @@ pub(crate) fn dispatch(host: &mut Host, hook: &str, input: &Value) -> Result<Val
                     }
                     let complete = match &state.sound {
                         Some(sound) => {
-                            host.invoke("JackConnectionSystem.Complete", sound.clone())? == true
+                            host.invoke(&format!("{}.Complete",audio_system()), sound.clone())? == true
                         }
                         None => true,
                     };
@@ -196,6 +203,11 @@ pub(crate) fn dispatch(host: &mut Host, hook: &str, input: &Value) -> Result<Val
             "Cancel" => state.end(host, true)?,
             "Close" => {
                 state.end(host, true)?;
+                if state.player_preparation_attempted {
+                    host.invoke("PlayerRigSystem.Release", state.visual.clone().ok_or("scene visual missing")?)?;
+                    state.player_prepared = false;
+                    state.player_preparation_attempted = false;
+                }
                 if let Some(visual) = &state.visual {
                     host.invoke("AppearanceSystem.Release", visual.clone())?;
                     host.invoke("EntitySystem.Remove", visual.clone())?;
@@ -210,3 +222,5 @@ pub(crate) fn dispatch(host: &mut Host, hook: &str, input: &Value) -> Result<Val
     host.cue_session = state;
     result
 }
+
+fn audio_system()->&'static str {if cfg!(target_os="ios"){"IOSAudioConnectionSystem"}else{"JackConnectionSystem"}}

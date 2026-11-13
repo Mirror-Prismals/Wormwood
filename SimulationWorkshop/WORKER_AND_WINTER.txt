@@ -1,0 +1,93 @@
+Worker and winter workshops — October 29, 2026
+
+New entries appear in the Mac scenario menu and iOS material menu, on the same
+explicit WebGPU, Vulkan and OpenGL paths:
+  matter_worker_dig — a visible Prismals worker excavates a turf/soil/rock section
+  matter_worker_axe — the worker chops a small standing game tree
+  matter_snow       — the worker shovels a compressible snow deposit
+  matter_ice        — a pick fractures ice floating in a finite warm-water bath
+  matter_ice_air    — the same ice specimen melts in warmer air on the floor
+
+Worker
+
+The actual player GLB supplies skin and limb lengths, with workshop clothing
+colors. Feet stay planted, legs bend, the torso leans and the arms solve to the
+accepted tool wrists. The material-space hand anchors, physical shafts,
+finite-mass tools and OGC projection are shared with gameplay. The motor asks
+for an edge-first insertion, levering, lifting, carrying and a tip around the
+upper hand. Surface selection samples remaining matter at each new digging
+stroke. No material is erased or attached to the shovel to produce a result.
+The tree uses the same anchored base fibres and retained crown as game trees.
+
+A reduced muscle actuator now also drives held tools in gameplay: activation
+and relaxation, force/length and force/velocity factors, fatigue, target-velocity
+tracking and finite hand force/wrist torque. The worker phases coordinate
+activation with the motion. Its quasistatic body lean responds to accepted tool
+reaction within a planted stance. This is a supported motor model, not a full
+anatomical muscle simulation or dynamic full-body ragdoll. The workshop does
+not run a separate copy of the game navigation/aim controller. It isolates the
+shared tool/material path so reach and contact are visible.
+
+Captions show current hand effort, actual current tool contact, accumulated
+contact work and peak carried material samples. The detailed report includes
+edge-to-target distance and grip error. A requested stroke is not a claim that
+it succeeded; the physical result and counters must be judged in play.
+The digging worker keeps its shovel when obstructed by rock; the older layered
+workshop remains the shovel-to-pick tool-exchange example.
+
+Winter materials
+
+Snow uses the existing APIC material-point transport with its own compressive
+plastic projection, limited tensile strain, permanent densification and
+hardening. Its transport step accounts for the faster elastic response of
+compacted snow; density follows each parcel's current phase. OGC handles
+shovel/ground boundaries. Snow initially starts at -6 C;
+after 20 physical seconds its demonstration warms the air to +8 C. Heating runs
+at 180 times physical time, labelled in the caption. A melted snow parcel keeps
+its mass and changes to the liquid constitutive law and corresponding volume.
+
+Ice uses density 917 kg/m3 and brittle bonded convex cells with ice-specific
+strength and toughness. The finite hydrostatic bath applies buoyancy using the
+submerged volume of each accepted cell. Its water temperature cools as heat
+passes into ice and it exchanges heat with ambient air. Liquid mass received
+from melting joins the bath, including airborne meltwater that falls into it. In air,
+melted ice becomes explicit water parcels with the source mass and velocity,
+using the APIC/OGC liquid path. Both ice showcases use 240x thermal time, +10 C
+air and initially -5 C ice; the bath starts at +12 C. The contact pick and
+mechanics run at ordinary simulation speed.
+
+Energy first warms frozen matter to zero, then pays latent heat before
+conversion. Convection coefficients are authored approximations; immersed heat
+exchange is faster than air exchange. Ice melts cell by cell at exposed faces;
+this is a coarse thermal front, not continuous ablation or molecular structure.
+The bath is a supported hydrostatic reservoir, not a resolved wave/fluid tank.
+Refreezing, snow accumulation/precipitation, seasonal landscape snow coverage,
+thermal stress and conduction inside an intact ice block are not implemented.
+
+The game now samples an authored air temperature from Eastern calendar day,
+time of day, elevation and the same weather-front phase used by clouds. Active
+game water parcels have temperature/air exchange at normal thermal time.
+This is game climate, not live real-world weather. Natural water generation has
+not been replaced with a planet-wide thermal/fluid calculation, and the new
+snow/ice deposits are currently workshop specimens rather than world coverage.
+
+References used for the model
+
+Stomakhin et al., A Material Point Method for Snow Simulation (2013): elastic
+stretch projection and plastic-volume hardening. The implementation adapts
+those ideas to this engine's existing transport and OGC contacts; it does not
+claim to reproduce Disney's full solver.
+https://www.disneyanimation.com/publications/a-material-point-method-for-snow-simulation/
+https://media.disneyanimation.com/uploads/production/publication_asset/94/asset/SSCTS13_2.pdf
+
+Penn State METEO 300, phase-change energy: heat capacity and latent heat.
+https://courses.ems.psu.edu/meteo300/node/585
+
+Verification status
+
+Native cargo check, the aarch64-apple-ios cargo check, and UIKit Objective-C
+syntax compilation passed. Only compilation and contract inspection are part
+of this change. No playback,
+benchmarks or device testing has been run, and no release has been uploaded.
+Compilation cannot establish successful excavation, tree felling, floating
+stability, presentation or phone performance. The user will judge those in play.

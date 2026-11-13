@@ -1,0 +1,10 @@
+{
+  "cursor_click": 1,
+  "keyswitch": 1,
+  "panel_motion": 1,
+  "button_click": 1,
+  "daw_open": 1,
+  "daw_close": 1,
+  "daw_startup": 1,
+  "workspace_swoosh": 1
+}

@@ -2,6 +2,14 @@
 
 Wormwood's own code is Apache-2.0. Third-party components retain their licenses.
 
+## Engraved panel font
+
+The SSLE glyph data and packed Blender font use Cardinal's Alegreya Sans Regular,
+Copyright (c) 2013 Juan Pablo del Peral (Huerta Tipografica), under the
+[SIL Open Font License 1.1](BuildSupport/Licenses/AlegreyaSans-OFL.txt).
+The original font is preserved; the separately named SSLE occupancy packet is
+generated from its outlines. The glyph data retains the font's OFL license.
+
 ## JACK external client library
 
 Wormwood uses the JACK Audio Connection Kit client library, `libjack`, under
@@ -63,3 +71,22 @@ archives and recorded SDK hashes remain in local output/ios-sdk. The iOS target
 uses Apple's system frameworks for native surfaces and audio; it does not bundle
 or link a JACK server or libjack. Preserve upstream notices from the SDK archives
 along with this notice when preparing a distributable application.
+
+## Native contact client
+
+Physics/OGC retains the author's standalone OGC adaptation and its attribution
+to Anka He Chen's Apache-2.0 Gaia implementation (revision c229692). See
+Physics/OGC/PROVENANCE.json for the preserved source hashes and subsequent
+wrapper changes. This does not establish equivalence to the SIGGRAPH solver.
+GLM 1.0.2 headers are compiled into this client; their notice is retained in
+[glm-1.0.2.txt](BuildSupport/Licenses/glm-1.0.2.txt). The client uses the system
+C++ runtime. No JACK server has been added to the distribution.
+
+The macOS component-drag cursor label also bundles the unchanged Cardinal
+Alegreya Sans Regular font at Procedures/Fonts/AlegreyaSans-Regular.ttf under
+the same SIL OFL 1.1 notice above; it is not installed as a system font.
+
+The macOS plugin catalog uses the unchanged Cardinal Material Icons Round font
+at Procedures/MaterialDesign/MaterialIconsRound-Regular.otf. Its Apache-2.0
+notice is retained in Procedures/MaterialDesign/LICENSE.txt. The font is loaded
+from the application resources and is not installed as a system font.

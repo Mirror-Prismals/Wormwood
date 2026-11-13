@@ -8,14 +8,313 @@
         "AudicleSystem.Ready",
         "AudicleSystem.Go",
         "AudicleSystem.Finish",
-        "AppearanceSystem.View"
+        "AppearanceSystem.View",
+        "PlanetSurfaceSystem.Height",
+        "GraphicsConnectionSystem.Caption",
+        "EntitySystem.Get",
+        "EntitySystem.Update",
+        "PlanetSurfaceSystem.Frame",
+        "InverseKinematicsSystem.Active",
+        "PlayerRigSystem.Advance",
+        "ColorEmotionSystem.Advance",
+        "ColorEmotionSystem.Active",
+        "PlanetSurfaceSystem.Reset",
+        "AudicleSystem.Fail",
+        "AudicleSystem.Resume",
+        "EnvironmentAudioSystem.Frame",
+        "EnvironmentAudioSystem.Status",
+        "EnvironmentAudioSystem.Begin",
+        "WaterSystem.Frame",
+        "WaterSystem.Configure",
+        "WaterSystem.Step",
+        "WaterSystem.Sample",
+        "WaterSystem.Disturb",
+        "WaterSystem.Edit",
+        "WaterSystem.Pause",
+        "CaveSystem.ResolveBody",
+        "CaveSystem.Sample",
+        "PhysicsSystem.GameStep",
+        "PhysicsSystem.GameFrame",
+        "PhysicsSystem.GameResolveBody",
+        "PhysicsSystem.GameClose",
+        "PlayerRigSystem.Plan",
+        "TheatreSystem.ResolveBody",
+        "PhoneSystem.Grip",
+        "PhoneSystem.Frame",
+        "DeerSystem.Step",
+        "GlassesSystem.Grip",
+        "CraftingSystem.Frame",
+        "CraftingSystem.Grip",
+        "CraftingSystem.Close",
+        "CraftingSystem.Configure",
+        "PhysicsSystem.GamePause",
+        "NpcSystem.Step",
+        "LaboratorySystem.Step",
+        "SilverSpiderCrabSystem.Step",
+        "SilverSpiderCrabSystem.Close"
       ]
     },
     "Stop": {
       "calls": [
-        "AudicleSystem.Finish"
+        "AudicleSystem.Finish",
+        "PlanetSurfaceSystem.Save",
+        "ColorEmotionSystem.Release",
+        "PhysicsSystem.GameClose",
+        "PhysicsSystem.GamePause",
+        "DeerSystem.Close",
+        "NpcSystem.Close",
+        "LaboratorySystem.Close",
+        "SilverSpiderCrabSystem.Close"
+      ]
+    },
+    "Configure": {
+      "calls": []
+    },
+    "Pause": {
+      "calls": [
+        "AudicleSystem.Finish",
+        "WaterSystem.Pause",
+        "PhysicsSystem.GamePause"
+      ]
+    },
+    "Abort": {
+      "calls": [
+        "AudicleSystem.Fail",
+        "PlanetSurfaceSystem.Save",
+        "ColorEmotionSystem.Release",
+        "PhysicsSystem.GameClose",
+        "DeerSystem.Close",
+        "NpcSystem.Close",
+        "LaboratorySystem.Close",
+        "SilverSpiderCrabSystem.Close"
       ]
     }
   },
-  "init_steps": []
+  "init_steps": [
+    "Configure"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "planet_navigation",
+        "description": "Navigate the material world with walking/flight, independent camera look, and press-to-mine shovel and pickaxe controls. Axe and bucket retain charge/release strokes. Accepted OGC tool poses drive both hands. Desktop uses 1\u20134 for shovel/pickaxe/axe/bucket, left mouse for work and right mouse to refill a cut or empty a physical tool. Mobile retains separate movement/look and tool controls. Spawn at the theatre FOH and resolve continuous authored floors, ramps and walls alongside terrain contacts. A deferred DAW observer step moves the player while preserving paused scene clock, water and wildlife; normal gameplay still advances them.",
+        "retention": "supported",
+        "selection": "Start walking with cheats off. Runtime cheats gate flight shortcuts; noclip additionally requires cheats and flight. Mobile top-right pause opens native controls for Cheats, Flight and Noclip. Changes apply on resume. A tutorial at the start of every play session teaches movement, look, jump and spade gestures, can be skipped, disappears on completion and can be replayed from pause. Desktop F8 toggles cheats, F9 flight, F10 noclip; double-Space flight is gated by cheats. Unrestricted double-tap flight and the old empty paused-screen resume gesture are superseded by these controls. The earlier manual spade-drag controller and immovable controls-only ground are retired from the game path at the user's material-world replacement request. PhysicsSystem.GameStep owns tool/matter interaction.",
+        "implements": [
+          "Configure",
+          "Step",
+          "Pause",
+          "Stop",
+          "Abort"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerTwo/PlanetSurfaceSystem.rs",
+          "BaseSystem/LayerFive/PlayerControls.rs",
+          "Procedures/player_controls.json",
+          "Render/window.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFour/PlayerRigSystem.rs",
+          "BaseSystem/LayerTwo/InverseKinematicsSystem.rs",
+          "Platform/iOS/Touch.rs",
+          "Platform/iOS/App.m",
+          "Render/ios.rs",
+          "Procedures/terrain_session.json",
+          "Physics/matter/game.rs",
+          "Theatre/mod.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "surface_navigation",
+            "kind": "declared_calls",
+            "expectation": "Navigation has declared shared-surface query, physical tool-trial and persistence routes.",
+            "targets": [
+              "PlanetSurfaceSystem.Height",
+              "PhysicsSystem.GameStep",
+              "PlanetSurfaceSystem.Save"
+            ]
+          },
+          {
+            "id": "planet_scale",
+            "kind": "behavior",
+            "expectation": "Navigation respects the surface and radial up direction, keeps a stable horizon, limits pitch to 89 degrees, and responds to walking, jump, sprint, flight and pause controls.",
+            "procedure": "Compile desktop/iOS. User checks WASD/mouse, charging and releasing each tool, pouring, jump/sprint/flight, pause/reset, mobile movement/look while working, and contact with changed ground. Check the existing cheats, time override, tutorials and cave traversal. Normal gameplay must have no HUD. Check the tool overlay appears with cheats enabled and immediately disappears, including its background, when cheats are disabled. No automated playthrough is implied by compilation."
+          },
+          {
+            "id": "controller_lifecycle",
+            "kind": "declared_calls",
+            "expectation": "Navigation retains event lifecycle, presentation, surface-query and save routes.",
+            "targets": [
+              "AudicleSystem.Create",
+              "AudicleSystem.Ready",
+              "AudicleSystem.Go",
+              "AudicleSystem.Finish",
+              "AppearanceSystem.View",
+              "PlanetSurfaceSystem.Height",
+              "PlanetSurfaceSystem.Save"
+            ]
+          },
+          {
+            "id": "body_motion_route",
+            "kind": "declared_calls",
+            "expectation": "The movement event routes each visible body change through the registered rig and IK hooks.",
+            "targets": [
+              "PlayerRigSystem.Advance",
+              "InverseKinematicsSystem.Solve",
+              "EntitySystem.Update"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "continuous_cave_body_contact",
+        "description": "Apply bounded swept capsule queries against the configured continuous cave volume after radial controller movement. Clip inward velocity at cave floors, walls and ceilings. Preserve existing gestures and reset controls.",
+        "retention": "experimental",
+        "selection": "CaveSystem enabled; no new mobile HUD or tool gestures. This is a bounded controller contact approximation, not a new calibrated body mechanics solver.",
+        "implements": [
+          "Step"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFive/PlayerControls.rs",
+          "BaseSystem/LayerTwo/CaveSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "cave_navigation",
+            "kind": "behavior",
+            "expectation": "Body floor, head clearance and side contact use the same cave field as local surface extraction. Movement remains bounded and reset is not rejected as a long movement sweep.",
+            "procedure": "Pending separately authorized desktop/mobile traversal and collision verification."
+          }
+        ]
+      },
+      {
+        "id": "runtime_cheats_and_mobile_onboarding",
+        "description": "Expose runtime Cheats/Flight/Noclip switches in mobile and Mac pause menus; start each session with cheats off. Keep pending requests until resume/engine acceptance, preserve ordinary jump without cheats, and provide bounded return-to-safe-position when disabling noclip in solid ground. Mobile shows a skippable seven-step tutorial at every play session with replay from pause and contextual tool buttons; Mac displays keyboard/mouse controls in its Escape menu. Both pause menus provide a cheats-gated time-of-day override and a return to the real clock; calendar and seasons remain real-time.",
+        "retention": "supported",
+        "selection": "Cheat flags are session-local. Tutorial completion is session-local and the tutorial starts again on each play session. Runtime toggles do not alter terrain, saved vegetation or water state. The paused clock slider holds the selected lighting time until real time is selected, cheats turn off, or the session ends.",
+        "implements": [
+          "Configure",
+          "Step",
+          "Pause",
+          "Stop"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/PlayerControls.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "Platform/iOS/App.m",
+          "Platform/iOS/Touch.rs",
+          "BaseEntity.rs",
+          "Render/window.rs",
+          "Render/PauseMenu.m",
+          "Render/mod.rs",
+          "BaseSystem/LayerFour/Atmosphere.rs",
+          "Procedures/player_controls.json"
+        ],
+        "checks": [
+          {
+            "id": "cheats_onboarding_validation",
+            "kind": "behavior",
+            "expectation": "Cheats off forbids flight/noclip; enabled flight and noclip can be toggled during a session. Disabling noclip inside solid material recovers safely. Mobile tutorial teaches real gestures, can be skipped/replayed, handles pause/background and leaves no persistent overlay.",
+            "procedure": "Run cheats controller cases, validate iOS Rust and UIKit compilation, then play-test first launch/skip/replay, all mobile touch gestures, pause/rapid toggle/resume, foreground/background, flights through cave walls and noclip exit in both open caves and solid rock. Build/upload evidence does not establish phone gameplay. Verify clock slider, real-time reset, disabling cheats, and season preservation on the phone. On Mac verify Escape menu changes remain pending while paused, apply once on resume, and resynchronize from accepted engine state on reopening; check F8/F9/F10, disabling cheats resets time, and every graphics backend."
+          }
+        ]
+      },
+      {
+        "id": "waterpark_slide_rides",
+        "description": "Z toggles a seated physical body, retaining momentum and resolving gravity, steering, jumps and water coupling against authored flume triangles. Both slides descend to deep cavern pools with a carved mine stair exit.",
+        "retention": "experimental",
+        "selection": "The author explicitly retires automatic centerline capture, minimum ride speed and velocity clearing in favor of free physical sliding. Walking remains available. Reset, flight and noclip use the ordinary player controller.",
+        "implements": [
+          "Step"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "Theatre/Waterpark.rs",
+          "BaseSystem/LayerFive/PlayerControls.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFive/WaterSystem.rs",
+          "Render/window.rs",
+          "BaseSystem/LayerTwo/InverseKinematicsSystem.rs",
+          "BaseSystem/LayerFour/PlayerRigSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "waterpark_slide_rides_behavior",
+            "kind": "behavior",
+            "expectation": "Sitting preserves foot position and momentum and is edge-triggered; reset restores standing height. Steering and contact can change the trajectory without snapping to the path. Both unsteered physical descents reach their receiving pools. Water gates drain the film; actual parcel velocity is coupled. Tower and mine stairs remain independently walkable.",
+            "procedure": "Run cargo test --offline --locked --lib waterpark. Review Blender overview and WORMWOOD_CHECK_WATERPARK=1 native theatre exterior captures. Manual full-game traversal remains separate validation."
+          }
+        ]
+      },
+      {
+        "id": "nightworld_floor_crossing",
+        "description": "Mine to the overworld floor and cross an authored portal through a loading card into the reflected Nightworld coordinate chart. Preserve X/Z, reverse radial up, and arrive at the bottom with mineable terrain overhead. The waterpark secret passage reaches a dedicated floor iris; its counterpart lands in a finite water pool inside a green/magenta metal spiral shaft with suspended jump platforms. Nightworld has dry asymmetric sand dunes and advances twelve hours opposite the overworld clock.",
+        "retention": "supported",
+        "selection": "User requested November 10, 2026. The second radial chart uses negative Y and shares no Cardinal world IDs, blocks, terrain resources or scheduler. Eight-metre floor iris sites outside the waterpark support coordinate-linked mining routes. Accepted excavation domains remain world-coordinate distinct across the charts. The waterpark shaft is a dedicated authored site; ordinary bottom arrivals use the bottom gallery and must mine upward. Portal arrival disarms the trigger until the player clears its floor band. A submitted loading card holds movement before transfer; reset cancels a pending crossing.",
+        "implements": [
+          "Configure",
+          "Step"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFive/PlayerControls.rs",
+          "Terrain/Nightworld.rs",
+          "Terrain/mod.rs",
+          "Terrain/Underground.rs",
+          "Theatre/Nightworld.rs",
+          "Theatre/Waterpark.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/Atmosphere.rs",
+          "Physics/planet.rs",
+          "Physics/matter/world_field.rs",
+          "Water/bodies.rs",
+          "Water/surface_mesh.rs",
+          "BaseSystem/LayerFive/WaterSystem.rs",
+          "ModSources/prismals/BuildSupport/Nightworld/build_nightworld.py",
+          "ModSources/prismals/Assets/Procedures/Assets/Nightworld/site.json",
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs",
+          "Render/NightworldCheck.rs",
+          "Render/TheatreExteriorCheck.rs",
+          "Render/mod.rs"
+        ],
+        "checks": [
+          {
+            "id": "nightworld_coordinates_loading_collision",
+            "kind": "behavior",
+            "expectation": "Loading holds position before transfer. X/Z remain exact and radial up reverses. Tunnel and landing are air; actual authored blocks supply contact with jump gaps. Sand surface differs from Pennsylvania. Nightworld water has the correct inverted bed/surface and does not replace overworld water. The clock retains a half-day phase offset at unit speed.",
+            "procedure": "Run RUST_MIN_STACK=16777216 cargo test --offline --locked nightworld. Run WORMWOOD_CHECK_NIGHTWORLD=1 with --check-theatre-exterior WebGPU for finite native captures through the production scene builder and water pass. Review landing, shaft, dunes and loading composition. Native waterpark-to-portal traversal, a complete player-controlled parkour ascent, device listening and installed-app packaging require separate observation; scene and route tests alone do not establish those."
+          }
+        ]
+      },
+      {
+        "id": "cheat_cave_inspection",
+        "description": "Reset requires cheats except explicit new-session initialization. Session-local night vision requires cheats, clears when cheats are disabled or the session resets, and preserves physical world geometry.",
+        "sources": [
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "Render/window.rs",
+          "Render/PauseMenu.m"
+        ],
+        "retention": "supported",
+        "selection": "Normal planet gameplay; full-bright inspection only when explicitly enabled with cheats.",
+        "implements": [
+          "Step",
+          "Configure"
+        ],
+        "checks": [
+          {
+            "id": "cave_regression",
+            "kind": "behavior",
+            "expectation": "Reset requires cheats except explicit new-session initialization. Session-local night vision requires cheats, clears when cheats are disabled or the session resets, and preserves physical world geometry.",
+            "procedure": "Run cave_lighting_tests, cave_water_tests and river_shore_tests. Validate all native water shaders. Inspect the real cave/slide transition, phone pickup, cheat reset and pause-menu night vision in native gameplay."
+          }
+        ]
+      }
+    ]
+  }
 }

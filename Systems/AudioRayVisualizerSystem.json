@@ -1,0 +1,71 @@
+{
+  "system": "AudioRayVisualizerSystem",
+  "layer": 4,
+  "functions": {
+    "Frame": {
+      "calls": [
+        "ChuckConnectionSystem.Telemetry"
+      ]
+    },
+    "Clear": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "live_cabinet_wave_visualization",
+        "description": "DAW right-panel toggle controls actual world-source and cabinet wave nets and measured ray ribbons; outside the DAW they require worn glasses. Animated rays are a separate unlit overlay over retained paused-world color and depth, and never trigger optical baking or world recapture.",
+        "retention": "experimental",
+        "selection": "Authored spawn theatre enabled in the game; DAW only mode shares the same session model.",
+        "implements": [
+          "Frame",
+          "Clear"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/AudioRayVisualizerSystem.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Audio/chuck.rs",
+          "Render/WorldBackdropWebGPU.rs",
+          "Render/WorkstationWorldImage.rs"
+        ],
+        "checks": [
+          {
+            "id": "live_cabinet_wave_visualization_behavior",
+            "kind": "behavior",
+            "expectation": "DAW right-panel toggle controls actual world-source and cabinet wave nets and measured ray ribbons; outside the DAW they require worn glasses. Animated rays are a separate unlit overlay over retained paused-world color and depth, and never trigger optical baking or world recapture.",
+            "procedure": "Run silence/first-wall clipping checks, then play actual routed PCM and inspect moving wave fronts in the native venue. Geometry revisions refresh cached limits round-robin; no calibrated SPL claim."
+          }
+        ]
+      },
+      {
+        "id": "cheat_sound_speaker_models",
+        "description": "The Sound speakers pause-menu option requires cheats and shows Blender-authored omni speaker models at published acoustic emitter positions, including moved wind; disabling cheats clears the option. This does not enable ray ribbons or require glasses.",
+        "retention": "supported",
+        "selection": "Cheats enabled and Sound speakers selected in the macOS pause menu.",
+        "implements": [
+          "Frame",
+          "Clear"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/AudioRayVisualizerSystem.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "Render/PauseMenu.m",
+          "Render/window.rs",
+          "Art/Audio/OmniSpeaker/runtime.json",
+          "BuildSupport/Blender/make_omni_speaker.py"
+        ],
+        "checks": [
+          {
+            "id": "cheat_sound_speaker_models_behavior",
+            "kind": "behavior",
+            "expectation": "The Sound speakers pause-menu option requires cheats and shows Blender-authored omni speaker models at published acoustic emitter positions, including moved wind; disabling cheats clears the option. This does not enable ray ribbons or require glasses.",
+            "procedure": "Verify toggle gating, published positions and finite mesh geometry; inspect native depth occlusion and doorway movement with cheats enabled."
+          }
+        ]
+      }
+    ]
+  }
+}

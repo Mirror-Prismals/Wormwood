@@ -1,0 +1,57 @@
+{
+  "system": "TerrainGeometrySystem",
+  "layer": 2,
+  "functions": {
+    "Capture": {
+      "calls": [
+        "PlanetSurfaceSystem.Frame",
+        "TerrainToolSystem.Frame",
+        "VegetationSystem.QueryWood",
+        "TheatreSystem.AcousticGeometry"
+      ]
+    },
+    "Trace": {
+      "calls": []
+    },
+    "MaterialIntervals": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "accepted_continuous_geometry",
+        "description": "Capture immutable accepted planet edits, debris and rooted-soil tetrahedra, and wind-deformed tapered wood. Query terrain and material hits and unioned solid intervals without substituting broadphase bounds for material thickness. Include independently authored theatre triangle surfaces and true axis-aligned/oriented wall prisms in the same immutable snapshot.",
+        "retention": "supported",
+        "selection": "Registered off-callback queries; wood uses up to128 nearby sites in a128-metre radius, independent of camera orientation and display LOD.",
+        "implements": [
+          "Capture",
+          "Trace",
+          "MaterialIntervals"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/TerrainGeometrySystem.rs",
+          "Terrain/MaterialGeometry.rs",
+          "Audio/Volumes.rs",
+          "Vegetation/BranchGraph.rs",
+          "Physics/terrain_tool.rs",
+          "Physics/planet.rs",
+          "Theatre/mod.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs",
+          "Audio/Geometry.rs",
+          "BaseSystem/LayerTwo/VegetationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "accepted_cut_thickness",
+            "kind": "behavior",
+            "expectation": "Accepted excavation and accepted soil/debris positions change hit positions and measured material intervals. Wood uses persistent life/damage and the shared wind time. Union overlapping material cells without double-counting or reflecting from internal tetrahedron seams. Geometry is frozen for each ray batch.",
+            "procedure": "Review accepted cell coordinates, wind ring geometry, local-origin conversion, query bounds and lifecycle wiring; then run geometry and native integration validation separately. Continuous terrain crossing searches retain their5cm resolution limit; source edits alone do not establish runtime correctness. Run oriented_authored_wall_has_actual_thickness; verify a cabinet ray hits the same visible wall and accepted venue placement."
+          }
+        ]
+      }
+    ]
+  }
+}

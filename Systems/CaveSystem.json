@@ -1,0 +1,86 @@
+{
+  "system": "CaveSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": []
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Sample": {
+      "calls": []
+    },
+    "Support": {
+      "calls": []
+    },
+    "Mesh": {
+      "calls": []
+    },
+    "ResolveBody": {
+      "calls": []
+    }
+  },
+  "init_steps": [
+    "Configure"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "continuous_depths_caves",
+        "description": "Generate expansive continuous brown-rock upper caves joined to blue-rock Depths, sharing the geological boundary with presentation, player support/contact and sound. Adapt pre-binary Cardinal cave proportions and configured original atlas colors without block storage.",
+        "retention": "experimental",
+        "selection": "Procedures/caves.json selects legacy_perlin: the older 64/128-metre two-field shape, a three-metre roof and 1024-metre local radius, overlapping the existing -20..-64 Depths field by four metres. Authored tunnels/chambers remain connected. The previous bounded value_noise alternative and marching tetrahedra remain explicitly selectable. Surface-net rendering and collision query the same field; mesh/contact remain bounded numerical approximations. Underground surface-net windows widen to 72 metres below -18 metres to include the main chamber walls; near-surface windows remain 36 metres. River air is capped by its shoreline margin so the extracted bank approaches the shared material boundary. Deep underground views render the cave volume with a 24..34-metre dark visibility fade and omit the outdoor height-field, theatre and surface vegetation; finite mesh boundaries are not presented as exposed sky. This is a bounded visibility treatment, not infinite cave rendering. The November cave expansion adds three authored surface routes and three distinct chamber proportions. Independently meshed Blender formations extend the shared collision/material volume; explicit fine meshes preserve their silhouettes without changing the geological extraction spacing. The original route and brown/blue rock distinction remain.",
+        "implements": [
+          "Configure",
+          "Snapshot",
+          "Sample",
+          "Support",
+          "Mesh",
+          "ResolveBody"
+        ],
+        "sources": [
+          "Terrain/Underground.rs",
+          "BaseSystem/LayerTwo/CaveSystem.rs",
+          "Procedures/caves.json",
+          "Terrain/SurfaceNet.rs",
+          "Terrain/OrganicCavePrototype.rs",
+          "Terrain/Depths.rs",
+          "Terrain/Rock.rs",
+          "Terrain/CaveFormations.rs",
+          "Art/Terrain/CaveFormations/meshes.json",
+          "Physics/matter/game.rs",
+          "Physics/matter/solid.rs",
+          "Terrain/VoidIndex.rs"
+        ],
+        "checks": [
+          {
+            "id": "shared_cave_boundary",
+            "kind": "behavior",
+            "expectation": "The entrance joins a descending tunnel and Depths chambers without cubic world cells. Display and collision query the same continuous solid. Existing save edits are retained. Sampling and body contact are bounded prototype approximations.",
+            "procedure": "Run cave field, meshing, shared collision and traversal-route checks; inspect upper/Depths material assignment and native shader validation. Human gameplay assessment of entrance continuity, ceiling contact, dark chamber visibility and mobile performance remains required."
+          },
+          {
+            "id": "physical_excavation_boundary",
+            "kind": "behavior",
+            "expectation": "Geological void generation does not count as excavation. No direct delete-volume hook is exposed; future underground removal must be committed from accepted tool/material response and account for detached mass.",
+            "procedure": "Review registered hooks and later integrate material separation before claiming player-driven underground excavation."
+          },
+          {
+            "id": "capped_noise_equivalence",
+            "kind": "behavior",
+            "expectation": "Geometric upper bounds skip only noise terms that cannot change the continuous field maximum; original cave and river surfaces remain unchanged.",
+            "procedure": "Run capped_noise_rejection_preserves_original_field_bits and existing underground mesh, support, surface cover and terrain acoustic regressions. Compare cold scene preparation separately from steady frames."
+          },
+          {
+            "id": "attached_cave_minerals",
+            "kind": "behavior",
+            "expectation": "Stalagmites and stalactites attach to sampled chamber floors/ceilings, keep route centerlines clear, and expose ruby/silver above the Depths and blue/magenta crystals below. Accepted mining domains remove formation volume and faces; refined material retains its mineral identity, mass and tint. Existing stone mechanics apply.",
+            "procedure": "Run cave_formations, cave_mining_checks, underground and deep_cave_view checks. Inspect Blender Preview.png. Native traversal, pickaxe strike/drop interactions, lighting and frame cost require gameplay review."
+          }
+        ]
+      }
+    ]
+  }
+}

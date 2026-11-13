@@ -1,0 +1,51 @@
+{
+  "system": "RegistrySystem",
+  "layer": 2,
+  "functions": {
+    "State": {
+      "calls": [
+
+      ]
+    },
+    "SetEnabled": {
+      "calls": [
+        "PlanetNavigationSystem.Configure",
+        "DiagnosticsSystem.ValidateRuntime"
+      ]
+    }
+  },
+  "init_steps": [
+
+  ],
+  "entry_steps": [
+    "State",
+    "SetEnabled"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "runtime_selection",
+        "description": "Inspect and change runtime System activation independently of retained behavior. Refuse disabling live work/resources or a System on the current invocation stack. Newly enabled Systems initialize once through registered startup hooks; failed initialization remains observable and disabled.",
+        "retention": "supported",
+        "selection": "Explicit runtime registry requests; the source registry remains a boolean-only default selection.",
+        "implements": [
+          "State",
+          "SetEnabled"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/RegistrySystem.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "activation",
+            "kind": "behavior",
+            "expectation": "A disabled System can be enabled and invoked without restarting. It initializes once. Disabled invocation and disabling live resources are rejected; retention and circuit breaker state are unchanged.",
+            "procedure": "Exercise initially disabled activation, init failure, reenable, live-Audicle/resource rejection, and successful disable after cleanup."
+          }
+        ]
+      }
+    ]
+  }
+}

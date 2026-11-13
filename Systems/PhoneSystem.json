@@ -1,0 +1,111 @@
+{
+  "system": "PhoneSystem",
+  "layer": 5,
+  "functions": {
+    "Configure": {
+      "calls": [
+        "PhoneRenderSystem.Load"
+      ]
+    },
+    "Input": {
+      "calls": [
+        "TerrainGeometrySystem.Capture",
+        "TerrainGeometrySystem.Trace",
+        "GraphicsConnectionSystem.InputMode",
+        "PhysicsSystem.GameFrame"
+      ]
+    },
+    "Frame": {
+      "calls": [
+        "EnvironmentAudioSystem.Status",
+        "ChuckConnectionSystem.Telemetry"
+      ]
+    },
+    "Grip": {
+      "calls": []
+    },
+    "Status": {
+      "calls": []
+    },
+    "Close": {
+      "calls": []
+    },
+    "Check": {
+      "calls": [
+        "PhoneSystem.Status",
+        "PhoneSystem.CheckScene",
+        "CueSystem.Status",
+        "CueSystem.Begin",
+        "CueSystem.Advance",
+        "CueSystem.Close",
+        "PlanetNavigationSystem.Step",
+        "PlanetNavigationSystem.Stop",
+        "PlanetNavigationSystem.Abort",
+        "AppearanceSystem.Pump",
+        "EnvironmentAudioSystem.Status",
+        "EnvironmentAudioSystem.Close",
+        "WaterSystem.Close"
+      ]
+    },
+    "CheckScene": {
+      "calls": []
+    }
+  },
+  "init_steps": [
+    "Configure"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "cardinal_phone_application",
+        "description": "Own one continuous handset at the theatre desk, preserving Cardinal app hit regions, F pickup/place, R focus and Escape release. Publish actual listener meter and current authored climate, keep player/session focus independent from the DAW and preserve its selected app and return it to the current theatre desk at every new game.",
+        "retention": "experimental",
+        "selection": "Enabled in game; desktop F/R take precedence over water-source/reset only while a phone interaction owns those keys. Mobile taps select the physical handset and screen; existing Put down phone button releases focus before placing it.",
+        "implements": [
+          "Configure",
+          "Input",
+          "Frame",
+          "Grip",
+          "Status",
+          "Close",
+          "Check",
+          "CheckScene"
+        ],
+        "sources": [
+          "Phone/mod.rs",
+          "BaseSystem/LayerFive/PhoneSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "Render/window.rs",
+          "Audio/chuck.rs",
+          "Phone/Diagnostic.rs",
+          "Platform/iOS/App.m"
+        ],
+        "checks": [
+          {
+            "id": "phone_state_and_focus",
+            "kind": "behavior",
+            "expectation": "Aimed pickup within3.25m respects obstruction; focus accepts only real screen coordinates, empty gaps do nothing, Escape releases focus before pause, F releases focus before placement. Pickup refuses a loaded tool. The held phone suspends the empty tool collider/input/mesh, advances material simulation and supplies IK grips; placing it restores the tool without a travel sweep. Interrupted/paused UI does not recapture its cursor. Save/restore validates before mutation. A new game places the handset at the current theatre desk even when the saved location was held, stowed or placed elsewhere; the selected app is preserved.",
+            "procedure": "Run phone state/render/flashlight/listener-meter tests and native phone checks; exercise actual F/R/Escape, focus loss, desktop clicks, return from DAW, placement and app restart. Verify mobile gestures on device separately."
+          },
+          {
+            "id": "phone_live_sensors",
+            "kind": "behavior",
+            "expectation": "The meter observes the actual mixed stereo output with125ms smoothing and max reset. Selfie uses the current full head-inclusive player skin. Weather uses the existing deterministic game climate, with absent humidity/pressure/rain fields left unavailable. No external weather feed or shutter is claimed.",
+            "procedure": "Compare actual PCM RMS/peak with meter readings, inspect moving selfie/UV/clipping, and compare current/forecast values with the same climate sampler."
+          },
+          {
+            "id": "phone_native_readbacks",
+            "kind": "behavior",
+            "expectation": "Explicit --check-phone captures all five real screens with actual sensors and skin in the native planet scene, verifies fresh complete readbacks and cleans up scene resources. It never saves its diagnostic phone pose.",
+            "procedure": "Run --check-phone OpenGL and inspect output/phone-OpenGL/report.json plus each screen capture. Physical input and other graphics backends need separate verification."
+          }
+        ]
+      }
+    ]
+  },
+  "entry_steps": [
+    "Check"
+  ]
+}

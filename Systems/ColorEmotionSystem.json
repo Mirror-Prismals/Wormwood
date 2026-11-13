@@ -1,0 +1,55 @@
+{
+  "system": "ColorEmotionSystem",
+  "layer": 4,
+  "functions": {
+    "Advance": {
+      "calls": [
+        "EntitySystem.Create",
+        "EntitySystem.Update",
+        "EntitySystem.Remove"
+      ]
+    },
+    "Active": {
+      "calls": []
+    },
+    "Release": {
+      "calls": [
+        "EntitySystem.Remove"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "interaction_color_emotions",
+        "description": "Present tracked color-emotion appearances for interaction charge and pickup. Digging uses lime and pink; pickup uses orange and green. The edge vignette, pulse, smoothing and full-charge spin use the authored Cardinal equations. It does not assert that terrain was removed.",
+        "retention": "supported",
+        "selection": "Layer-five interaction input drives charge and pickup feedback; inactive effects fade and release their Entity.",
+        "implements": [
+          "Advance",
+          "Active",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/ColorEmotionSystem.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseEntity.rs",
+          "Procedures/Shaders/triangle.gl.frag",
+          "Procedures/Shaders/triangle.frag",
+          "Procedures/Shaders/triangle.wgsl",
+          "Procedures/Shaders/scene.ios.frag"
+        ],
+        "checks": [
+          {
+            "id": "color_emotion_visual",
+            "kind": "behavior",
+            "expectation": "No text, icons or buttons appear in the game. Only the requested two color pairs fade at screen edges without replacing world colors; the effect remains an Entity attributed to the calling Audicle.",
+            "procedure": "Check both pairs, hold/release, full-charge spin, fade to clear, native aspect and alpha blending on each selected graphics API; verify normal/error release and no stale Entity. Compilation is not rendering verification."
+          }
+        ]
+      }
+    ]
+  }
+}

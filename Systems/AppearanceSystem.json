@@ -22,15 +22,417 @@
     "Pump": {
       "calls": [
         "EntitySystem.Get",
-        "GraphicsConnectionSystem.Pump"
+        "GraphicsConnectionSystem.Pump",
+        "GraphicsConnectionSystem.SetView"
       ]
     },
     "View": {
       "calls": [
         "EntitySystem.Get",
-        "GraphicsConnectionSystem.SetView"
+        "GraphicsConnectionSystem.SetView",
+        "VegetationSystem.QueryGeometry",
+        "CloudSystem.Frame",
+        "TheatreSystem.Mesh",
+        "AudioRayVisualizerSystem.Frame",
+        "PhoneRenderSystem.Frame",
+        "PlanetSurfaceSystem.Frame",
+        "PhysicsSystem.GameFrame",
+        "GlassesRenderSystem.Frame",
+        "WorkstationDataSystem.StageLighting",
+        "EnvironmentAudioSystem.Status",
+        "CraftingRenderSystem.Frame",
+        "MonasteryRenderSystem.Frame"
       ]
     }
   },
-  "init_steps": []
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "planet_grid_body_composition",
+        "description": "Compose the Pennsylvania-inspired planet, vegetation, player, carried shovel and tracked color-emotion appearance without a permanent gameplay HUD. Compose at most two tool, four bird and two deer visual instances while preserving the shared bounded composed-scene capacity. Compose the spawn theatre through a separate bounded numeric mesh batch, with live source-level wire visualization. The silver spider crab adds one independently owned visual instance within the expanded fourteen-instance bound. Its dark-cave silver facet shading remains visible without outdoor sky exposure.",
+        "retention": "supported",
+        "selection": "Natural terrain is the default; the anchored 24-cell grid remains an optional development view flag.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/Projection.rs",
+          "Terrain/mod.rs",
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "BaseEntity.rs",
+          "Host/Host.rs",
+          "Theatre/mod.rs",
+          "BaseSystem/LayerFour/AudioRayVisualizerSystem.rs",
+          "BaseSystem/LayerFour/DeerRig.rs",
+          "BaseSystem/LayerFive/DeerSystem.rs",
+          "BaseSystem/LayerFour/TheatreAppearance.rs",
+          "Render/webgpu.rs",
+          "BaseSystem/LayerFour/TerrainProjectionWorker.rs",
+          "BaseSystem/LayerFour/SilverSpiderCrabRig.rs"
+        ],
+        "checks": [
+          {
+            "id": "planet_grid_body_composition_routes",
+            "kind": "declared_calls",
+            "expectation": "The retained behavior has explicit declared routes for its dependencies.",
+            "targets": [
+              "EntitySystem.Get",
+              "GraphicsConnectionSystem.SetView"
+            ]
+          },
+          {
+            "id": "planet_grid_body_composition_review",
+            "kind": "behavior",
+            "expectation": "Natural terrain and tool/soil Entities share the player depth projection. Optional grid remains planet-anchored. No Entity contains references to another Entity.",
+            "procedure": "Inspect shared terrain/player depth, optional development grid, camera-relative tool precision and the original player appearance on all selected graphics APIs. Verify no text, icons, virtual buttons, debug captions or staged soil/cradle appear during gameplay. Inspect only the requested edge color emotions and their alpha blending. The requested temporary UIKit controls tutorial and explicit paused controls menu are allowed; both must disappear after completion/skip or Resume."
+          },
+          {
+            "id": "numeric_material_skin",
+            "kind": "behavior",
+            "expectation": "A native immutable material skin preserves the JSON Entity/Get/Update representation and projects the same accepted vertices on every graphics backend. Updates retain shader checks, finite vertex validation and the material appearance budget.",
+            "procedure": "Run native_material_entity_keeps_immutable_skin_and_json_compatibility and numeric_material_skin_projects_identically_to_json. Compare the release mining mesh transport and CPU terrain-presentation timings separately from GPU FPS."
+          },
+          {
+            "id": "cached_theatre_projection_equivalence",
+            "kind": "behavior",
+            "expectation": "Retained camera-independent venue terms preserve every retained projected triangle exactly across camera sides, day/night lighting and mesh replacement. Fully clipped venue faces may be omitted only when planar reflections do not need them; settled visible pixels remain unchanged.",
+            "procedure": "Run cached_venue_matches_original_across_views_light_and_replacement against the real authored venue. Run projection and numeric material/entity regressions; compare bounded release outdoor and embedded workstation benchmarks with the installed baseline."
+          },
+          {
+            "id": "opaque_scene_pipeline",
+            "kind": "behavior",
+            "expectation": "WebGPU disables alpha blending only for the contiguous alpha-one scene prefix. Player texture cutouts, color emotions, order, depth, reflection passes and baked DAW compositing retain their original behavior.",
+            "procedure": "Compare fixed native theatre captures with WORMWOOD_SCENE_OPAQUE_PIPELINE=0 versus default, require byte-identical captures, and benchmark both normal game and embedded workstation. Run existing GPU timestamp and geometry regressions."
+          },
+          {
+            "id": "scene_cpu_fused_preparation",
+            "kind": "behavior",
+            "expectation": "Fused terrain/theatre preparation preserves projected positions, visible triangle order, material packing, fog, live lighting and final clipping. Scene output reuses bounded CPU storage without retaining stale geometry or changing sky/flashlight ordering.",
+            "procedure": "Run scene_cpu_projector_preserves_projection_bits, scene_cpu_fused_terrain_matches_original_with_motion_light_edits_and_caves, cached_venue_matches_original_across_views_light_and_replacement, eight-instance scene and flashlight tests. Compare fixed native captures and alternating real game/embedded workstation benchmarks."
+          }
+        ]
+      },
+      {
+        "id": "real_time_authored_day_night",
+        "description": "Sample Eastern civil wall time once per planet View at real speed. Preserve the original authored blue/navy sky profiles and directional yellow sunset equations around 18:00. Use the spherical local horizon for sky rays and the shared primary sun/moon direction for terrain, vegetation shadows and water. Terrain haze follows the current horizon palette without rebuilding terrain topology. View also reports authored air temperature, wind and cloud fraction from real calendar time, altitude and the cloud weather-front phase. This is seasonal game climate, not live weather; the visual time-of-day cheat does not change the physical climate clock. At the author's November 12 request, night adds a dense fictional blue-white celestial sphere with varied star brightness, broad distant galactic glow, faint nebula filaments and dark dust lanes. It rotates continuously through the daily cycle, fades at dawn and the horizon, and stays behind the unchanged clouds and sun/moon disks. No nearby galaxy, planet or alteration of daytime palette, cloud appearance, weather, terrain lighting or audio is introduced.",
+        "retention": "supported",
+        "selection": "Default planet appearance; no accelerated gameplay clock or saved session-time reset.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/Atmosphere.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs",
+          "Vegetation/Packet.rs",
+          "Render/Scene.rs",
+          "Procedures/Atmosphere/sky_palette.json",
+          "BuildSupport/generate_sky_shaders.py",
+          "Procedures/Shaders/triangle.gl.frag",
+          "Procedures/Shaders/triangle.frag",
+          "Procedures/Shaders/triangle.wgsl",
+          "Procedures/Shaders/scene.ios.frag",
+          "Physics/matter/climate.rs",
+          "Render/TheatreExteriorCheck.rs",
+          "Procedures/Atmosphere/celestial.glsl",
+          "Render/NightSkyCheck.rs"
+        ],
+        "checks": [
+          {
+            "id": "real_time_authored_day_night_review",
+            "kind": "behavior",
+            "expectation": "Original RGB profile interpolation and directional sunset run per pixel on GL, GLES, Vulkan and WebGPU. Sun, moon, shadows, water colors and atmospheric haze advance together; stationary cameras and application resume update from wall time. Midnight is continuous; US Eastern DST boundaries follow civil time.",
+            "procedure": "Run Atmosphere unit cases for DST transitions, midnight palette continuity and local-horizon sun directions. Review captured morning/noon/17:30/18:30/night frames across each native backend and real iPhone, including water reflections, stationary terrain and resume. These runtime checks remain unverified until performed."
+          },
+          {
+            "id": "opaque_before_sky",
+            "kind": "behavior",
+            "expectation": "Production retains sky-first order. The opaque-first research alternative preserves sky equations and blended suffix ordering but is not promoted because measured Metal GPU time regressed.",
+            "procedure": "Run sky_is_after_opaque_and_before_original_blended_suffix and WORMWOOD_CHECK_SCENE_ORDER=1 --check-theatre-exterior WebGPU for the diagnostic alternative. Review output/benchmarks/extra-20261108/comparison/ for the rejected performance measurement."
+          },
+          {
+            "id": "distant_blue_white_night_sky",
+            "kind": "behavior",
+            "expectation": "A rich blue-white field of point stars, distant diffuse galactic structure and dust lanes appears only at night, remains continuous around the sphere and midnight, fades towards the horizon and dawn, and is obscured by the existing clouds. No foreground galaxy or changed cloud equations. Daytime sky and scene lighting are preserved.",
+            "procedure": "Validate GL/GLES/Vulkan and WGSL scene shaders. Run WORMWOOD_CHECK_NIGHT_SKY=1 --check-theatre-exterior WebGPU and inspect midnight, east, zenith, existing-cloud, dawn, noon and midnight-wrap captures. Compare noon and cloudy images with the baseline shader. Verify other native backends and iPhone separately; these remain unverified until performed."
+          }
+        ]
+      },
+      {
+        "id": "pennsylvania_woodland_materials",
+        "description": "Retain Pennsylvania tree habitats, existing generated tree shapes, bark atlas, and calendar-driven seasonal foliage. Habitat density and stable tree identities are preserved.",
+        "retention": "supported",
+        "selection": "Ground atlas tiles, cave sprites, moss/crystal/ore/lava overlays and fallback clods/grass are explicitly retired from game presentation at the user's 2026-10-29 request. They are replaced by material_world_surface. Bark sampling remains selected for the requested old trees; the shared storage allocation still contains legacy tile bytes to preserve the native tree/cloud ABI.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "Terrain/Woodland.rs",
+          "Render/SceneAssets.rs",
+          "Vegetation/Season.rs",
+          "Vegetation/Geometry.rs",
+          "Vegetation/Forest.rs",
+          "Vegetation/mod.rs",
+          "BaseSystem/LayerFour/Atmosphere.rs",
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs",
+          "BaseSystem/LayerFour/VegetationGeometry.rs",
+          "Procedures/Assets/Woodland/materials.json",
+          "BuildSupport/generate_woodland_shaders.py"
+        ],
+        "checks": [
+          {
+            "id": "woodland_seasons_review",
+            "kind": "behavior",
+            "expectation": "Tree bark and seasonal foliage retain their established appearance and habitat placement. Ground never invokes the atlas sampler.",
+            "procedure": "Compile shaders and native/iOS. User reviews trees and seasons alongside the new material surface."
+          }
+        ]
+      },
+      {
+        "id": "material_world_surface",
+        "description": "Render the world as shared matter: root-mat turf and geometric crowns, cohesive dirt, bulk fine sand, brittle stone and a continuous bedrock floor that the pickaxe can cut. Landform and cave fields supply occupied shape; they no longer supply texture slots. Rest and disturbed turf use one crown builder. Accepted moving matter and tools receive the same day/night tint and fog. All native graphics backends consume colored material geometry. Existing sky/clouds and native water optics remain. At the user's November7 request, green near-ground turf now uses the original Blender meadow material with filtered color/occlusion and normal/height maps; existing crowns remain. Relief is diffuse shading in the dominant ground plane, not displacement or a physics change. At the user's request, brown near-ground dirt and steep root-mat faces use original fine-loam color/occlusion and normal/height maps; fine sand keeps its separate appearance. Sharp mesh silhouettes are unchanged. At the user's LOD-consistency request, natural terrain root exposure uses the fixed metre-scale world gradient rather than rendered triangle slope. Base turf/soil/sediment/rock colors are sampled per world vertex at every resolution; triangle-majority color and edge-size material blending are retired. Newly exposed turf walls retain face-based root-side shading. Mesh and shader LOD may simplify detail but must not select a different base material for a shared world point. At the user's November7 request, low-altitude terrain detail follows a broad tangent-plane camera cone. The unchanged eight-metre support patch joins finer two-metre radial rings; forward radii expand toward a 256-metre shared distant boundary, taper to the original side/rear range, and rejoin the original horizon beyond 2048 metres. Small turns retain the selected cone; larger turns rebuild both adjoining caches. Ground diffuse fades from 192 to 320 metres with UV eligibility through 512 metres. The near/distant connector has intermediate sampled rings; original landform normals are shared independently of mesh resolution. November8: intentional detailed surface grass/dirt cover is sampled onto original landform vertices at every LOD using world-anchored upper surface-net tiles; the coarse landform no longer defaults to turf where the detailed ground is dirt. Tile memory is bounded and reused during mesh construction. Existing detailed geometry, material physics and excavation remain unchanged.",
+        "retention": "experimental",
+        "selection": "Default planet presentation. Replaces atlas terrain and old decorative clods/cave sprites; existing vegetation remains its own generated tree mesh with material-physics transfer on chopping.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs",
+          "Physics/matter/world_field.rs",
+          "Physics/matter/turf.rs",
+          "Art/Terrain/Grass/build_grass.py",
+          "Art/Terrain/Dirt/build_dirt.py",
+          "BuildSupport/generate_dirt_shaders.py",
+          "BuildSupport/generate_grass_shaders.py",
+          "Render/SceneAssets.rs",
+          "Physics/matter/solid.rs",
+          "Terrain/MaterialDomain.rs",
+          "Terrain/Underground.rs",
+          "Procedures/Shaders/triangle.frag",
+          "Procedures/Shaders/triangle.gl.frag",
+          "Procedures/Shaders/triangle.wgsl",
+          "Procedures/Shaders/scene.ios.frag",
+          "Terrain/SurfaceCover.rs"
+        ],
+        "checks": [
+          {
+            "id": "material_lod_consistency",
+            "kind": "behavior",
+            "expectation": "The same world sample retains turf, dirt, sediment or rock base color as triangle size changes. Original surface root exposure uses the same fixed-scale world gradient at every LOD. Exposed turf side walls remain roots. Distance filters fine texture and geometry without substituting turf for soil.",
+            "procedure": "Run the EnvironmentGeometry shared-strata and exposed-root-wall regressions, existing cave/depth/projection checks, and review a fixed bank or cut from near and far while moving through mesh anchors and LOD boundaries. Check mesh rebuild cost during motion. Source tests establish the sampled-color rule, not exact distant pixel coverage of undersampled small patches. November8: run distant_cover_retains_detailed_surface_dirt_and_grass and coarse_landform_preserves_the_detailed_ground_cover, comparing actual detailed roof samples with original landform colors at 0.5/4/8/32 m face sizes. Review distant pixel coverage and cold mesh-build timing separately."
+          },
+          {
+            "id": "material_world_visual_review",
+            "kind": "behavior",
+            "expectation": "Ground is turf/earth/sediment/stone geometry with no ground atlas sampling; near turf has real blades and exposed cuts reveal correct strata. Refined matter occupies the same world location and has consistent material appearance. Depths remain caves in stone. Sky and trees retain their appearance.",
+            "procedure": "November7 forward cone: run forward_cone_preserves_support_and_horizon_with_ordered_rings and actual_camera_axes_drive_cone_and_turns_invalidate_cached_terrain. Review turning, vertical views, near/far seam, anchor travel, cave entry, high altitude and frame time in native gameplay; these visual/performance obligations remain pending until observed. November7 grass/dirt update: validate all shader variants, packed material offsets, filtered unit normals and deterministic regeneration; inspect near/far turf under changing light and compare GPU frame time. A Blender preview is not native gameplay or performance evidence. Compile native and iOS. User playtests the landscape, cave cuts, digging, chopping, sand/water scooping and camera movement. October30 adds denser128/256-sector distant rings, a separate32m-anchor outer cache stitched to the exact near support patch, block frustum rejection and shared grass-support samples. Inspect the seam while walking across32m anchors, pole basis boundaries and100m altitude; near collision must still match the64-sector half-metre rings. Compare moving and stationary frame time, memory, hill contours and reflections on all backends. Compilation and contract loading alone do not establish appearance, physics behavior or throughput."
+          }
+        ]
+      },
+      {
+        "id": "theatre_uv_walnut_material",
+        "description": "Retain Blender-authored metric UVs for the FOH desktop and shade its walnut with albedo, tangent normals, satin roughness, AO and bounded height relief under the theatre lamps. Keep the modeled bevel silhouette and existing geometry/contact placement.",
+        "retention": "experimental",
+        "selection": "Material tags 106 through 111 on the authored FOH desktop, including the workstation theatre-camera backdrop.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "Art/Theatre/wood_material.py",
+          "Art/Theatre/make_theatre.py",
+          "Theatre/mod.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Render/SceneAssets.rs",
+          "Procedures/Shaders/table_material.wgsl",
+          "Procedures/Shaders/table_material.glsl",
+          "Workstation/CameraBackdrop.rs"
+        ],
+        "checks": [
+          {
+            "id": "theatre_uv_walnut_material_check",
+            "kind": "behavior",
+            "expectation": "The table carries visible UV grain and view-dependent satin highlights; material data is not interpreted as vertex color. The monitor, legacy finish atlas and gem storage keep their separate regions.",
+            "procedure": "Validate map channels, unit normals and mip layout; compile the native scene and camera shaders; preserve the material tag through camera clipping; inspect Blender and native captures and signed package assets. Verify actual OpenGL/WebGPU output independently of shader compilation. macOS device checks do not establish iOS behavior."
+          }
+        ]
+      },
+      {
+        "id": "cave_rock_substances",
+        "description": "Present warm brown upper stone and dark blue Depths stone using original periodic Blender substances inspired by the configured Cardinal original atlas. Grey cave appearance is superseded and retained only as an unselected future Nightworld palette. Stone mechanics, excavation ownership and collision remain unchanged.",
+        "retention": "supported",
+        "selection": "Stone surfaces use BrownRock above -20 metres and DepthsBlue below it. Nearby triangles use world-anchored albedo, normal, roughness and cavity maps with mip filtering; distant stone retains the measured palette. Blender assets additionally contain height maps and modeled relief swatches. Native surface relief does not displace collision or silhouettes.",
+        "implements": [
+          "Present"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs",
+          "Terrain/Rock.rs",
+          "Physics/matter/world_field.rs",
+          "Render/SceneAssets.rs",
+          "Art/Terrain/Rock/make_rock.py",
+          "BuildSupport/generate_rock_shaders.py",
+          "Procedures/Shaders/triangle.gl.frag",
+          "Procedures/Shaders/triangle.frag",
+          "Procedures/Shaders/triangle.wgsl",
+          "Procedures/Shaders/scene.ios.frag"
+        ],
+        "checks": [
+          {
+            "id": "brown_and_blue_rock_materials",
+            "kind": "behavior",
+            "expectation": "Upper/Depths terrain retains brown/blue palette under shared scene light, maps are correctly addressed after the walnut data, rock UV tags survive projection, and player/monitor/walnut/legacy-finish layouts stay intact.",
+            "procedure": "Run palette/geometry and shared material-buffer tests, validate WGSL and Vulkan shaders, render Blender previews, and inspect bounded native captures. Mobile device appearance and continuous traversal remain unverified until played."
+          }
+        ]
+      },
+      {
+        "id": "theatre_exterior_limestone_material",
+        "description": "Replace the flat outward theatre shell finish with the approved Blender dressed-limestone maps. Keep jambs, interior, geometry, collision and acoustics unchanged.",
+        "retention": "supported",
+        "selection": "Material tag 112 on outward-facing perimeter polygons only; scalar local positions survive projection and the workstation backdrop.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "Art/Theatre/exterior_material.py",
+          "Art/Theatre/make_interior.py",
+          "Art/Theatre/make_theatre.py",
+          "Theatre/mod.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Render/SceneAssets.rs",
+          "BuildSupport/Theatre/update_exterior_shaders.py",
+          "Render/TheatreExteriorCheck.rs"
+        ],
+        "checks": [
+          {
+            "id": "theatre_exterior_limestone_native_review",
+            "kind": "behavior",
+            "expectation": "Native desktop paths display matching metric staggered courses, mapped pores and roughness, bounded height relief and the current outdoor light. Prior walnut, terrain, monitor and finish bytes remain at their original relative offsets. Only the exterior material assignment changes.",
+            "procedure": "Run scene_assets and theatre tests, validate desktop GLSL and WGSL including the embedded camera, and run --check-theatre-exterior BACKEND for near/far, day/night and interior captures. Compare runtime vertex positions and non-exterior payloads to the preserved packet. Review and verify the signed app separately. iOS/device material support remains unverified."
+          }
+        ]
+      },
+      {
+        "id": "bounded_scene_preparation_pipeline",
+        "description": "On macOS WebGPU, collect immutable accepted scene inputs through the existing registered routes. Prepare one running scene and at most one queued scene on a CPU worker, and publish the latest complete coherent camera/scene at Pump. Keep current-camera projection independent of expensive view-conditioned terrain rebuilds by publishing complete near/distant mesh replacements together. Geometry refinement may use the previous complete mesh until a replacement is ready; world edits invalidate immediately and stale world builds are discarded. Native graphics remains on its owning thread. Initial scene loading waits before gameplay; explicit diagnostic captures wait for their requested scene. Deferred scenes retain their requesting Audicle identity; results whose event has finished are discarded, retaining the displayed image during pause. Publication under a live requesting event restores the caller context afterward.",
+        "retention": "supported",
+        "selection": "Default macOS WebGPU gameplay. WORMWOOD_GAME_SCENE_SYNC=1 and WORMWOOD_GAME_GEOMETRY_SYNC=1 retain synchronous research comparisons. Camera-only and other-backend paths remain synchronous.",
+        "implements": [
+          "View",
+          "Pump",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs",
+          "BaseSystem/LayerFour/TerrainProjectionWorker.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "coherent_scene_pipeline_review",
+            "kind": "behavior",
+            "expectation": "Bound pending work, preserve immutable camera/geometry ownership and exact settled output, propagate errors and join workers at close. Count fresh scenes separately from repeated draws.",
+            "procedure": "Run scene_pipeline_tests, parallel_spans, fused terrain and venue regressions; compare fixed native captures. Measure complete frame timing, fresh-scene intervals and background rebuild times during stationary, continuous-turn and walk workloads, plus real embedded DAW transitions."
+          }
+        ]
+      },
+      {
+        "id": "theatre_red_wool_carpet_material",
+        "description": "Replace flat wine-colored terrace tops and the central, FOH and lobby ramps with the approved original Blender red wool carpet. Retain their geometry, collision, acoustics and all unrelated theatre finishes.",
+        "retention": "supported",
+        "selection": "Default carpet tags 117..120 carry venue-local positions through native projection and the embedded workstation background. Offline packed maps append after limestone; no runtime Blender or artwork baking.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "Art/Theatre/carpet_material.py",
+          "Art/Theatre/export_carpet.py",
+          "Art/Theatre/make_interior.py",
+          "Art/Theatre/make_theatre.py",
+          "Theatre/mod.rs",
+          "BaseSystem/LayerFour/TheatreAppearance.rs",
+          "Render/SceneAssets.rs",
+          "Render/WorkstationCameraSplit.rs",
+          "Render/WorkstationCameraColor.wgsl",
+          "Procedures/Shaders/carpet_material.glsl",
+          "Procedures/Shaders/carpet_material.wgsl",
+          "BuildSupport/Theatre/update_carpet_shaders.py"
+        ],
+        "checks": [
+          {
+            "id": "theatre_carpet_material_review",
+            "kind": "behavior",
+            "expectation": "Deep red wool uses filtered albedo, normal, roughness, height and cavity maps with metric ramp tangent frames, shallow bounded relief and approximate wool sheen under the theatre lamps. Previous material bytes and monitor offsets stay intact. Workstation optics remain offline and paused world retention is unchanged.",
+            "procedure": "Run carpet_mips_preserve_previous_materials_and_both_upload_paths, authored_carpet_tags_follow_floor_geometry_and_keep_metric_positions, theatre and projection regressions, scene/camera WGSL validation and desktop GLSL/SPIR-V compilation. Compare native near/far carpet and ramp captures; compile and verify a signed package separately. Native sheen approximates Blender; no Cycles pixel parity or iOS device verification is implied."
+          }
+        ]
+      },
+      {
+        "id": "roofed_cave_presentation",
+        "description": "Cave roofs suppress outdoor light on rock, water and slide geometry. Cave views retain authored slides and opaque depth. Explicit cheat night vision reveals the same geometry. River surfaces clip to signed banks.",
+        "sources": [
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/TheatreAppearance.rs",
+          "Water/presentation.rs",
+          "Water/surface_mesh.rs",
+          "Water/bodies.rs",
+          "Terrain/Depths.rs",
+          "Terrain/Underground.rs",
+          "Render/Water/data.rs",
+          "Render/Water/mod.rs",
+          "Procedures/Water/Shaders/water.wgsl",
+          "Procedures/Water/Shaders/water.vert",
+          "Procedures/Water/Shaders/water.frag",
+          "Procedures/Water/Shaders/water.gl.vert",
+          "Procedures/Water/Shaders/water.gl.frag",
+          "Procedures/Water/Shaders/water.es.vert",
+          "Procedures/Water/Shaders/water.es.frag"
+        ],
+        "retention": "supported",
+        "selection": "Normal planet gameplay; full-bright inspection only when explicitly enabled with cheats.",
+        "implements": [
+          "View"
+        ],
+        "checks": [
+          {
+            "id": "cave_regression",
+            "kind": "behavior",
+            "expectation": "Cave roofs suppress outdoor light on rock, water and slide geometry. Cave views retain authored slides and opaque depth. Explicit cheat night vision reveals the same geometry. River surfaces clip to signed banks.",
+            "procedure": "Run cave_lighting_tests, cave_water_tests and river_shore_tests. Validate all native water shaders. Inspect the real cave/slide transition, phone pickup, cheat reset and pause-menu night vision in native gameplay."
+          }
+        ]
+      },
+      {
+        "id": "laboratory_quartz_and_yarn_portal",
+        "description": "Render the authored Blender Prismasqueek mesh with a faceted real-time quartz approximation and bounded walking pose. The lab and zoo retain independent static geometry caches and share their physical venue placement. After the gift, clip the linked site and its actors to the circular yarn aperture and compose them at portal depth, preserving foreground occlusion. Portal views do not recurse.",
+        "retention": "supported",
+        "selection": "Laboratory instances and portal-open state supplied by planet navigation. Nearby site geometry only; no DAW lighting changes.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/LaboratoryAppearance.rs",
+          "ModSources/prismals/src/render/LaboratoryAppearance.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/TheatreAppearance.rs",
+          "BaseSystem/LayerFour/Projection.rs",
+          "Render/LaboratoryCheck.rs"
+        ],
+        "checks": [
+          {
+            "id": "native_lab_views",
+            "kind": "behavior",
+            "expectation": "The authored quartz silhouette and pink paws/tail render; site imagery stays in the yarn aperture and foreground objects still occlude the portal. Added sites and actors stay within the shared final scene budget.",
+            "procedure": "Run laboratory projection and lifecycle checks; run WORMWOOD_CHECK_LABORATORY=1 wormwood --check-theatre-exterior WebGPU and inspect its six native captures."
+          }
+        ]
+      }
+    ]
+  }
 }

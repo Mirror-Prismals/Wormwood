@@ -16,7 +16,569 @@
     },
     "SetView": {
       "calls": []
+    },
+    "Caption": {
+      "calls": []
+    },
+    "InputMode": {
+      "calls": []
+    },
+    "Texture": {
+      "calls": [
+        "EntitySystem.Get"
+      ]
+    },
+    "ReleaseTexture": {
+      "calls": [
+        "EntitySystem.Get"
+      ]
+    },
+    "Suspend": {
+      "calls": [
+        "EntitySystem.Get"
+      ]
+    },
+    "Resume": {
+      "calls": []
+    },
+    "CursorLabel": {
+      "calls": []
+    },
+    "PluginSurface": {
+      "calls": []
+    },
+    "SelectionRange": {
+      "calls": []
+    },
+    "CcParameterPicker": {
+      "calls": []
+    },
+    "PrewarmWorkstation": {
+      "calls": []
+    },
+    "ParkWorkstation": {
+      "calls": []
+    },
+    "FocusWorkstation": {
+      "calls": []
     }
   },
-  "init_steps": []
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "workstation_idle_presentation",
+        "description": "Desktop workstation input is polled on every application tick while unchanged optical frames retain their last presentation. Optical updates, capture requests, native expose events, size changes and restoration request a new draw. Ordinary unfocused workstation windows defer that draw until focus returns, retaining redraw debt while application input and audio servicing continue; explicitly forced finite diagnostics retain their existing draw policy.",
+        "retention": "experimental",
+        "selection": "A desktop workstation_panel Entity is prepared. Pump accepts an optional boolean force_draw for finite diagnostics; other scenes retain continuous drawing. Pump also accepts finish_only=true to complete existing submissions without drawing, consuming input or acknowledging redraw; it cannot be combined with force_draw=true. Normal macOS WebGPU workstation launches select the user-approved retained gem renderer, compact merged atlas, bounded incremental refresh and plain camera backdrop without environment flags. Other backends keep their existing renderer. Optional diagnostic overrides remain available.",
+        "implements": [
+          "Prepare",
+          "SetView",
+          "Pump"
+        ],
+        "sources": [
+          "Render/mod.rs",
+          "Render/window.rs",
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Render/webgpu.rs",
+          "Render/DisplayCadence.m",
+          "Render/WorkstationControls.m",
+          "Render/WorkstationDrawRate.rs",
+          "Workstation/FrameCadence.rs",
+          "Render/WorkstationBackdrop.rs",
+          "Workstation/RenderDefaults.rs",
+          "Workstation/TransportControls.rs",
+          "Render/WorkstationPrerender.wgsl"
+        ],
+        "checks": [
+          {
+            "id": "dirty_frame_gate",
+            "kind": "behavior",
+            "expectation": "Settled desktop panels do not repeat raytracing while input keeps polling. Capture, expose, resize and restore redraw; minimized windows retain pending work. Finite diagnostics still count requested actual draws and capture only their requested frames.",
+            "procedure": "Pending: run Render/mod.rs redraw_tests, then observe settled GPU activity, key responsiveness, expose/minimize/restore, capture requests and finite frame counts on each native backend. Source inspection alone does not establish runtime behavior."
+          },
+          {
+            "id": "workstation_native_activation",
+            "kind": "behavior",
+            "expectation": "Standalone macOS workstation creation enables GLFW_COCOA_MENUBAR before glfwInit, including GLFW's regular UI application activation policy. Its first show requests normal native focus. Initial inactive ticks retain the first image request without acquiring a drawable, focus gain draws it, and later background ticks stay deferred. Pending quit preempts startup or retained refresh draws. Other scene initialization keeps its prior menu policy.",
+            "procedure": "Run initial-inactive, focus-transition and pending-quit redraw/input tests; verify the actual guarded app launch reports regular_application, key_eligible, app_active and focused, displays the first gem image, accepts native toolbar controls and exits. Verify background frames do not acquire a drawable. Source and CPU tests are not native launch evidence."
+          },
+          {
+            "id": "preview_panel_controls",
+            "kind": "behavior",
+            "expectation": "The normal macOS standalone workstation toolbar provides clickable panel toggles and Quit outside the gem drawable, explicitly activates its window, and reports drawn frames per wall second including waits and idle time. It does not represent physical scanout or alter optical shading. WORMWOOD_WORKSTATION_PREVIEW_CONTROLS=0 explicitly hides it. The ordinary app has no test watchdog or forced motion.",
+            "procedure": "Run draw-rate and input callback CPU tests, compile the native toolbar, then verify actual manual button/keyboard delivery, panel state changes, visible FPS, retained drawable dimensions, focus and exits under the process-specific recovery guard. Build success is not interactive validation."
+          },
+          {
+            "id": "unfocused_workstation_deferral",
+            "kind": "behavior",
+            "expectation": "Ordinary unfocused workstation Pump does not call backend draw or acquire a drawable, even with a pending retained refresh. Input and audio loop servicing continue. Focus return preserves pending capture, resize and exposure work. Forced finite diagnostics and other scenes retain their existing policy. This does not interrupt an already executing backend call. WebGPU upload staging is submitted and completed even when drawing is deferred. This empty submission must not acquire/present a surface, count as a drawn frame, clear redraw debt, or run optical rendering. Device polling alone is insufficient because it does not submit pending writes.",
+            "procedure": "Run redraw_tests and input/callback tests, then guarded windowed native focus-loss/reacquisition, arrow, exit and pending-refresh checks. Verify focus_deferred reports no acquisition while unfocused and a fresh draw after focus returns. Startup, native event polling and already executing backend calls are outside this acquisition gate; record their stalls separately. Compare bounded native DAW-only memory runs with the window unfocused and minimized; verify resident memory plateaus while upload-drain counts increase and drawn-frame counts remain zero."
+          },
+          {
+            "id": "bounded_retained_frame_overlap",
+            "kind": "behavior",
+            "expectation": "By default on macOS (explicitly disabled with WORMWOOD_WORKSTATION_FRAME_OVERLAP=0), ordinary retained WebGPU frames may overlap the next CPU update, but the prior submission completes before another draw is encoded. Captures, optical bakes and fallback are synchronous. Completion-only Pump and shutdown drain pending work; benchmark windows include the final GPU completion. Existing gesture ownership, redraw debt and optical inputs are preserved.",
+            "procedure": "Run paired native playback with the flag off/on, verify completed timing boundaries, pending-frame bound, identical moving/settled captures and no-input refresh, then check measured audio counters. Input latency is bounded by one submitted frame; absolute end-to-end latency requires separate measurement."
+          },
+          {
+            "id": "workstation_display_metadata",
+            "kind": "behavior",
+            "expectation": "Pump reports the owning window screen current mode and variable-refresh ceiling separately from measured scanout; metadata is read-only and refreshed at most twice per second. Existing FIFO, redraw invalidation and one-frame GPU bound remain unchanged.",
+            "procedure": "Native paired cadence run; inspect display metadata and FIFO capabilities, exact images and settle refresh, zero pending on shutdown."
+          },
+          {
+            "id": "plain_camera_backdrop",
+            "kind": "behavior",
+            "expectation": "The approved macOS default (explicitly disabled with WORMWOOD_WORKSTATION_PLAIN_BACKDROP=0) removes only the directly visible floor shadow/reflection shading in native WebGPU. Retained background pixels carry only depth and receive live authored ambient color; no baked floor picture can update late. Foreground gem optics, secondary floor lighting, engraving, controls and their required invalidation remain unchanged. Custom style backgrounds retain their original fallback behavior.",
+            "procedure": "Run backdrop_tests and plain_backdrop_tests to validate generated WGSL, preserved optical functions, no floor shading in the retained fragment, and absence of background gemTrace capture. User manually verifies appearance and controls; no native performance claim follows from CPU tests."
+          },
+          {
+            "id": "approved_workstation_defaults",
+            "kind": "behavior",
+            "expectation": "Normal macOS app and CLI launches select the accepted iteration26 settings without opt-in flags. Standalone DAW opens fullscreen at the primary monitor resolution by default (user-requested replacement of the windowed default); explicit CLI WORMWOOD_FULLSCREEN=0 or WORMWOOD_WORKSTATION_SIZE retains windowed diagnostics, keeps the original gem foreground and live controls, and has neither replay motion nor a time-limited test launcher. Other platforms retain their existing defaults.",
+            "procedure": "Verify DAW-only launcher and direct CLI startup fill the primary monitor, with explicit CLI windowed diagnostics still available. Run render_defaults unit tests, generated backdrop/incremental shader and input tests; compile/package the ordinary macOS app and verify bundled source assets, engine identity and signature. The user approved iteration26 appearance and motion manually; packaging and CPU checks do not constitute another native benchmark."
+          },
+          {
+            "id": "live_cardinal_transport_pressure",
+            "kind": "behavior",
+            "expectation": "The approved retained WebGPU path captures the existing four top buttons separately from their panel. Live pressure applies the Cardinal leftward 10*press logical-pixel shift, 1-.5*press depth factor and 1-.14*press linear exposure factor while reusing original gem radiance. Pressure alone cannot rebuild or cancel an appearance generation. Unpressed samples keep their original optical source and final display transform. Other backend fallbacks retain their existing unpressed drawing.",
+            "procedure": "Validate generated WGSL and no optical tracing reachable from retained composition, test neutral source-coordinate identity and pressure-only generation stability, then manually inspect press animation and idle artwork. This ports the interaction and deformation response onto the approved authored gem art; it does not claim identical Cardinal shader pixels or measured new FPS."
+          }
+        ]
+      },
+      {
+        "id": "opengl_presentation",
+        "description": "Present tracked Entity appearances through the explicitly selected OpenGL connection. Preserve the declared Entity and Audicle boundaries and report failures without silently selecting a different API.",
+        "retention": "supported",
+        "selection": "The caller selects OpenGL; other backend choices remain supported.",
+        "implements": [
+          "Prepare",
+          "Present",
+          "Release",
+          "Pump",
+          "SetView",
+          "Caption"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Render/opengl.rs",
+          "Render/ios.rs",
+          "Render/ios_gl.rs"
+        ],
+        "checks": [
+          {
+            "id": "native_presentation",
+            "kind": "behavior",
+            "expectation": "OpenGL creates its own native surface/device, presents the requested appearance, and releases resources on close or failure.",
+            "procedure": "Review the OpenGL selection and resource paths; explicitly select this API on each supported platform and check presentation, resize, suspend/resume where applicable, and normal/error cleanup. Dependency discovery alone does not satisfy this check."
+          }
+        ]
+      },
+      {
+        "id": "vulkan_presentation",
+        "description": "Present tracked Entity appearances through the explicitly selected Vulkan connection. Preserve the declared Entity and Audicle boundaries and report failures without silently selecting a different API.",
+        "retention": "supported",
+        "selection": "The caller selects Vulkan; other backend choices remain supported.",
+        "implements": [
+          "Prepare",
+          "Present",
+          "Release",
+          "Pump",
+          "SetView",
+          "Caption"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Render/vulkan.rs",
+          "Render/ios.rs",
+          "BaseSystem/LayerOne/IOSGraphicsSymbols.c",
+          "BuildSupport/iOS/CMakeLists.txt",
+          "BuildSupport/iOS/graphics_exports.py",
+          "BuildSupport/iOS/build_ios.py"
+        ],
+        "checks": [
+          {
+            "id": "native_presentation",
+            "kind": "behavior",
+            "expectation": "Vulkan creates its own native surface/device, presents the requested appearance, and releases resources on close or failure.",
+            "procedure": "Review the Vulkan selection and resource paths; explicitly select this API on each supported platform and check presentation, resize, suspend/resume where applicable, and normal/error cleanup. Dependency discovery alone does not satisfy this check."
+          }
+        ]
+      },
+      {
+        "id": "webgpu_presentation",
+        "description": "Present tracked Entity appearances through the explicitly selected WebGPU connection. Preserve the declared Entity and Audicle boundaries and report failures without silently selecting a different API.",
+        "retention": "supported",
+        "selection": "The caller selects WebGPU; other backend choices remain supported.",
+        "implements": [
+          "Prepare",
+          "Present",
+          "Release",
+          "Pump",
+          "SetView",
+          "Caption"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Render/webgpu.rs",
+          "Render/ios.rs",
+          "BaseSystem/LayerOne/IOSGraphicsSymbols.c",
+          "BuildSupport/iOS/CMakeLists.txt",
+          "BuildSupport/iOS/graphics_exports.py",
+          "BuildSupport/iOS/build_ios.py"
+        ],
+        "checks": [
+          {
+            "id": "native_presentation",
+            "kind": "behavior",
+            "expectation": "WebGPU creates its own native surface/device, presents the requested appearance, and releases resources on close or failure.",
+            "procedure": "Review the WebGPU selection and resource paths; explicitly select this API on each supported platform and check presentation, resize, suspend/resume where applicable, and normal/error cleanup. Dependency discovery alone does not satisfy this check."
+          }
+        ]
+      },
+      {
+        "id": "player_pointer_mode",
+        "description": "A prepared visual connection accepts explicit capture or pointer mode requests from the application without requiring a held mouse button.",
+        "retention": "supported",
+        "selection": "The application captures the pointer during play and releases it for pause or focus loss. Mac planet play supplies a pause_menu state to InputMode; a native overlay exposes resume, controls, cheats, time and return to title across all three graphics APIs. Ordinary pointer-mode clients such as workshops and the workstation do not open this menu.",
+        "implements": [
+          "InputMode"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Render/window.rs",
+          "Render/mod.rs",
+          "Render/PauseMenu.m",
+          "build.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "capture_transition",
+            "kind": "behavior",
+            "expectation": "Mode changes preserve the prepared Entity, avoid a first-frame look jump and allow recapture after pause or focus return. Suspending or destroying a desktop window explicitly releases capture before destruction; the embedded DAW receives a visible free pointer and returning to play restores capture.",
+            "procedure": "Review prepared-Entity validation and cursor state transitions; check Escape opens the native Mac pause menu, clicking settings keeps the simulation paused, Escape/Resume returns mouse capture without a look jump or tool stroke, and focus loss pauses until explicit resume. Check keyboard/button release, Cmd+Q, return-to-title cleanup, scrollable controls at640x480 and fullscreen, and WebGPU/Vulkan/OpenGL. Compile Rust and Objective-C; compilation alone does not establish UI behavior."
+          }
+        ]
+      },
+      {
+        "id": "appearance_materials",
+        "description": "Upload the owned player texture and present vertex colors, the 24-cell grid, and the textured body on each explicitly selected native API.",
+        "retention": "supported",
+        "selection": "The player texture is prepared once for a tracked body Entity and released before that Entity is removed.",
+        "implements": [
+          "Texture",
+          "ReleaseTexture",
+          "SetView"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Host/Host.rs",
+          "Vegetation/Packet.rs",
+          "Render/Scene.rs",
+          "Render/Water/vulkan.rs",
+          "Render/mod.rs",
+          "Render/ios.rs",
+          "Render/opengl.rs",
+          "Render/vulkan.rs",
+          "Render/webgpu.rs",
+          "Render/ios_gl.rs",
+          "BaseSystem/LayerOne/IOSGraphics.m",
+          "BaseSystem/LayerOne/IOSGraphicsSymbols.c",
+          "Procedures/Shaders/triangle.vert",
+          "Procedures/Shaders/triangle.frag",
+          "Procedures/Shaders/triangle.gl.vert",
+          "Procedures/Shaders/triangle.gl.frag",
+          "Procedures/Shaders/triangle.wgsl",
+          "Procedures/Shaders/scene.ios.vert",
+          "Procedures/Shaders/scene.ios.frag"
+        ],
+        "checks": [
+          {
+            "id": "appearance_materials_routes",
+            "kind": "declared_calls",
+            "expectation": "The retained behavior has explicit declared routes for its dependencies.",
+            "targets": [
+              "EntitySystem.Get"
+            ]
+          },
+          {
+            "id": "appearance_materials_review",
+            "kind": "behavior",
+            "expectation": "All three API paths interpret the same material payload and original RGBA pixels. Texture resources remain bounded and disappear on release.",
+            "procedure": "Review the material payload, texture orientation, bilinear sampling, descriptor lifetimes, native release ordering and default-white resources. Manually select OpenGL, Vulkan and WebGPU and inspect both the grid and textured body. October30 routes numeric scene/vegetation batches through the existing named Host calls and shared SetView validation; verify route rejection, Audicle Go requirement, finite/count/index bounds and compatibility of diagnostic JSON callers. Scene storage uses shared scene_limits bounds: 262144 composed triangles and 524288 reflection triangles, allowing the at-most-two output faces per water-plane-clipped source face on Vulkan/WebGPU; clipping uses fixed four-vertex scratch arrays and reflected-view rejection. Inspect shoreline geometry and dense forest reflections as well as normal scene rendering. Device validation on Windows/iOS remains separate."
+          }
+        ]
+      },
+      {
+        "id": "suspended_game_presentation",
+        "description": "Release and recreate native presentation while retaining the game Entity and original player texture for workstation focus.",
+        "retention": "experimental",
+        "selection": "Application computer focus uses Suspend/Resume.",
+        "implements": [
+          "Suspend",
+          "Resume",
+          "Release",
+          "ReleaseTexture"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "retained_native_ownership",
+            "kind": "behavior",
+            "expectation": "Suspended scene/texture owners cannot be removed. Failed resume retains retry handles; close releases both active and suspended resources.",
+            "procedure": "Run the computer focus/recovery Host tests and inspect real native window recreation on desktop. iOS device validation is separate."
+          }
+        ]
+      },
+      {
+        "id": "workstation_cache_cause_diagnostic",
+        "description": "Optional bounded CPU cache-placement observations identify key, plane and allocation changes without affecting admission, reuse or GPU work.",
+        "retention": "experimental",
+        "selection": "WORMWOOD_WORKSTATION_CACHE_CAUSES=1 at Plan construction. Default off. Observe only the first256 Plan updates, at most20 slot records and16 changed key words per slot. No Plan file output or real-time audio work.",
+        "implements": [
+          "Prepare",
+          "SetView",
+          "Pump"
+        ],
+        "sources": [
+          "Workstation/RubyResponsePlan.rs",
+          "Workstation/RubyCacheCauses.rs",
+          "Render/webgpu.rs",
+          "Workstation/Benchmark.rs"
+        ],
+        "checks": [
+          {
+            "id": "diagnostic_decision_neutrality",
+            "kind": "behavior",
+            "expectation": "Flag off/on produce identical Update rows, dirty/readiness counts, slot reuse and submitted behavior. Diagnostic reports preserve actual placement decision and pre-update identity, bounded raw-bit differences and variable-span schema. Existing benchmark samples copy metadata without per-frame disk writes; missing/exhausted observations cannot establish GPU hit coverage.",
+            "procedure": "Run existing RubyResponsePlan tests and focused off/on replay comparisons for movement, inherited pending work, material/plane/allocation changes, slot replacement, variable glyph/mip spans, invalid frames and budget exhaustion. Then collect a short native motion diagnostic from the same binary; correlate update_index with actual benchmark draw records. Do not use diagnostic overhead as production FPS evidence."
+          }
+        ]
+      },
+      {
+        "id": "native_cursor_label",
+        "description": "Bounded pass-through cursor artwork and legacy text in the macOS native window, independent of scene rendering.",
+        "retention": "supported",
+        "selection": "Explicit CursorLabel entry on the currently prepared Entity; null label hides. Other platforms return unsupported.",
+        "implements": [
+          "CursorLabel"
+        ],
+        "sources": [
+          "Render/WorkstationControls.m",
+          "Render/mod.rs",
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "cursor_label_isolation",
+            "kind": "behavior",
+            "expectation": "Reject malformed requests or wrong Entity; update native baked artwork, text and position without changing redraw state, scene packets, or GPU cache generation. Author-requested inertial drag rotation runs on a bounded native timer and settles at rest. Release cancels that timer and hides immediately. No mouse or key ownership. The bundled licensed font is loaded once per overlay.",
+            "procedure": "Run request and Host packet-invariance tests, compile native overlay, verify packaged font/license, then manually inspect placement and hit pass-through."
+          }
+        ]
+      },
+      {
+        "id": "native_selection_range",
+        "description": "Bounded pass-through macOS range visualization independent of optical scene rendering.",
+        "retention": "supported",
+        "selection": "Explicit SelectionRange entry on prepared Entity; null hides.",
+        "implements": [
+          "SelectionRange"
+        ],
+        "sources": [
+          "Render/WorkstationControls.m",
+          "Render/mod.rs",
+          "Host/Host.rs",
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "range_overlay_bounds",
+            "kind": "behavior",
+            "expectation": "Validate finite bounded rectangle and at most129 exclusion rectangles (128 tapes and one live playhead). No focus/input ownership or optical cache mutation; teardown releases overlay.",
+            "procedure": "Run payload and Host overlay tests, compile AppKit and manually inspect native layout; no automated GUI run."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_plugin_surface",
+        "description": "Draw Cardinal catalog labels, Edison names and the original U Shaping EQ graph on a pass-through macOS view over the existing gem surfaces. Input remains owned by the Rust controller.",
+        "retention": "experimental",
+        "selection": "macOS workstation; native plugin catalog and selected-track FX page.",
+        "implements": [
+          "PluginSurface"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Render/mod.rs",
+          "Render/WorkstationControls.m",
+          "Render/WorkstationPluginSurface.m",
+          "Workstation/PluginSurface.rs",
+          "Workstation/StockEq.rs",
+          "Workstation/PluginInserts.rs",
+          "Workstation/PluginBrowser.rs",
+          "Workstation/PluginIntegrationTests.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "plugin_surface_contract_and_lifetime",
+            "kind": "behavior",
+            "expectation": "Validate bounded finite text/graph data and owning Entity. Reuse bundled fonts without global font installation. View cannot take mouse/focus; hidden/closed panels and Close clear their surface. Names and graph changes do not rebake optical gem geometry.",
+            "procedure": "Run payload/UTF-8 and registered Step/Close integration tests, native Objective-C compile, and desktop visual/input playtest. Headless tests do not validate AppKit z-order or glyph appearance."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_cc_parameter_picker",
+        "description": "Present the original automation parameter popup on the prepared Entity, with source180px width,18px rows,6px padding,4px bevel and exactSTB glyph quads. Pass-through native view preserves Rust press selection and authored button release toggle. Null hides; no gem optical buffers change.",
+        "selection": "Explicit CcParameterPicker on the prepared Entity.",
+        "implements": [
+          "CcParameterPicker"
+        ],
+        "sources": [
+          "Render/WorkstationCcParameterPicker.m",
+          "Render/CcStbEasyFont.h",
+          "Workstation/CcParameterPicker.rs",
+          "Host/Host.rs"
+        ],
+        "retention": "supported",
+        "checks": [
+          {
+            "id": "cc_picker_source_contract",
+            "kind": "behavior",
+            "expectation": "Original picker geometry, pressselection,outsidedismissal,selectedhighlight,STBfont. Native overlay takes no input and does not modify optical scene packets.",
+            "procedure": "Run cc_parameter_picker and TrackIo picker tests; compileCocoa renderer; combinedHost tests and final visualQA remainwithintegrator."
+          }
+        ]
+      },
+      {
+        "id": "hidden_workstation_preparation",
+        "description": "Own a single hidden prepared macOS WebGPU workstation client until its first Prepare call transfers ownership to a real workstation Entity. GLFW remains initialized until every active and prewarmed window has been destroyed.",
+        "retention": "supported",
+        "selection": "Explicit PrewarmWorkstation, issued before gameplay; unsupported backends return without creating a client.",
+        "implements": [
+          "PrewarmWorkstation",
+          "Prepare"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Render/mod.rs",
+          "Render/webgpu.rs",
+          "Render/window.rs"
+        ],
+        "checks": [
+          {
+            "id": "hidden_native_lifetime",
+            "kind": "behavior",
+            "expectation": "No presentation or Entity ownership is assigned during prewarm. Closing the game window must not terminate GLFW beneath the prewarmed workstation. Deferred fullscreen activates only on first show. First show explicitly activates the actual engine process and makes its Cocoa window key/front; ordinary redraws and hidden background work never request foreground focus. Borderless fullscreen windows do not receive the optional preview toolbar. Failed constructors release their GLFW lease.",
+            "procedure": "Run native embedded benchmark with prewarm enabled, both windowed and fullscreen, compare entry preparation time, and verify normal shutdown. Check startup_focus evidence and launch from the real launcher without Command-Tab. Run computer-focus failure/reopen checks separately."
+          }
+        ]
+      },
+      {
+        "id": "composed_scene_capacity",
+        "description": "Accept complete terrain, theatre, rigs and overlay scenes through one shared bounded validation/allocation contract. Finite geometry is preserved rather than truncating contributor meshes at a combined-scene limit.",
+        "retention": "supported",
+        "selection": "All native scene submissions. The November 9 exterior failure demonstrated that the former 131072 bound rejected a valid 131099-face scene; the composed bound is now 262144 with reflected clipping capacity twice that.",
+        "implements": [
+          "SetView"
+        ],
+        "sources": [
+          "Render/Limits.rs",
+          "lib.rs",
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Host/Host.rs",
+          "Render/webgpu.rs",
+          "Render/vulkan.rs",
+          "Render/opengl.rs",
+          "Render/ios_gl.rs",
+          "Render/Scene.rs",
+          "Render/Water/vulkan.rs",
+          "Render/WorldBackdropWebGPU.rs",
+          "Render/WorkstationBaked.rs",
+          "Render/WorkstationPrerender.rs"
+        ],
+        "checks": [
+          {
+            "id": "exterior_batch_bounds",
+            "kind": "behavior",
+            "expectation": "Recorded exterior face count is accepted; finite/count guards and two backdrop faces remain enforced; all GPU allocations and descriptor ranges match their respective scene or reflection bound. Rejection diagnostics leave a short error so cleanup can run.",
+            "procedure": "Run scene_limits and exterior regressions, native exit-back replay and longer outdoor traversal. Verify fixed native images and real embedded DAW transition; other device/backend runs remain separate."
+          }
+        ]
+      },
+      {
+        "id": "translucent_animated_baked_notes",
+        "description": "Present the authoritative Blender bubble material through immutable offline RGBA flipbooks with per-pixel translucency, authored placement settling and film motion that continues after settling. Preserve note duration shoulders and stable per-note animation identity. Stable identities occupy a32KiB extension after the dynamic browser-label rows; old field addresses stay fixed.",
+        "retention": "supported",
+        "selection": "Production macOS WebGPU baked DAW; retained legacy optics and other backends keep their existing research paths.",
+        "implements": [
+          "SetView",
+          "Pump"
+        ],
+        "sources": [
+          "Render/WorkstationBaked.rs",
+          "Render/WorkstationBaked.wgsl",
+          "Render/BubbleArt.rs",
+          "Render/webgpu.rs",
+          "Render/mod.rs",
+          "Workstation/BubbleNotes.rs",
+          "Workstation/PianoRollScene.rs",
+          "BuildSupport/Workstation/bake_bubble_art.py",
+          "BuildSupport/macOS/build_app.py",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "Render/Workstation.rs"
+        ],
+        "checks": [
+          {
+            "id": "offline_note_alpha_and_motion",
+            "kind": "behavior",
+            "expectation": "Actual source-material RGBA carries transmission instead of fixed opacity. Source shapes settle into idle frames without jumps; film keeps advancing independently. Frame ticks do not reach optical functions or refresh paused-world lighting. Packed per-note identity remains stable through pan, duration and selection edits.",
+            "procedure": "Run bubble_art, stable_animation_identity, bubble_notes and no-live-optics regressions; inspect real native piano captures and placement/idle motion on contrasting backgrounds. Validate packaged embedded DAW with retained world caching and measure complete-frame timing; source Blender asset hash remains unchanged."
+          }
+        ]
+      },
+      {
+        "id": "resident_workstation_focus",
+        "description": "Keep a parked baked workstation client and the suspended game client alive across focus changes. Hidden background draws update the physical monitor without window show, input polling, world pipeline teardown or optical lighting. Restore parked windows explicitly. Performance snapshots preserve resident query streams.",
+        "retention": "supported",
+        "selection": "macOS baked WebGPU resident DAW startup; final Release destroys the retained clients.",
+        "implements": [
+          "ParkWorkstation",
+          "FocusWorkstation",
+          "Suspend",
+          "Resume",
+          "Pump",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Render/mod.rs",
+          "Render/window.rs",
+          "Render/webgpu.rs",
+          "Render/Performance.rs",
+          "Workstation/Benchmark.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "resident_focus_ownership",
+            "kind": "behavior",
+            "expectation": "Repeated focus preserves native clients and game texture ownership. Background capture cannot steal input or clear the game scene. Profiling snapshots remain cumulative, and benchmark draw offsets exclude earlier sessions. Final shutdown releases all Entities.",
+            "procedure": "Run computer_focus_preserves_game_texture_document_and_workstation_layout and workstation_benchmark_gpu_warmup_uses_submission_order_not_completion_order. Run finite native WORMWOOD_RESIDENT_FOCUS_VERIFY=3 with computer, AR and VR verification; inspect all draws, focus latency and cleanup."
+          }
+        ]
+      }
+    ]
+  }
 }

@@ -65,6 +65,16 @@ pub(crate) fn valid(input: &Value) -> bool {
 pub(crate) fn dispatch(host: &mut Host, hook: &str, input: &Value) -> Result<Value, String> {
     let mut state = std::mem::take(&mut host.flight);
     let result = (|| {
+        if hook == "Abort" {
+            if let Some(event) = state.event.clone() {
+                host.invoke(
+                    "AudicleSystem.Fail",
+                    json!({"audicle":event["audicle"],"reason":input["reason"]}),
+                )?;
+                state.event = None;
+            }
+            return Ok(Value::Null);
+        }
         if hook == "Stop" {
             if let Some(event) = &state.event {
                 host.invoke("AudicleSystem.Finish", event.clone())?;
@@ -86,6 +96,7 @@ pub(crate) fn dispatch(host: &mut Host, hook: &str, input: &Value) -> Result<Val
                 host.invoke("AudicleSystem.Ready", event.clone())?;
                 host.invoke("AudicleSystem.Go", event)?;
             }
+            host.invoke("AudicleSystem.Resume", state.event.clone().unwrap())?;
             state.advance(input);
             host.invoke("AppearanceSystem.View",json!({"entity":input["entity"],"position":state.position,"yaw":state.yaw,"pitch":state.pitch}))?;
             host.emit(json!({"event":"flight_step","position":state.position,"yaw":state.yaw,"pitch":state.pitch,"reset":input["reset"]}))?;
@@ -97,6 +108,26 @@ pub(crate) fn dispatch(host: &mut Host, hook: &str, input: &Value) -> Result<Val
             json!({"position":state.position,"yaw":state.yaw,"pitch":state.pitch,"moving":state.event.is_some()}),
         )
     })();
+    let result = match result {
+        Err(error) => {
+            let failure = if let Some(event) = state.event.clone() {
+                host.invoke(
+                    "AudicleSystem.Fail",
+                    json!({"audicle":event["audicle"],"reason":error}),
+                )
+                .map(|_| {
+                    state.event = None;
+                })
+            } else {
+                Ok(())
+            };
+            Err(match failure {
+                Ok(()) => error,
+                Err(cleanup) => format!("{error}; event failure recording: {cleanup}"),
+            })
+        }
+        result => result,
+    };
     host.flight = state;
     result
 }

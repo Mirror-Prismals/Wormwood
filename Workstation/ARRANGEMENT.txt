@@ -1,0 +1,118 @@
+FREE-TIME TRACK ARRANGEMENT
+
+The working left gem is a component browser. Audio Track, Midi Track and CC Track select on press; drag into the timeline body and release
+to insert an ordered track, following Cardinal component-browser semantics.
+A single release in the browser selects without creating; double-click inserts
+before the selected track, or appends with no selection. Comp Lane double-click
+adds a take to the selected audio track. Matrix/Mix Bus use the bottom panel.
+Release outside a valid destination cancels without creating.
+The window title shows selection and the candidate insertion row. On macOS,
+Cardinal's full component-name ghost follows the cursor (+12/+8 logical pixels),
+using the original default font/color in a pass-through native overlay. It hides
+on cancellation/release and does not update the gem appearance packet.
+Variable-height rows support packed insertion; free vertical offsets remain unported.
+Drag empty timeline body to select a range, then Command-Shift-M creates empty
+MIDI/CC clips with per-kind overlap checks. Audio clips require a decoded source;
+this correction adds no file import or capture. The invented NEW CLIP/EDIT CLIP
+controls, N fixed-clip creation and timeline Enter-to-open are retired.
+Double-click a MIDI tape (same identity, unmoved release within0.35s) to open its
+existing piano roll. Single click selects; dragging moves. Focus/pointer loss,
+Escape, layout or document changes cancel the click sequence. The default open
+field is an arrangement. Escape leaves the note editor.
+Tab switches between arrangement and the retained spatial mixer. A held press
+is consumed through release when switching views; gestures never draw through
+from the browser to notes. Programmatic OpenPianoRoll cancels arrangement capture.
+
+Unlabelled vertical handles select and drag vertically to reorder tracks.
+Pull a handle horizontally to resize its lane, from 32 to 256 logical points.
+The first motion beyond four points chooses resize or reorder. Height follows
+the stable track ID and lasts for the current workstation session; it is view
+state, not an audio document edit. Release retains the size; Escape, pointer
+loss, a panel resize or a changed document restores the size before the drag.
+Tape, fade/range overlays and monitor picking use the same variable row bounds.
+Production only transforms persistent baked artwork; no lighting bake runs.
+As in Cardinal, the face is13px wide, spans the full lane height and sits12px
+before the lane; its pick width is19px. Scroll the handle column to reach
+further rows. Mute and solo live in right-panel Track IO page one. Volume
+lives in the bottom panel or enabled track faders. The previous left-side
+name, M/S and gain buttons and their input actions are explicitly retired. Drag tapes horizontally to move in elapsed seconds; Delete
+removes the selected tape. Empty lane clicks select the track without adding
+notes. Wheel over time pans; Command-wheel zooms around the pointed elapsed
+time. Clicking the top ruler seeks the shared native transport. Space and the
+existing ruby rewind/stop/play buttons retain their shared audio behavior.
+
+There is no global BPM, bar grid, or automatic snapping in this increment.
+Clip moves preserve source offsets and local MIDI clocks. Reordering preserves
+stable track identities and all attached clips. Edits use document revisions,
+commit once on release and reread authoritative state after rejection. Escape,
+pointer loss, layout changes or external edits cancel uncommitted gestures.
+Newly created selections scroll into view.
+
+Track handles use the same optical cut as the ruler, rebuilt for the vertical
+aspect ratio with existing ruby material. No dedicated handle model is needed.
+Clips reuse TapeClip_Long's real perforated mesh. Duration repeats/crops uniform
+source tiles, preserving hole pitch and thickness rather than stretching X.
+This tiling is a presentation approximation; no illustrative audio waveform is
+shown as actual source data. The optional peel morph is deliberately flat.
+The fixed Off/Auto/In specimens are available only through the explicit
+WorkstationPanelSystem.View monitor_preview diagnostic flag. Concurrent monitor
+presentation work places Off indicators alongside actual eligible document
+lanes in a reserved57px gutter. These do not enable input monitoring or arming;
+real monitoring/capture routing remains unfinished.
+
+The document supports64 tracks and512 clips. The scene packet shows up to32
+whole rows and128 visible tapes; scroll/zoom reach further content. Excess
+visible tapes are omitted from the front of document order consistently in
+rendering and picking, with a notice to zoom. This does not mute or remove them.
+Track handles carry no text; full stable IDs/names remain in the document.
+
+Source checks cover revision conflicts, gestures, creation, selection, seek,
+zoom, browser geometry and panel transforms. The finite --check-arrangement
+BACKEND diagnostic prepares two real document lanes and captures their scene;
+it does not start audio or establish audible playback. Native interaction,
+appearance and device audio require separate verification. Whole-crate build,
+Host tests and native capture results are recorded by
+BuildSupport/Workstation/validate_arrangement.py when run.
+
+Remaining work includes the full plugin/file browser experience, file decode,
+recording and monitoring, clip trimming/cross-track movement, track removal,
+save/load and arrangement undo. CC editing is described below. Existing
+plugin work from other agents is independent of this initial component browser.
+
+VALIDATION COMPLETED
+
+Job job-mvut3zbm-002efa31 exited0. All177 selected workstation tests passed
+(one ignored); desktop build, OpenGL/iOS/Vulkan shader checks, zero-mismatch
+intent inspection and finite WebGPU capture passed. Monitored source hashes
+were stable through validation. The saved640x480 capture was reviewed: the
+browser, one complete track row, gem controls, tape, ruler and Off lamp appear.
+Its second lane requires scrolling at that size. Native input and audible
+playback remain untested. See output/checks/genma-arrangement-20261030-100542-859255
+including visual-review.json for exact evidence and any later source changes.
+
+PianoRoll.rs changed after this successful run (viewport-fitting work from another
+agent). Those later changes are not covered by the recorded whole-crate results.
+
+Cardinal selected-range port: drag empty lane body within the visible tape body, release,
+then Command-Shift-M. Current tape picking keeps priority. Free-time grid uses Cardinal
+MeterTrackSystem freeGridSeconds; Command anchors at playhead and bypasses snap.
+Inclusive ordered tracks and time endpoints normalize in either direction.
+MIDI then CC each reject all of that kind on any overlap; touching permitted.
+Create empty notes/points at the exact requested duration, no fixed fallback.
+Escape clears; pointer/focus/layout/document changes cancel unfinished drag.
+No shared musical tempo-map, Cmd-Shift-M, undo transaction or free lane placement
+is introduced. macOS range overlay excludes foreground tape rectangles and does
+not alter gem caches. User manual validation remains required.
+
+CC curve point editor — November 9, 2026
+
+Click inside a CC tape below its top 10-point strip to add a point. Drag an
+existing square point to change its time and normalized value. Option-click a
+point to remove it. The top strip moves the whole clip. Values clamp to 0..1;
+time clamps to the clip duration. Lines interpolate linearly and hold endpoints;
+an empty curve displays 0.5. Drag previews are view-only; release commits one
+revision-checked PutClip. Escape, pointer loss, resize or document changes cancel.
+Curves and handles use the inexpensive unlit overlay, with no optical rebaking.
+The legacy CC C/clear-clips control and its document action are retired entirely.
+The arm toggle and lane/device/parameter selectors remain. Automation recording
+is separate unfinished work. Native interaction still requires verification.

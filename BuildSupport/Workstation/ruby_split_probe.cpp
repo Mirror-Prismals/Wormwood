@@ -1,0 +1,772 @@
+// Finite, headless wgpu-native 27 split-pixel ruby response-cache probe.
+// Fast pixels complete in a small kernel; only compacted fallback pixels enter
+// the full workstation shader through a separate indirect compute dispatch.
+// Warm timings exclude the one startup bake. Cold timings include a new bake
+// before every frame; baseline disables the same shader's cache through plan.
+// Build/run is deliberately external; the canonical probes are unchanged.
+#include <wgpu.h>
+
+#include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <cmath>
+#include <cstdint>
+#include <cstring>
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <memory>
+#include <mutex>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <thread>
+#include <vector>
+
+using Clock = std::chrono::steady_clock;
+static constexpr uint64_t maximum_buffer_bytes = 128ull * 1024 * 1024;
+static constexpr uint64_t maximum_shader_bytes = 8ull * 1024 * 1024;
+static constexpr uint64_t cache_bytes = 120ull * 1024 * 1024;
+static constexpr uint32_t maximum_entries = 20, entry_rows = 8;
+static constexpr uint32_t descriptor_rows = 1 + maximum_entries * entry_rows;
+static constexpr uint32_t mapped_targets = 16644 + 4096;
+static constexpr uint64_t plan_rows = descriptor_rows + (mapped_targets + 3) / 4;
+static constexpr uint64_t plan_bytes = plan_rows * 16;
+static double milliseconds(Clock::time_point start, Clock::time_point end) {
+    return std::chrono::duration<double, std::milli>(end - start).count();
+}
+static WGPUStringView view(const std::string &text) { return {text.data(), text.size()}; }
+static WGPUStringView literal(const char *text) { return {text, std::strlen(text)}; }
+static std::string text(WGPUStringView value) {
+    if (!value.data) return {};
+    return {value.data, value.length == WGPU_STRLEN ? std::strlen(value.data) : value.length};
+}
+static std::string quoted(const std::string &value) {
+    std::ostringstream out;
+    out << '"';
+    for (unsigned char c : value) {
+        if (c == '"' || c == '\\') out << '\\' << c;
+        else if (c == '\n') out << "\\n";
+        else if (c == '\r') out << "\\r";
+        else if (c == '\t') out << "\\t";
+        else if (c < 32) out << "\\u" << std::hex << std::setw(4) << std::setfill('0') << unsigned(c) << std::dec;
+        else out << c;
+    }
+    out << '"';
+    return out.str();
+}
+static std::vector<char> read_file(const std::string &path, uint64_t maximum) {
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    if (!file) throw std::runtime_error("Cannot open " + path);
+    auto length = file.tellg();
+    if (length <= 0) throw std::runtime_error("Empty input: " + path);
+    if (static_cast<uint64_t>(length) > maximum ||
+        static_cast<uint64_t>(length) > std::numeric_limits<size_t>::max() ||
+        static_cast<uint64_t>(length) > static_cast<uint64_t>(std::numeric_limits<std::streamsize>::max()))
+        throw std::runtime_error("Input exceeds bounded read size: " + path);
+    std::vector<char> bytes(static_cast<size_t>(length));
+    file.seekg(0);
+    file.read(bytes.data(), static_cast<std::streamsize>(bytes.size()));
+    if (!file) throw std::runtime_error("Cannot read " + path);
+    return bytes;
+}
+static void write_file(const std::string &path, const void *data, size_t size) {
+    if (size > maximum_buffer_bytes ||
+        size > static_cast<uint64_t>(std::numeric_limits<std::streamsize>::max()))
+        throw std::runtime_error("Output exceeds bounded write size: " + path);
+    std::ofstream file(path, std::ios::binary);
+    if (!file) throw std::runtime_error("Cannot create " + path);
+    file.write(static_cast<const char *>(data), static_cast<std::streamsize>(size));
+    if (!file) throw std::runtime_error("Cannot write " + path);
+}
+static uint32_t integer(const char *arg, uint32_t maximum) {
+    std::string source(arg);
+    size_t consumed = 0;
+    auto value = std::stoull(source, &consumed);
+    if (consumed != source.size() || value == 0 || value > maximum)
+        throw std::runtime_error("Invalid positive integer: " + source);
+    return static_cast<uint32_t>(value);
+}
+
+// Callback storage outlives GPU handles even on a timeout/error path. The
+// callbacks publish their strings/handles before the release-store to done.
+struct Completion {
+    std::atomic<bool> done{false};
+    bool success = false;
+    std::string message;
+    WGPUAdapter adapter = nullptr;
+    WGPUDevice device = nullptr;
+};
+static std::vector<std::unique_ptr<Completion>> completions;
+static Completion *completion() {
+    completions.emplace_back(std::make_unique<Completion>());
+    return completions.back().get();
+}
+static std::atomic<bool> gpu_failed{false};
+static std::mutex error_mutex;
+static std::string gpu_error;
+static void report_gpu_error(const std::string &message) {
+    {
+        std::lock_guard<std::mutex> lock(error_mutex);
+        gpu_error = message;
+        std::cerr << "GPU error: " << message << '\n';
+    }
+    gpu_failed.store(true, std::memory_order_release);
+}
+static void check_gpu_error() {
+    if (gpu_failed.load(std::memory_order_acquire)) {
+        std::lock_guard<std::mutex> lock(error_mutex);
+        throw std::runtime_error(gpu_error);
+    }
+}
+static void finish(Completion *state, bool success, WGPUStringView message = {}) {
+    state->success = success;
+    state->message = text(message);
+    state->done.store(true, std::memory_order_release);
+}
+static void await(Completion *state, WGPUInstance instance, WGPUDevice device,
+                  const char *operation, double timeout_seconds = 60.) {
+    (void)instance;
+    auto start = Clock::now();
+    while (!state->done.load(std::memory_order_acquire)) {
+        // wgpu-native's device polling drives queue/map completion. Every
+        // callback here allows spontaneous delivery, including adapter/device
+        // creation; do not depend on optional browser-style instance futures.
+        if (device) wgpuDevicePoll(device, false, nullptr);
+        check_gpu_error();
+        if (milliseconds(start, Clock::now()) > timeout_seconds * 1000.)
+            throw std::runtime_error(std::string(operation) + " callback timed out");
+        if (!state->done.load(std::memory_order_acquire))
+            std::this_thread::sleep_for(std::chrono::microseconds(250));
+    }
+    check_gpu_error();
+    if (!state->success)
+        throw std::runtime_error(std::string(operation) + " failed: " + state->message);
+}
+
+struct Context {
+    WGPUInstance instance = nullptr;
+    WGPUAdapter adapter = nullptr;
+    WGPUDevice device = nullptr;
+    WGPUQueue queue = nullptr;
+    WGPUShaderModule shader = nullptr;
+    WGPUBindGroupLayout bind_layout = nullptr;
+    WGPUPipelineLayout pipeline_layout = nullptr;
+    WGPUComputePipeline pipeline = nullptr;
+    WGPUComputePipeline bake_pipeline = nullptr;
+    WGPUComputePipeline prepare_pipeline = nullptr;
+    WGPUComputePipeline fallback_pipeline = nullptr;
+    WGPUBindGroup bind_group = nullptr;
+    WGPUBindGroup bake_bind_group = nullptr;
+    WGPUQuerySet queries = nullptr;
+    std::vector<WGPUBuffer> buffers;
+    ~Context() {
+        if (bind_group) wgpuBindGroupRelease(bind_group);
+        if (bake_bind_group) wgpuBindGroupRelease(bake_bind_group);
+        if (pipeline) wgpuComputePipelineRelease(pipeline);
+        if (bake_pipeline) wgpuComputePipelineRelease(bake_pipeline);
+        if (prepare_pipeline) wgpuComputePipelineRelease(prepare_pipeline);
+        if (fallback_pipeline) wgpuComputePipelineRelease(fallback_pipeline);
+        if (pipeline_layout) wgpuPipelineLayoutRelease(pipeline_layout);
+        if (bind_layout) wgpuBindGroupLayoutRelease(bind_layout);
+        if (shader) wgpuShaderModuleRelease(shader);
+        if (queries) wgpuQuerySetRelease(queries);
+        for (auto buffer : buffers) wgpuBufferRelease(buffer);
+        if (queue) wgpuQueueRelease(queue);
+        if (device) { wgpuDeviceDestroy(device); wgpuDeviceRelease(device); }
+        if (adapter) wgpuAdapterRelease(adapter);
+        if (instance) wgpuInstanceRelease(instance);
+    }
+    WGPUBuffer buffer(uint64_t size, WGPUBufferUsage usage, const char *label) {
+        if (size == 0 || size > maximum_buffer_bytes || size % 4)
+            throw std::runtime_error(std::string("Invalid bounded buffer size: ") + label);
+        WGPUBufferDescriptor descriptor{};
+        descriptor.label = literal(label);
+        descriptor.size = size;
+        descriptor.usage = usage;
+        auto result = wgpuDeviceCreateBuffer(device, &descriptor);
+        if (!result) throw std::runtime_error(std::string("Creating buffer: ") + label);
+        buffers.push_back(result);
+        return result;
+    }
+    void pop_error_scope(const char *operation) {
+        auto state = completion();
+        WGPUPopErrorScopeCallbackInfo callback{};
+        callback.mode = WGPUCallbackMode_AllowSpontaneous;
+        callback.userdata1 = state;
+        callback.callback = [](WGPUPopErrorScopeStatus status, WGPUErrorType error,
+                               WGPUStringView message, void *data, void *) {
+            finish(static_cast<Completion *>(data), status == WGPUPopErrorScopeStatus_Success &&
+                   error == WGPUErrorType_NoError, message);
+        };
+        wgpuDevicePopErrorScope(device, callback);
+        await(state, instance, device, operation);
+    }
+    void wait_queue() {
+        auto state = completion();
+        WGPUQueueWorkDoneCallbackInfo callback{};
+        callback.mode = WGPUCallbackMode_AllowSpontaneous;
+        callback.userdata1 = state;
+        callback.callback = [](WGPUQueueWorkDoneStatus status, void *data, void *) {
+            finish(static_cast<Completion *>(data), status == WGPUQueueWorkDoneStatus_Success);
+        };
+        wgpuQueueOnSubmittedWorkDone(queue, callback);
+        await(state, instance, device, "queue completion");
+    }
+    std::vector<char> readback(WGPUBuffer buffer, size_t size) {
+        if (size == 0 || size > maximum_buffer_bytes || size % 4)
+            throw std::runtime_error("Invalid bounded readback size");
+        auto state = completion();
+        WGPUBufferMapCallbackInfo callback{};
+        callback.mode = WGPUCallbackMode_AllowSpontaneous;
+        callback.userdata1 = state;
+        callback.callback = [](WGPUMapAsyncStatus status, WGPUStringView message, void *data, void *) {
+            finish(static_cast<Completion *>(data), status == WGPUMapAsyncStatus_Success, message);
+        };
+        wgpuBufferMapAsync(buffer, WGPUMapMode_Read, 0, size, callback);
+        await(state, instance, device, "buffer mapping");
+        const void *mapped = wgpuBufferGetConstMappedRange(buffer, 0, size);
+        if (!mapped) throw std::runtime_error("Mapped range is null");
+        std::vector<char> result(size);
+        std::memcpy(result.data(), mapped, size);
+        wgpuBufferUnmap(buffer);
+        return result;
+    }
+};
+
+struct Timing {
+    double encode_ms = 0, submit_complete_ms = 0, cpu_ms = 0;
+    double gpu_ms = std::numeric_limits<double>::quiet_NaN();
+    double bake_gpu_ms = 0, shade_gpu_ms = std::numeric_limits<double>::quiet_NaN();
+    double fast_gpu_ms = 0, prepare_gpu_ms = 0, fallback_gpu_ms = 0;
+};
+static std::string compute_entry(uint32_t width, uint32_t height, uint32_t group,
+                                 bool invocation_hook, bool baseline) {
+    std::ostringstream out;
+    out << "\n// Headless split-pixel diagnostic.\n"
+        << "struct WorkstationComputeOutput { pixels: array<vec4<f32>> };\n"
+        << "struct WorkstationFallbackQueue { pixels: array<u32> };\n"
+        << "struct WorkstationFallbackHeader { count:atomic<u32>, dispatchX:u32, dispatchY:u32, dispatchZ:u32 };\n"
+        << "@group(0) @binding(4) var<storage,read_write> workstationComputeOutput: WorkstationComputeOutput;\n"
+        << "@group(0) @binding(5) var<storage,read_write> workstationFallbackQueue: WorkstationFallbackQueue;\n"
+        << "@group(0) @binding(6) var<storage,read_write> workstationFallbackHeader: WorkstationFallbackHeader;\n"
+        << "fn workstationSplitScreen(pixel:u32)->vec2<f32>{\n"
+        << " let x=pixel%" << width << "u; let y=pixel/" << width << "u;\n"
+        << " return vec2<f32>((f32(x)+0.5)*2.0/" << width << ".0-1.0,"
+        << "1.0-(f32(y)+0.5)*2.0/" << height << ".0);\n}\n"
+        << "@compute @workgroup_size(" << group << "," << group << ",1)\n"
+        << "fn cs_main(@builtin(global_invocation_id) id:vec3<u32>, @builtin(local_invocation_index) localIndex:u32) {\n"
+        << " if(id.x >= " << width << "u || id.y >= " << height << "u){return;}\n"
+        << (invocation_hook ? " workstationProbeInvocation(localIndex);\n" : "")
+        << " let pixel=id.y*" << width << "u+id.x;\n"
+        << " let screen=workstationSplitScreen(pixel);\n";
+    if (baseline) {
+        out << " workstationComputeOutput.pixels[pixel]=workstationShade(screen);\n";
+    } else {
+        out << " let fast=workstationFastShade(screen);\n"
+            << " if(fast.a>=0.0){workstationComputeOutput.pixels[pixel]=fast;return;}\n"
+            << " let index=atomicAdd(&workstationFallbackHeader.count,1u);\n"
+            << " if(index<" << uint64_t(width)*height << "u){workstationFallbackQueue.pixels[index]=pixel;}\n";
+    }
+    out << "}\n"
+        << "@compute @workgroup_size(1,1,1)\n"
+        << "fn cs_prepare(){\n"
+        << " workstationFallbackHeader.dispatchX=(atomicLoad(&workstationFallbackHeader.count)+63u)/64u;\n"
+        << " workstationFallbackHeader.dispatchY=1u; workstationFallbackHeader.dispatchZ=1u;\n}\n"
+        << "@compute @workgroup_size(64,1,1)\n"
+        << "fn cs_fallback(@builtin(global_invocation_id) id:vec3<u32>, @builtin(local_invocation_index) localIndex:u32){\n"
+        << " if(id.x>=atomicLoad(&workstationFallbackHeader.count)){return;}\n"
+        << " if(id.x>=" << uint64_t(width)*height << "u){return;}\n"
+        << (invocation_hook ? " workstationProbeInvocation(localIndex);\n" : "")
+        << " let pixel=workstationFallbackQueue.pixels[id.x];\n"
+        << " if(pixel>=" << uint64_t(width)*height << "u){return;}\n"
+        << " workstationComputeOutput.pixels[pixel]=workstationShade(workstationSplitScreen(pixel));\n}\n";
+    return out.str();
+}
+
+int main(int argc, char **argv) {
+    std::string prefix;
+    try {
+        if (argc < 8 || argc > 9) throw std::runtime_error(
+            "usage: ruby_split_probe shader.wgsl frame.bin plan.bin width height output-prefix iterations [baseline|cold|warm]");
+        uint32_t width = integer(argv[4], 16384), height = integer(argv[5], 16384);
+        uint32_t iterations = integer(argv[7], 1000);
+        constexpr uint32_t group = 8;
+        const std::string mode = argc == 9 ? argv[8] : "warm";
+        if (mode != "baseline" && mode != "cold" && mode != "warm")
+            throw std::runtime_error("Mode must be baseline, cold or warm");
+        const uint64_t output_rows = uint64_t(width) * height;
+        const uint64_t output_bytes = output_rows * 4 * sizeof(float);
+        // Arguments are bounded before multiplication, so this cannot overflow
+        // uint64_t. Keep both GPU and CPU readback allocations within 128 MiB.
+        if (output_bytes > maximum_buffer_bytes || output_bytes > std::numeric_limits<size_t>::max())
+            throw std::runtime_error("Probe output exceeds the 128 MiB limit");
+        prefix = argv[6];
+        auto parent = std::filesystem::path(prefix).parent_path();
+        if (!parent.empty()) std::filesystem::create_directories(parent);
+        auto shader_bytes = read_file(argv[1], maximum_shader_bytes);
+        std::string source(shader_bytes.begin(), shader_bytes.end());
+        if (source.find("fn cs_main(") != std::string::npos)
+            throw std::runtime_error("Pass canonical WGSL; the probe appends its compute entry itself");
+        if (source.find("fn cs_ruby_response(") == std::string::npos)
+            throw std::runtime_error("Shader must include cs_ruby_response bake entry");
+        if (source.find("fn workstationFastShade(") == std::string::npos)
+            throw std::runtime_error("Shader must include workstationFastShade split-pixel helper");
+        bool invocation_hook = source.find("fn workstationProbeInvocation(") != std::string::npos;
+        source += compute_entry(width, height, group, invocation_hook, mode == "baseline");
+        write_file(prefix + ".compute.wgsl", source.data(), source.size());
+        auto frame = read_file(argv[2], maximum_buffer_bytes);
+        if (frame.size() < 256 * 16 || frame.size() % 16)
+            throw std::runtime_error("frame.bin must contain complete RGBA32F optical rows");
+        for (size_t offset = 0; offset < frame.size(); offset += sizeof(float)) {
+            float value;
+            std::memcpy(&value, frame.data() + offset, sizeof(value));
+            if (!std::isfinite(value)) throw std::runtime_error("Nonfinite optical-frame value");
+        }
+        float resolution[2];
+        std::memcpy(resolution, frame.data() + 8 * 16, sizeof(resolution));
+        if (resolution[0] != static_cast<float>(width) || resolution[1] != static_cast<float>(height))
+            throw std::runtime_error("frame row8 resolution differs from width/height; refusing to alter sampling");
+        auto plan = read_file(argv[3], plan_bytes);
+        if (plan.size() != plan_bytes)
+            throw std::runtime_error("plan.bin must contain 5346 RGBA32F rows, including the complete target-to-slot map");
+        std::vector<float> plan_values(plan.size() / sizeof(float));
+        std::memcpy(plan_values.data(), plan.data(), plan.size());
+        for (float value : plan_values)
+            if (!std::isfinite(value)) throw std::runtime_error("Nonfinite response-plan value");
+        const float count = plan_values[0];
+        if (count < 0 || count > maximum_entries || count != std::floor(count))
+            throw std::runtime_error("Plan entry count is outside 0..20");
+        const uint32_t entry_count = static_cast<uint32_t>(count);
+        const bool plan_enabled = plan_values[1] >= .5f && entry_count > 0;
+        plan_values[1] = mode == "baseline" || !plan_enabled ? 0.f : 1.f;
+        uint32_t active_entry_count = 0;
+        for (uint32_t i = 0; i < entry_count; ++i) {
+            const size_t descriptor_index = (1 + i * entry_rows) * 4;
+            const size_t state_index = descriptor_index + 3;
+            const float state = plan_values[state_index];
+            // Slots 0..3 belong to panels even when those panels are hidden;
+            // entry_count is a dispatch extent, not a dense active-entry count.
+            if (state == 0.f) continue;
+            if (state != 1.f && state != 2.f)
+                throw std::runtime_error("Active plan descriptors must be ready (1) or bake (2)");
+            ++active_entry_count;
+            const float target = plan_values[descriptor_index];
+            const float edge = plan_values[descriptor_index + 1];
+            const float base = plan_values[descriptor_index + 2];
+            if (target < 0 || target >= 16644 || target != std::floor(target))
+                throw std::runtime_error("Plan descriptor target is outside the supported component range");
+            if ((edge != 64.f && edge != 128.f) || base < 0 || base != std::floor(base) ||
+                double(base) + double(edge) * edge * 60. > double(cache_bytes / 16))
+                throw std::runtime_error("Plan descriptor response range exceeds bounded cache storage");
+            // This process owns a fresh cache, so even an already-ready saved
+            // descriptor must be baked once before its first shading pass.
+            plan_values[state_index] = 2.f;
+        }
+        for (uint32_t target = 0; plan_enabled && target < mapped_targets; ++target) {
+            const float slot = plan_values[descriptor_rows * 4 + target];
+            if (slot != std::floor(slot) || slot >= float(entry_count))
+                throw std::runtime_error("Target-to-slot map contains an invalid cache slot");
+            if (slot >= 0) {
+                const size_t descriptor_index = (1 + uint32_t(slot) * entry_rows) * 4;
+                if (plan_values[descriptor_index + 3] == 0.f || plan_values[descriptor_index] != float(target))
+                    throw std::runtime_error("Target-to-slot map does not match an active response descriptor");
+            }
+        }
+        const bool bake_enabled = mode != "baseline" && plan_enabled && active_entry_count > 0;
+        std::memcpy(plan.data(), plan_values.data(), plan.size());
+
+        Context context;
+        WGPUInstanceExtras extra{};
+        extra.chain.sType = static_cast<WGPUSType>(WGPUSType_InstanceExtras);
+        extra.backends = WGPUInstanceBackend_Metal;
+        WGPUInstanceDescriptor instance_descriptor{};
+        instance_descriptor.nextInChain = &extra.chain;
+        context.instance = wgpuCreateInstance(&instance_descriptor);
+        if (!context.instance) throw std::runtime_error("Cannot create Metal WebGPU instance");
+        auto adapter_state = completion();
+        WGPURequestAdapterOptions adapter_options{};
+        adapter_options.featureLevel = WGPUFeatureLevel_Core;
+        adapter_options.powerPreference = WGPUPowerPreference_HighPerformance;
+        adapter_options.backendType = WGPUBackendType_Metal;
+        WGPURequestAdapterCallbackInfo adapter_callback{};
+        adapter_callback.mode = WGPUCallbackMode_AllowSpontaneous;
+        adapter_callback.userdata1 = adapter_state;
+        adapter_callback.callback = [](WGPURequestAdapterStatus status, WGPUAdapter adapter,
+                                      WGPUStringView message, void *data, void *) {
+            auto state = static_cast<Completion *>(data);
+            state->adapter = adapter;
+            finish(state, status == WGPURequestAdapterStatus_Success && adapter, message);
+        };
+        wgpuInstanceRequestAdapter(context.instance, &adapter_options, adapter_callback);
+        await(adapter_state, context.instance, nullptr, "adapter request");
+        context.adapter = adapter_state->adapter;
+        WGPUAdapterInfo adapter_info{};
+        if (wgpuAdapterGetInfo(context.adapter, &adapter_info) != WGPUStatus_Success)
+            throw std::runtime_error("Cannot get adapter info");
+        std::string adapter_name = text(adapter_info.device);
+        std::string adapter_description = text(adapter_info.description);
+        auto backend = adapter_info.backendType;
+        wgpuAdapterInfoFreeMembers(adapter_info);
+        if (backend != WGPUBackendType_Metal) throw std::runtime_error("Requested Metal, received another backend");
+        bool timestamps = wgpuAdapterHasFeature(context.adapter, WGPUFeatureName_TimestampQuery);
+        WGPUFeatureName timestamp_feature = WGPUFeatureName_TimestampQuery;
+        WGPUDeviceDescriptor device_descriptor{};
+        device_descriptor.label = literal("Workstation exact-kernel compute probe");
+        device_descriptor.defaultQueue.label = literal("Workstation probe queue");
+        device_descriptor.requiredFeatureCount = timestamps ? 1 : 0;
+        device_descriptor.requiredFeatures = timestamps ? &timestamp_feature : nullptr;
+        device_descriptor.uncapturedErrorCallbackInfo.callback =
+            [](WGPUDevice const *, WGPUErrorType, WGPUStringView message, void *, void *) {
+                report_gpu_error(text(message));
+            };
+        device_descriptor.deviceLostCallbackInfo.mode = WGPUCallbackMode_AllowSpontaneous;
+        device_descriptor.deviceLostCallbackInfo.callback =
+            [](WGPUDevice const *, WGPUDeviceLostReason reason, WGPUStringView message, void *, void *) {
+                if (reason != WGPUDeviceLostReason_Destroyed && reason != WGPUDeviceLostReason_InstanceDropped)
+                    report_gpu_error("Device lost: " + text(message));
+            };
+        auto device_state = completion();
+        WGPURequestDeviceCallbackInfo device_callback{};
+        device_callback.mode = WGPUCallbackMode_AllowSpontaneous;
+        device_callback.userdata1 = device_state;
+        device_callback.callback = [](WGPURequestDeviceStatus status, WGPUDevice device,
+                                     WGPUStringView message, void *data, void *) {
+            auto state = static_cast<Completion *>(data);
+            state->device = device;
+            finish(state, status == WGPURequestDeviceStatus_Success && device, message);
+        };
+        wgpuAdapterRequestDevice(context.adapter, &device_descriptor, device_callback);
+        await(device_state, context.instance, nullptr, "device request");
+        context.device = device_state->device;
+        context.queue = wgpuDeviceGetQueue(context.device);
+        WGPULimits limits{};
+        if (wgpuDeviceGetLimits(context.device, &limits) != WGPUStatus_Success)
+            throw std::runtime_error("Cannot get device limits");
+        const uint64_t largest_buffer = std::max({uint64_t(frame.size()), output_bytes, cache_bytes});
+        if (largest_buffer > limits.maxStorageBufferBindingSize || largest_buffer > limits.maxBufferSize ||
+            limits.maxStorageBuffersPerShaderStage < 7)
+            throw std::runtime_error("Probe input/output exceeds device storage-buffer limits");
+        if ((output_rows + 63) / 64 > limits.maxComputeWorkgroupsPerDimension)
+            throw std::runtime_error("Fallback queue exceeds one-dimensional indirect dispatch limit");
+        float timestamp_period = timestamps ? wgpuQueueGetTimestampPeriod(context.queue) : 0.f;
+        if (timestamps && !(timestamp_period > 0)) throw std::runtime_error("Invalid timestamp period");
+
+        auto dummy = context.buffer(96, WGPUBufferUsage_Storage | WGPUBufferUsage_CopyDst, "Unused vertex appearance");
+        auto optical = context.buffer(frame.size(), WGPUBufferUsage_Storage | WGPUBufferUsage_CopyDst, "Complete optical frame");
+        auto cache = context.buffer(cache_bytes, WGPUBufferUsage_Storage, "Ruby optical response cache");
+        auto bake_plan = context.buffer(plan_bytes, WGPUBufferUsage_Storage | WGPUBufferUsage_CopyDst, "Ruby bake plan");
+        auto ready_plan = context.buffer(plan_bytes, WGPUBufferUsage_Storage | WGPUBufferUsage_CopyDst, "Ruby ready plan");
+        auto output = context.buffer(output_bytes, WGPUBufferUsage_Storage | WGPUBufferUsage_CopySrc, "Compute RGBA32F output");
+        auto output_readback = context.buffer(output_bytes, WGPUBufferUsage_CopyDst | WGPUBufferUsage_MapRead, "Image readback");
+        auto fallback_queue = context.buffer(output_rows * sizeof(uint32_t), WGPUBufferUsage_Storage, "Fallback pixel indices");
+        auto fallback_header = context.buffer(16, WGPUBufferUsage_Storage | WGPUBufferUsage_Indirect | WGPUBufferUsage_CopyDst | WGPUBufferUsage_CopySrc, "Fallback counter and dispatch dimensions");
+        // WebGPU cannot use one buffer as read/write storage and indirect input
+        // in the same pass. Copy the generated dimensions into a tiny dedicated
+        // indirect buffer; the full counter remains available to the shader.
+        auto fallback_indirect = context.buffer(12, WGPUBufferUsage_Indirect | WGPUBufferUsage_CopyDst, "Fallback indirect arguments");
+        auto header_readback = context.buffer(16, WGPUBufferUsage_CopyDst | WGPUBufferUsage_MapRead, "Fallback count readback");
+        wgpuQueueWriteBuffer(context.queue, optical, 0, frame.data(), frame.size());
+        wgpuQueueWriteBuffer(context.queue, bake_plan, 0, plan.data(), plan.size());
+        for (uint32_t i = 0; i < entry_count; ++i) {
+            const size_t state_index = (1 + i * entry_rows) * 4 + 3;
+            if (plan_values[state_index] == 2.f) plan_values[state_index] = 1.f;
+        }
+        wgpuQueueWriteBuffer(context.queue, ready_plan, 0, plan_values.data(), plan.size());
+        WGPUBindGroupLayoutEntry layout_entries[7]{};
+        uint64_t sizes[7] = {96, frame.size(), cache_bytes, plan_bytes, output_bytes, output_rows * sizeof(uint32_t), 16};
+        WGPUBuffer handles[7] = {dummy, optical, cache, ready_plan, output, fallback_queue, fallback_header};
+        WGPUBindGroupEntry bindings[7]{};
+        for (uint32_t i = 0; i < 7; ++i) {
+            layout_entries[i].binding = i;
+            layout_entries[i].visibility = WGPUShaderStage_Compute;
+            layout_entries[i].buffer.type = (i == 2 || i >= 4) ? WGPUBufferBindingType_Storage : WGPUBufferBindingType_ReadOnlyStorage;
+            layout_entries[i].buffer.minBindingSize = sizes[i];
+            bindings[i].binding = i;
+            bindings[i].buffer = handles[i];
+            bindings[i].size = sizes[i];
+        }
+        WGPUBindGroupLayoutDescriptor bind_layout_descriptor{};
+        bind_layout_descriptor.entryCount = 7;
+        bind_layout_descriptor.entries = layout_entries;
+        context.bind_layout = wgpuDeviceCreateBindGroupLayout(context.device, &bind_layout_descriptor);
+        WGPUPipelineLayoutDescriptor pipeline_layout_descriptor{};
+        pipeline_layout_descriptor.bindGroupLayoutCount = 1;
+        pipeline_layout_descriptor.bindGroupLayouts = &context.bind_layout;
+        context.pipeline_layout = wgpuDeviceCreatePipelineLayout(context.device, &pipeline_layout_descriptor);
+        WGPUBindGroupDescriptor bind_descriptor{};
+        bind_descriptor.layout = context.bind_layout;
+        bind_descriptor.entryCount = 7;
+        bind_descriptor.entries = bindings;
+        context.bind_group = wgpuDeviceCreateBindGroup(context.device, &bind_descriptor);
+        bindings[3].buffer = bake_plan;
+        context.bake_bind_group = wgpuDeviceCreateBindGroup(context.device, &bind_descriptor);
+        if (!context.bind_layout || !context.pipeline_layout || !context.bind_group || !context.bake_bind_group)
+            throw std::runtime_error("Null response-cache pipeline layout or bind group");
+        auto compile_start = Clock::now();
+        wgpuDevicePushErrorScope(context.device, WGPUErrorFilter_Validation);
+        WGPUShaderSourceWGSL wgsl{};
+        wgsl.chain.sType = WGPUSType_ShaderSourceWGSL;
+        wgsl.code = view(source);
+        WGPUShaderModuleDescriptor shader_descriptor{};
+        shader_descriptor.nextInChain = &wgsl.chain;
+        shader_descriptor.label = literal("Canonical workstation plus compute entry");
+        context.shader = wgpuDeviceCreateShaderModule(context.device, &shader_descriptor);
+        context.pop_error_scope("shader creation");
+        if (!context.shader) throw std::runtime_error("Null shader module");
+        wgpuDevicePushErrorScope(context.device, WGPUErrorFilter_Validation);
+        WGPUComputePipelineDescriptor pipeline_descriptor{};
+        pipeline_descriptor.layout = context.pipeline_layout;
+        pipeline_descriptor.compute.module = context.shader;
+        pipeline_descriptor.compute.entryPoint = literal("cs_main");
+        context.pipeline = wgpuDeviceCreateComputePipeline(context.device, &pipeline_descriptor);
+        context.pop_error_scope("pipeline creation");
+        if (!context.pipeline) throw std::runtime_error("Null compute pipeline");
+        wgpuDevicePushErrorScope(context.device, WGPUErrorFilter_Validation);
+        pipeline_descriptor.compute.entryPoint = literal("cs_ruby_response");
+        context.bake_pipeline = wgpuDeviceCreateComputePipeline(context.device, &pipeline_descriptor);
+        context.pop_error_scope("bake pipeline creation");
+        if (!context.bake_pipeline) throw std::runtime_error("Null bake compute pipeline");
+        wgpuDevicePushErrorScope(context.device, WGPUErrorFilter_Validation);
+        pipeline_descriptor.compute.entryPoint = literal("cs_prepare");
+        context.prepare_pipeline = wgpuDeviceCreateComputePipeline(context.device, &pipeline_descriptor);
+        context.pop_error_scope("prepare pipeline creation");
+        if (!context.prepare_pipeline) throw std::runtime_error("Null prepare compute pipeline");
+        wgpuDevicePushErrorScope(context.device, WGPUErrorFilter_Validation);
+        pipeline_descriptor.compute.entryPoint = literal("cs_fallback");
+        context.fallback_pipeline = wgpuDeviceCreateComputePipeline(context.device, &pipeline_descriptor);
+        context.pop_error_scope("fallback pipeline creation");
+        if (!context.fallback_pipeline) throw std::runtime_error("Null fallback compute pipeline");
+        double compile_ms = milliseconds(compile_start, Clock::now());
+        WGPUBuffer query_resolve = nullptr, query_readback = nullptr;
+        if (timestamps) {
+            WGPUQuerySetDescriptor query_descriptor{};
+            query_descriptor.type = WGPUQueryType_Timestamp;
+            query_descriptor.count = 8;
+            context.queries = wgpuDeviceCreateQuerySet(context.device, &query_descriptor);
+            query_resolve = context.buffer(256, WGPUBufferUsage_QueryResolve | WGPUBufferUsage_CopySrc, "Timestamp resolution");
+            query_readback = context.buffer(64, WGPUBufferUsage_CopyDst | WGPUBufferUsage_MapRead, "Timestamp readback");
+        }
+        context.wait_queue(); // Initial uploads are outside all timed dispatches.
+        auto dispatch = [&](bool do_bake, bool do_shade) {
+            auto start = Clock::now();
+            WGPUCommandEncoder encoder = wgpuDeviceCreateCommandEncoder(context.device, nullptr);
+            uint32_t query_count = 0;
+            if (do_shade) wgpuCommandEncoderClearBuffer(encoder, fallback_header, 0, 16);
+            // Four possible passes: bake, fast, prepare, indirect fallback.
+            auto encode_pass = [&](uint32_t kind) {
+                WGPUComputePassDescriptor pass_descriptor{};
+                WGPUComputePassTimestampWrites writes{};
+                if (timestamps) {
+                    writes.querySet = context.queries;
+                    writes.beginningOfPassWriteIndex = query_count++;
+                    writes.endOfPassWriteIndex = query_count++;
+                    pass_descriptor.timestampWrites = &writes;
+                }
+                auto pass = wgpuCommandEncoderBeginComputePass(encoder, &pass_descriptor);
+                WGPUComputePipeline selected = kind == 0 ? context.bake_pipeline :
+                    kind == 1 ? context.pipeline : kind == 2 ? context.prepare_pipeline : context.fallback_pipeline;
+                wgpuComputePassEncoderSetPipeline(pass, selected);
+                wgpuComputePassEncoderSetBindGroup(pass, 0, kind == 0 ? context.bake_bind_group : context.bind_group, 0, nullptr);
+                if (kind == 0)
+                    wgpuComputePassEncoderDispatchWorkgroups(pass, 16, 16, entry_count);
+                else if (kind == 1)
+                    wgpuComputePassEncoderDispatchWorkgroups(pass, (width + group - 1) / group, (height + group - 1) / group, 1);
+                else if (kind == 2)
+                    wgpuComputePassEncoderDispatchWorkgroups(pass, 1, 1, 1);
+                else
+                    wgpuComputePassEncoderDispatchWorkgroupsIndirect(pass, fallback_indirect, 0);
+                wgpuComputePassEncoderEnd(pass);
+                wgpuComputePassEncoderRelease(pass);
+            };
+            if (do_bake) encode_pass(0);
+            if (do_shade) {
+                encode_pass(1);
+                encode_pass(2);
+                wgpuCommandEncoderCopyBufferToBuffer(encoder, fallback_header, 4, fallback_indirect, 0, 12);
+                encode_pass(3);
+            }
+            if (timestamps) {
+                wgpuCommandEncoderResolveQuerySet(encoder, context.queries, 0, query_count, query_resolve, 0);
+                wgpuCommandEncoderCopyBufferToBuffer(encoder, query_resolve, 0, query_readback, 0, query_count * 8);
+            }
+            auto command = wgpuCommandEncoderFinish(encoder, nullptr);
+            wgpuCommandEncoderRelease(encoder);
+            auto submit_start = Clock::now();
+            wgpuQueueSubmit(context.queue, 1, &command);
+            wgpuCommandBufferRelease(command);
+            context.wait_queue();
+            auto complete = Clock::now();
+            Timing timing;
+            timing.encode_ms = milliseconds(start, submit_start);
+            timing.submit_complete_ms = milliseconds(submit_start, complete);
+            timing.cpu_ms = milliseconds(start, complete);
+            if (timestamps) {
+                auto bytes = context.readback(query_readback, query_count * 8);
+                uint64_t values[8]{};
+                std::memcpy(values, bytes.data(), bytes.size());
+                for (uint32_t i = 1; i < query_count; ++i)
+                    if (values[i] < values[i - 1]) throw std::runtime_error("Timestamp query went backwards");
+                const double unit_ms = timestamp_period / 1.e6;
+                timing.gpu_ms = double(values[query_count - 1] - values[0]) * unit_ms;
+                timing.bake_gpu_ms = do_bake ? double(values[1] - values[0]) * unit_ms : 0.;
+                const uint32_t shade_start = do_bake ? 2 : 0;
+                timing.shade_gpu_ms = do_shade ? double(values[shade_start + 5] - values[shade_start]) * unit_ms : 0.;
+                if (do_shade) {
+                    timing.fast_gpu_ms = double(values[shade_start + 1] - values[shade_start]) * unit_ms;
+                    timing.prepare_gpu_ms = double(values[shade_start + 3] - values[shade_start + 2]) * unit_ms;
+                    timing.fallback_gpu_ms = double(values[shade_start + 5] - values[shade_start + 4]) * unit_ms;
+                }
+            }
+            return timing;
+        };
+        Timing startup_bake;
+        const bool startup_bake_performed = mode == "warm" && bake_enabled;
+        if (startup_bake_performed) {
+            startup_bake = dispatch(true, false);
+            std::cout << "{\"phase\":\"startup_bake\",\"cpu_ms\":" << startup_bake.cpu_ms << ",\"gpu_ms\":";
+            if (timestamps) std::cout << startup_bake.gpu_ms; else std::cout << "null";
+            std::cout << "}\n" << std::flush;
+        }
+        std::vector<Timing> timings;
+        Timing warmup;
+        for (uint32_t iteration = 0; iteration <= iterations; ++iteration) {
+            Timing timing = dispatch(mode == "cold" && bake_enabled, true);
+            if (iteration == 0) warmup = timing;
+            else timings.push_back(timing);
+            std::cout << "{\"phase\":" << quoted(iteration == 0 ? "warmup" : "pass")
+                      << ",\"index\":" << iteration << ",\"cpu_ms\":" << timing.cpu_ms
+                      << ",\"gpu_ms\":";
+            if (timestamps) std::cout << timing.gpu_ms; else std::cout << "null";
+            std::cout << ",\"bake_gpu_ms\":";
+            if (timestamps) std::cout << timing.bake_gpu_ms; else std::cout << "null";
+            std::cout << ",\"shade_gpu_ms\":";
+            if (timestamps) std::cout << timing.shade_gpu_ms; else std::cout << "null";
+            std::cout << "}\n" << std::flush;
+        }
+        auto encoder = wgpuDeviceCreateCommandEncoder(context.device, nullptr);
+        wgpuCommandEncoderCopyBufferToBuffer(encoder, output, 0, output_readback, 0, output_bytes);
+        wgpuCommandEncoderCopyBufferToBuffer(encoder, fallback_header, 0, header_readback, 0, 16);
+        auto command = wgpuCommandEncoderFinish(encoder, nullptr);
+        wgpuCommandEncoderRelease(encoder);
+        wgpuQueueSubmit(context.queue, 1, &command);
+        wgpuCommandBufferRelease(command);
+        auto header_bytes = context.readback(header_readback, 16);
+        uint32_t queue_header[4]{};
+        std::memcpy(queue_header, header_bytes.data(), sizeof(queue_header));
+        if (queue_header[0] > output_rows || queue_header[1] != (queue_header[0] + 63) / 64 || queue_header[2] != 1 || queue_header[3] != 1)
+            throw std::runtime_error("Fallback queue header exceeds bounds or contains inconsistent dispatch dimensions");
+        auto rgba = context.readback(output_readback, output_bytes);
+        write_file(prefix + ".rgba32f", rgba.data(), rgba.size());
+        std::vector<unsigned char> rgb(size_t(width) * height * 3);
+        size_t nonfinite = 0;
+        size_t negative = 0;
+        float minimum = std::numeric_limits<float>::infinity();
+        float maximum = -minimum;
+        for (size_t row = 0; row < static_cast<size_t>(output_rows); ++row) {
+            float color[4];
+            std::memcpy(color, rgba.data() + row * 16, 16);
+            for (size_t channel = 0; channel < 4; ++channel) {
+                float value = color[channel];
+                if (!std::isfinite(value)) { ++nonfinite; value = 0; }
+                else {
+                    if (value < 0) ++negative;
+                    if (channel < 3) {
+                        minimum = std::min(minimum, value);
+                        maximum = std::max(maximum, value);
+                    }
+                }
+                if (channel < 3)
+                    rgb[row * 3 + channel] = static_cast<unsigned char>(std::lround(std::clamp(value, 0.f, 1.f) * 255));
+            }
+        }
+        {
+            std::ostringstream header;
+            header << "P6\n" << width << ' ' << height << "\n255\n";
+            const auto header_bytes = header.str();
+            if (rgb.size() > maximum_buffer_bytes - header_bytes.size())
+                throw std::runtime_error("PPM output exceeds bounded write size");
+            std::ofstream ppm(prefix + ".ppm", std::ios::binary);
+            ppm.write(header_bytes.data(), static_cast<std::streamsize>(header_bytes.size()));
+            ppm.write(reinterpret_cast<const char *>(rgb.data()), static_cast<std::streamsize>(rgb.size()));
+            if (!ppm) throw std::runtime_error("Cannot write PPM output");
+        }
+        auto median = [&](bool gpu) {
+            std::vector<double> values;
+            for (const auto &t : timings) values.push_back(gpu ? t.gpu_ms : t.cpu_ms);
+            std::sort(values.begin(), values.end());
+            size_t count = values.size();
+            return count % 2 ? values[count / 2] : (values[count / 2 - 1] + values[count / 2]) * .5;
+        };
+        std::ostringstream json;
+        json << std::setprecision(10) << "{\n  \"status\":\"completed\",\n  \"backend\":\"Metal\",\n"
+             << "  \"adapter\":" << quoted(adapter_name) << ",\n  \"adapter_description\":" << quoted(adapter_description)
+             << ",\n  \"wgpu_native_version\":" << wgpuGetVersion()
+             << ",\n  \"width\":" << width << ",\n  \"height\":" << height
+             << ",\n  \"mode\":" << quoted(mode)
+             << ",\n  \"entry_count\":" << entry_count
+             << ",\n  \"active_entry_count\":" << active_entry_count
+             << ",\n  \"cache_bytes\":" << cache_bytes
+             << ",\n  \"plan_bytes\":" << plan.size()
+             << ",\n  \"rows_per_pixel\":1"
+             << ",\n  \"output_rows\":" << output_rows
+             << ",\n  \"fallback_pixel_count\":" << queue_header[0]
+             << ",\n  \"fallback_pixel_fraction\":" << double(queue_header[0]) / double(output_rows)
+             << ",\n  \"output_bytes\":" << output_bytes
+             << ",\n  \"ppm_written\":true"
+             << ",\n  \"workgroup\":[" << group << "," << group << ",1],\n  \"invocation_hook\":" << (invocation_hook ? "true" : "false")
+             << ",\n  \"measured_iterations\":" << iterations
+             << ",\n  \"unmeasured_warmups\":1,\n  \"timestamp_supported\":" << (timestamps ? "true" : "false")
+             << ",\n  \"timestamp_period_ns\":" << timestamp_period
+             << ",\n  \"shader_pipeline_compile_ms\":" << compile_ms
+             << ",\n  \"frame_bytes\":" << frame.size()
+             << ",\n  \"startup_bake_performed\":" << (startup_bake_performed ? "true" : "false")
+             << ",\n  \"startup_bake_cpu_ms\":" << startup_bake.cpu_ms
+             << ",\n  \"startup_bake_gpu_ms\":";
+        if (timestamps && startup_bake_performed) json << startup_bake.gpu_ms; else json << "null";
+        json
+             << ",\n  \"warmup_cpu_ms\":" << warmup.cpu_ms
+             << ",\n  \"median_cpu_ms\":" << median(false) << ",\n  \"median_gpu_ms\":";
+        if (timestamps) json << median(true); else json << "null";
+        json << ",\n  \"nonfinite_output_channels\":" << nonfinite
+             << ",\n  \"negative_output_channels\":" << negative;
+        json << ",\n  \"rgb_min\":" << (std::isfinite(minimum) ? minimum : 0)
+             << ",\n  \"rgb_max\":" << (std::isfinite(maximum) ? maximum : 0)
+             << ",\n  \"output_format\":\"top-left origin, tightly packed little-endian RGBA32F, display-encoded workstationShade output\",\n";
+        json
+             << "  \"timing_scope\":\"GPU timestamps bracket fast, queue preparation, argument copy and indirect fallback shading in warm/baseline mode, bake through shading in cold mode. Separate pass timings are included; inter-pass overhead remains in the total. Warm startup bake and one warmup frame are excluded from medians. CPU includes encoding, submission, timestamp resolve/copy and completion wait; excludes query mapping, image readback and compilation.\",\n"
+             << "  \"passes\":[\n";
+        for (size_t i = 0; i < timings.size(); ++i) {
+            auto t = timings[i];
+            json << "    {\"encode_ms\":" << t.encode_ms << ",\"submit_complete_ms\":" << t.submit_complete_ms
+                 << ",\"cpu_ms\":" << t.cpu_ms << ",\"gpu_ms\":";
+            if (timestamps) json << t.gpu_ms; else json << "null";
+            json << ",\"bake_gpu_ms\":";
+            if (timestamps) json << t.bake_gpu_ms; else json << "null";
+            json << ",\"shade_gpu_ms\":";
+            if (timestamps) json << t.shade_gpu_ms; else json << "null";
+            json << ",\"fast_gpu_ms\":";
+            if (timestamps) json << t.fast_gpu_ms; else json << "null";
+            json << ",\"prepare_gpu_ms\":";
+            if (timestamps) json << t.prepare_gpu_ms; else json << "null";
+            json << ",\"fallback_gpu_ms\":";
+            if (timestamps) json << t.fallback_gpu_ms; else json << "null";
+            json << '}' << (i + 1 < timings.size() ? "," : "") << '\n';
+        }
+        json << "  ]\n}\n";
+        auto report = json.str();
+        write_file(prefix + ".json", report.data(), report.size());
+        if (nonfinite) throw std::runtime_error("Nonfinite shader output; inspect saved report/raw output");
+        std::cout << "COMPUTE_PROBE_OK=" << prefix << ".json\n";
+        return 0;
+    } catch (const std::exception &error) {
+        std::cerr << "COMPUTE_PROBE_FAILED: " << error.what() << '\n';
+        if (!prefix.empty()) {
+            auto report = "{\"status\":\"failed\",\"error\":" + quoted(error.what()) + "}\n";
+            try { write_file(prefix + ".error.json", report.data(), report.size()); } catch (...) {}
+        }
+        return 1;
+    }
+}

@@ -1,0 +1,119 @@
+{
+  "system": "SecurityCameraSystem",
+  "layer": 5,
+  "functions": {
+    "View": {
+      "calls": [
+        "WaterSystem.Frame",
+        "WaterSystem.Configure",
+        "WaterSystem.Pause",
+        "WaterSystem.Step",
+        "WorkstationDataSystem.StageLighting",
+        "EnvironmentAudioSystem.Status"
+      ]
+    },
+    "Status": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "entry_steps": [
+    "View",
+    "Status"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "theatre_camera_passthrough",
+        "description": "Select riverbank, mountain and theatre observer poses over the live game scene. Preserve per-page aim, the gameplay time override, terrain changes and normal native water, clouds, vegetation and theatre rendering. The DAW overlays the complete scene after water.",
+        "retention": "experimental",
+        "selection": "Embedded DAW camera passthrough. The shared original scene builder/native materials remain authoritative. Continuously advancing full water/world rendering is retained as the explicit WORMWOOD_WORKSTATION_WORLD_CACHE=0 research alternative; normal macOS WebGPU baked composition uses paused_game_image_composition. Standalone passthrough remains disabled. Separate scenic reconstructions, empty terrain snapshots, coarse water meshes and depth remapping remain retired. Fixed theatre-camera lighting rehearsal now selects the actual venue-only pass described by fixed_stage_rehearsal_camera; the former full-scene theatre camera remains available when stage_rehearsal is absent. This author-requested choice does not change outdoor cameras.",
+        "implements": [
+          "View",
+          "Status"
+        ],
+        "sources": [
+          "Theatre/Cameras.rs",
+          "Terrain/Drainage.rs",
+          "BaseSystem/LayerFive/SecurityCameraSystem.rs",
+          "Workstation/CameraBackdrop.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Render/WorldBackdropWebGPU.rs",
+          "Render/webgpu.rs",
+          "Render/opengl.rs",
+          "Render/vulkan.rs",
+          "Host/WorkstationPerformanceTests.rs",
+          "Render/ios.rs",
+          "Render/ios_gl.rs",
+          "Render/mod.rs"
+        ],
+        "checks": [
+          {
+            "id": "camera_controls",
+            "kind": "behavior",
+            "expectation": "C cycles once per press; WASD and per-page aim retain their existing behavior. Camera and player use the same scene builder and native scene shaders. Gameplay time override, live edits, full water and vegetation are retained; the mountain site is unchanged. World depth and material tags are not remapped; DAW panels composite after water. Disabling passthrough removes the world. The theatre lighting rehearsal is the explicitly selected venue-only exception; it avoids the outdoor passes.",
+            "procedure": "Run camera state, live-clock and shared scene packet regression checks; native macOS camera cycling, water and UI composition checks on selected backends. iOS OpenGL ES full scene overlay remains unavailable and errors explicitly."
+          }
+        ]
+      },
+      {
+        "id": "paused_game_image_composition",
+        "description": "Compose a completed image of the real paused game view under independent DAW artwork, rather than rebuilding and rendering the full scene for every UI frame.",
+        "retention": "supported",
+        "selection": "Embedded macOS WebGPU baked DAW while the game is paused; an explicit WORLD_CACHE=0 override retains continuous-world research rendering.",
+        "implements": [
+          "View",
+          "Status"
+        ],
+        "sources": [
+          "Workstation/PausedWorld.rs",
+          "Theatre/Cameras.rs",
+          "BaseSystem/LayerFive/SecurityCameraSystem.rs",
+          "BaseSystem/LayerFour/WorkstationPanelSystem.rs",
+          "BaseSystem/LayerOne/GraphicsConnectionSystem.rs",
+          "Host/Host.rs",
+          "Host/WorkstationPerformanceTests.rs",
+          "Render/WorkstationWorldImage.rs",
+          "Render/WorldBackdropWebGPU.rs",
+          "Render/webgpu.rs",
+          "Render/mod.rs"
+        ],
+        "checks": [
+          {
+            "id": "retained_real_game_background",
+            "kind": "behavior",
+            "expectation": "Capture the complete original world color image after native vegetation/water/reflections and before the DAW overlay. Retain it between camera/world changes. Water animation is held with the paused visual background, while DAW input, audio playback and audio processing continue. Camera changes, game time/resume, vegetation revision and resizing invalidate or replace the image. Normal gameplay rendering remains unchanged; no fake world or DAW-only benchmark may stand in for embedded validation.",
+            "procedure": "Run paused_world key/shader and embedded_daw_reuses_prepared_world tests. Enter via the real theatre computer transition; verify retained world captures/draws, zero runtime gem optics, active game audio and cleanup. Measure panel motion/fader dragging without image readbacks; separately capture camera navigation and resume for visual review."
+          }
+        ]
+      },
+      {
+        "id": "fixed_stage_rehearsal_camera",
+        "description": "The theatre camera previews the actual venue under song-driven stage lighting, independently of the retained outdoor world.",
+        "retention": "supported",
+        "selection": "Fixed theatre lighting rehearsal requested by the author. All evaluation and visual preparation stay outside audio callbacks.",
+        "implements": [
+          "View"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/SecurityCameraSystem.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/TheatreAppearance.rs",
+          "Theatre/Lighting.rs",
+          "Render/TheatreExteriorCheck.rs"
+        ],
+        "checks": [
+          {
+            "id": "fixed_stage_rehearsal_camera_review",
+            "kind": "behavior",
+            "expectation": "A theatre-camera lighting change refreshes only the real venue geometry and shared native material pass. Terrain, water, vegetation and reflection passes are absent from rehearsal. Outdoor cameras preserve the paused world policy. Ordinary DAW edits leave identical lighting/view packets and reuse the completed theatre image. Gem panel artwork stays fixed.",
+            "procedure": "Run finite native red/blue/blackout captures with WORMWOOD_CHECK_STAGE_LIGHTING=1 and --check-theatre-exterior WebGPU; verify the real theatre-computer embedded transition and CC playback. Native render evidence and callback isolation must be checked separately."
+          }
+        ]
+      }
+    ]
+  }
+}

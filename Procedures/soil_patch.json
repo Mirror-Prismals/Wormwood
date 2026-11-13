@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "enabled": true,
+  "selection": "Experimental material-preserving polyhedral soil, prepared before contact. Shovel requests are contact constrained; fracture depends on accepted blade movement and contact work. Full digging is not yet verified.",
+  "material_model": "polyhedral_cutting",
+  "internal_contact_mesh": "clipped"
+}

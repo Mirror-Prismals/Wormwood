@@ -134,6 +134,11 @@ pub(crate) struct State {
     session: Option<audio::Session>,
 }
 impl State {
+    pub(crate) fn attach_output(&mut self, entity: u64, output: &mut Option<crate::audio::chuck::Output>) -> Result<(),String> {
+        let session = self.session.as_mut().ok_or("audio not prepared")?;
+        if session.entity != entity { return Err("audio ownership mismatch".into()); }
+        session.attach_output(output)
+    }
     pub(crate) fn prepared_entity(&self) -> Option<u64> {
         self.session.as_ref().map(|s| s.entity)
     }
@@ -144,11 +149,18 @@ pub(crate) fn dispatch(
     input: &Value,
 ) -> Result<Value, String> {
     match hook {
+        "Info" => {
+            let id=input["entity"].as_u64().ok_or("sound Entity required")?;
+            let session=host.audio.session.as_ref().ok_or("audio not prepared")?;
+            if session.entity != id { return Err("audio ownership mismatch".into()); }
+            Ok(session.info())
+        }
+        "Attach" => host.invoke("ChuckConnectionSystem.AttachOutput", json!({"entity":input["entity"],"backend":"jack"})),
         "Prepare" => {
             if host.audio.session.is_some() {
                 return Err("audio already prepared".into());
             }
-            if input["kind"] != "sound" || input["source"] != "diagnostic_sine_440" {
+            if input["kind"] != "sound" || !matches!(input["source"].as_str(),Some("diagnostic_sine_440" | "embedded_chuck")) {
                 return Err("unsupported diagnostic sound".into());
             }
             let id = input["id"].as_u64().ok_or("sound Entity ID required")?;

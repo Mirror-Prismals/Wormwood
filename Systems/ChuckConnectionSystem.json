@@ -1,0 +1,123 @@
+{
+  "system": "ChuckConnectionSystem",
+  "layer": 1,
+  "functions": {
+    "Prepare": {
+      "calls": []
+    },
+    "Compile": {
+      "calls": []
+    },
+    "Remove": {
+      "calls": []
+    },
+    "Poll": {
+      "calls": []
+    },
+    "SetRoutes": {
+      "calls": []
+    },
+    "Telemetry": {
+      "calls": []
+    },
+    "Release": {
+      "calls": []
+    },
+    "AttachOutput": {
+      "calls": []
+    },
+    "RefreshMix": {
+      "calls": []
+    },
+    "SetMicrophoneRoutes": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "embedded_chuck_vm",
+        "description": "Restore the original ChucK synthesis VM and independent bus routing with worker-owned compilation and preallocated callback transport.",
+        "retention": "experimental",
+        "selection": "Authorized Mirror restoration; shared integration and native validation pending.",
+        "implements": [
+          "Prepare",
+          "Compile",
+          "Remove",
+          "Poll",
+          "SetRoutes",
+          "Telemetry",
+          "Release",
+          "AttachOutput",
+          "SetMicrophoneRoutes"
+        ],
+        "sources": [
+          "Audio/chuck.rs",
+          "Audio/dsp.rs",
+          "Audio/native/ChuckBridge.cpp",
+          "Audio/native/CMakeLists.txt",
+          "BaseSystem/LayerOne/ChuckConnectionSystem.rs",
+          "Audio/WorkerScheduling.rs"
+        ],
+        "checks": [
+          {
+            "id": "restoration_review",
+            "kind": "behavior",
+            "expectation": "Restore the original ChucK synthesis VM and independent bus routing with worker-owned compilation and preallocated callback transport.",
+            "procedure": "Rewrite owns validation: compare retained Cardinal formulas/scripts, run new unit checks, wire registered hooks into Mirror, verify native macOS and iOS output, source movement/removal, failure cleanup and callback underrun telemetry. Source presence and compilation alone are not audible verification."
+          },
+          {
+            "id": "listener_output_meter",
+            "kind": "behavior",
+            "expectation": "listener_rms and listener_peak measure the actual final unclipped stereo sum of birds and workstation audio. Callback uses fixed stack arithmetic and atomic publication without allocation, locks or logging.",
+            "procedure": "Run listener meter tests for stereo RMS, peaks above unity,250ms decay,silence and nonfinite isolation; compare native playback telemetry."
+          },
+          {
+            "id": "preparation_worker_priority",
+            "kind": "behavior",
+            "expectation": "On Apple platforms the non-real-time preparation worker requests user-interactive QoS once at thread startup and reports whether the OS accepted it. No native callback operation, PCM queue target, capture-frame dropping or recording-clock behavior changes.",
+            "procedure": "Run native worker/capture tests and inspect the native scheduling telemetry for acceptance or errno. Compare underruns under load separately; QoS is a best-effort priority request, not a hard-real-time guarantee."
+          },
+          {
+            "id": "workstation_feedback",
+            "kind": "behavior",
+            "expectation": "Workstation interface cues reach both listener channels independently of the transport and spatial source routes.",
+            "procedure": "Run workstation_cues_reach_stereo_output_with_transport_stopped for each shipped ChucK cue."
+          },
+          {
+            "id": "independent_microphone_routes",
+            "kind": "behavior",
+            "expectation": "SetMicrophoneRoutes publishes a validated centered mono receiver snapshot to the dedicated capture mixer without replacing the player routes or applying player environment volume settings.",
+            "procedure": "Run audio::chuck::input_capture_tests and microphone tests; verify native VM1 capture separately."
+          }
+        ]
+      },
+      {
+        "id": "pause_environment_sound_levels",
+        "description": "Apply the saved ambient master and independent wind, bird, insect, water, ocean and underwater gains to prepared environment routes on the control thread. Preserve unscaled routes so repeated refreshes do not compound volume. The pause loop refreshes routes without advancing the game.",
+        "retention": "supported",
+        "selection": "SetRoutes during normal environment playback; RefreshMix while paused. Defaults preserve existing playback levels.",
+        "implements": [
+          "SetRoutes",
+          "RefreshMix"
+        ],
+        "sources": [
+          "Render/PauseMenu.m",
+          "BaseSystem/LayerOne/ChuckConnectionSystem.rs",
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "saved_environment_mix",
+            "kind": "behavior",
+            "expectation": "Each named slider controls only its environment group, ambient master multiplies all groups, zero mutes, defaults restore the previous mix, saved values survive relaunch, and repeated refreshes do not compound gain. No preferences or UI work occurs in the audio callback.",
+            "procedure": "Run isolated native Cocoa sound-settings controls and persistence checks, inspect the live sound panel, and run embedded-VM mix mute/restore verification. Verify pause/resume input capture separately."
+          }
+        ]
+      }
+    ]
+  }
+}

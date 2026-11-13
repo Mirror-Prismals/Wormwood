@@ -1,0 +1,411 @@
+{
+  "system": "PhysicsSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "PlayerModelSystem.Load"
+      ]
+    },
+    "Advance": {
+      "calls": [
+        "OGCConnectionSystem.Project",
+        "OGCConnectionSystem.Synchronize",
+        "OGCConnectionSystem.Configure",
+        "OGCConnectionSystem.Respond"
+      ]
+    },
+    "Report": {
+      "calls": []
+    },
+    "Mesh": {
+      "calls": []
+    },
+    "Release": {
+      "calls": [
+        "OGCConnectionSystem.Release"
+      ]
+    },
+    "GameStep": {
+      "calls": [
+        "OGCConnectionSystem.Configure",
+        "OGCConnectionSystem.Respond",
+        "OGCConnectionSystem.Project",
+        "OGCConnectionSystem.Synchronize",
+        "VegetationSystem.QueryWood",
+        "PlanetSurfaceSystem.MineCell",
+        "PlanetSurfaceSystem.RefineMaterial",
+        "WaterSystem.Sample",
+        "VegetationSystem.MaterialTree",
+        "TerrainSurfaceHydrologySystem.MaterialDomain",
+        "TerrainSurfaceHydrologySystem.MaterialPreview"
+      ]
+    },
+    "GameFrame": {
+      "calls": []
+    },
+    "GameHeight": {
+      "calls": []
+    },
+    "GamePause": {
+      "calls": []
+    },
+    "GameClose": {
+      "calls": [
+        "OGCConnectionSystem.Ownership",
+        "OGCConnectionSystem.Release",
+        "VegetationSystem.MaterialTree",
+        "TerrainSurfaceHydrologySystem.MaterialDomain",
+        "PlanetSurfaceSystem.ReleaseMaterials"
+      ]
+    },
+    "GameResolveBody": {
+      "calls": []
+    },
+    "GameCollision": {
+      "calls": []
+    },
+    "GameWater": {
+      "calls": []
+    },
+    "GameWaterSample": {
+      "calls": []
+    },
+    "GameCraftTree": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "adaptive_material_workshop",
+        "description": "Automatic material scenes distinguish cohesive soil clusters, discrete frictional pebbles and closed shape-preserving wood/stone cells. The wood specimen uses the game's generated broadleaf trunk mesh, capped and partitioned into elongated grain-bearing cells. Solid interfaces carry traction and accumulate fracture work; their existing faces become exposed when broken. Tool work and geometry-derived projected contact area determine localized stress; light and stronger blows and a broad bucket comparison use the same fracture law. Dirt alone refines/coarsens near contact, preserving mass and damage; pebbles and loose stones never subdivide merely because a tool approaches. Static granular friction retains contact multipliers within a substep. All coupled iterations share the fixed inertial prediction. Roots and three-leaf shoots transfer loads into soil. OGC contact uses validated typed transport. Physical substeps and iteration counts remain fixed. Strength/toughness presets and estimated contact areas are uncalibrated; solid fracture follows prepartitioned interfaces. The axe now has thick physical splitting cheeks and a centered swing with an embedded levering phase. Crack-front adjacency persists in material coordinates. Wood work follows the most loaded admissible crack and each face consumes its fracture energy before the remainder continues; growth-ring direction modulates cleavage resistance.",
+        "retention": "experimental",
+        "selection": "matter_dirt, matter_seedlings, matter_pebbles, matter_wood, matter_wood_chop, matter_stone, matter_rubble or matter_stone_blunt through the workshop; established matter_grass uses the dedicated rooted_turf_material behavior. Retained old fixtures and gameplay soil alternatives remain separate. Fine sand uses fine_sand_continuum; force variants and layered ground are separately described below.",
+        "implements": [
+          "Configure",
+          "Advance",
+          "Report",
+          "Mesh",
+          "Release"
+        ],
+        "sources": [
+          "Physics/matter/mod.rs",
+          "Physics/matter/material.rs",
+          "Physics/matter/adapt.rs",
+          "Physics/matter/tools.rs",
+          "Physics/matter/growth.rs",
+          "Physics/matter/skin.rs",
+          "Physics/matter/solid.rs",
+          "Physics/matter/solid_geometry.rs",
+          "Physics/cut_geometry.rs",
+          "Vegetation/Geometry.rs",
+          "Physics/rigid_contact.rs",
+          "Physics/mod.rs",
+          "SimulationWorkshop/MATTER.txt",
+          "Physics/matter/coupling.rs"
+        ],
+        "checks": [
+          {
+            "id": "material_showcase_observation",
+            "kind": "behavior",
+            "expectation": "A curved spade displaces and lifts existing loam or loose stone; a hollow bucket retains then pours sand; the axe splits grain-bearing wood and the pick chips stone. Seeded soil grows shoots and roots that mechanically react to disturbance. Local material complexity increases near disturbance and may decrease in settled interiors without mass loss or healed cracks. Captions distinguish requested motion from actual physical outcomes.",
+            "procedure": "Compile iOS Rust and UIKit source. Observe bounded native Mac runs: solid cells retain volume, light contact preserves interfaces, stronger tool work drives fractures, and a broad bucket differs from a pick on the same stone. Inspect discrete sand settling and bucket motion. The user judges phone visuals and material behavior; throughput or compilation alone does not certify excavation realism."
+          },
+          {
+            "id": "wood_grain_fracture",
+            "kind": "behavior",
+            "expectation": "Intact connected wood remains stiff. Broken interfaces cannot pull splinters back together. Longitudinal splitting and transverse edge cutting act through different directional material resistance, with finite shared contact work. The two automatic axe directions use the same specimen and material law. A sufficiently loaded wedge can remain in the opening and separate complete wood pieces along connected grain interfaces. Weak force must not receive scripted cracks or separation.",
+            "procedure": "Compile the native and iOS targets. Inspect the aggregate rigid mass/inertia and permanent fracture connectivity. Observe the split and chop cases, including withdrawal and settling; report pieces and directional failures without treating a caption as successful fracture. Phone visual judgment belongs to the user."
+          }
+        ]
+      },
+      {
+        "id": "rooted_turf_material",
+        "description": "Established turf owns a deformable volume mesh, cohesive soil seams and tensile-only root bundles. Dense crowns and blade geometry follow the mat. Roots bridge soil cracks, transfer forces and sever permanently under edge work or tensile overload. A finite-force spade cuts, undercuts, lifts and releases through OGC contact with the physical mat. Tissue mass remains in the simulation; roots do not heal and detached sod is never attached to the tool. This replaces sparse seedlings as the main grass showcase; the seeded growth behavior remains separately selectable.",
+        "retention": "experimental",
+        "selection": "matter_grass; matter_seedlings retains the prior biological growth experiment.",
+        "implements": [
+          "Configure",
+          "Advance",
+          "Report",
+          "Mesh",
+          "Release"
+        ],
+        "sources": [
+          "Physics/matter/turf.rs",
+          "Physics/matter/mod.rs",
+          "Physics/matter/tools.rs",
+          "SimulationWorkshop/MATTER.txt",
+          "Physics/matter/coupling.rs"
+        ],
+        "checks": [
+          {
+            "id": "rooted_turf_observation",
+            "kind": "behavior",
+            "expectation": "The scene starts as dense established turf. The mat has finite thickness and preserves material mass, soil cohesion and root connectivity independently. A cut can expose roots and release a coherent rooted fragment. Torn root ends follow their own fragment and do not reconnect. Gravity alone does not destroy an undisturbed mat. Geometry stays within the mobile mesh budget, and initialization, deformation, reset and pause remain available.",
+            "procedure": "Compile native/iOS. Inspect initial geometry, a bounded automatic cut/lift/release and reset, checking finite state, volume, measured cuts/tears/lifted tissue, and root/fragment ownership. User phone playtest judges appearance and mechanics. Blade geometry is crown-attached; individual leaf contact and growth are not claimed by this behavior."
+          }
+        ]
+      },
+      {
+        "id": "fine_sand_continuum",
+        "description": "Fine sand uses mesoscopic material parcels, APIC momentum transfer, Hencky elastic strain and a Drucker-Prager frictional plastic projection. Loose expansion carries no tension; pressure supports frictional shear. Accepted OGC boundary displacement feeds the strain update. Persistent point masses and an implicit display skin replace visible centimetre grains in this case. The previous discrete model remains selectable as pebbles. This is a bounded explicit adaptation with uncalibrated constants, not individual submillimetre grains or a full beach.",
+        "retention": "experimental",
+        "selection": "matter_sand and matter_sand_compare",
+        "implements": [
+          "Configure",
+          "Advance",
+          "Report",
+          "Mesh",
+          "Release"
+        ],
+        "sources": [
+          "Physics/matter/sand.rs",
+          "Physics/matter/mod.rs",
+          "Physics/matter/material.rs",
+          "Physics/matter/skin.rs",
+          "SimulationWorkshop/MATTER.txt"
+        ],
+        "checks": [
+          {
+            "id": "fine_sand_continuum_observation",
+            "kind": "behavior",
+            "expectation": "Sand settles into a load-bearing deposit, yields under the bucket, and can be carried and poured without tensile strands or self-excited motion. Mass remains accounted for. Display looks like finer bulk sand, distinct from pebbles.",
+            "procedure": "Compile native/iOS; review pressure-dependent return mapping and accepted contact-to-strain feedback. User observes settling, scoop, hold and pour. Runtime speed and visual quality remain unverified by compilation."
+          }
+        ]
+      },
+      {
+        "id": "material_force_comparison",
+        "description": "Compare 45, 240 and 800 N actuator limits using fresh deterministic specimens, identical target motion and equal trial duration. Preserve measured results across trial resets. Report actuator settings separately from physical contact peaks, kinetic energy and work. Each trial remains a physical solve; fracture thresholds are not changed with force.",
+        "retention": "experimental",
+        "selection": "Supported single-material case ID with _compare suffix; excludes seedlings and layered sequence.",
+        "implements": [
+          "Configure",
+          "Advance",
+          "Report",
+          "Mesh",
+          "Release"
+        ],
+        "sources": [
+          "Physics/matter/trials.rs",
+          "Physics/matter/mod.rs",
+          "Physics/matter/tools.rs"
+        ],
+        "checks": [
+          {
+            "id": "material_force_comparison_observation",
+            "kind": "behavior",
+            "expectation": "Increasing actuator effort produces measurable differences where contact is force-limited. Reports retain all three outcomes, mass, peak lifting and bucket containment; the clock remains monotonic through fresh-specimen resets. No results are invented for a failed or unfinished trial.",
+            "procedure": "Compile native/iOS. User observes one complete comparison, verifies specimen resets and phase/results captions, and compares measured work and damage. A force limit alone does not establish a specific damage outcome."
+          }
+        ]
+      },
+      {
+        "id": "layered_ground_section",
+        "description": "A single bounded section combines rooted turf, cohesive soil and an anchored brittle rock bed in one OGC contact configuration. Breakable roots couple turf to soil. All materials use the same inertial substep and contact iterations. Repeated spade motions cut, lift and deposit matter; tools exchange only outside the specimen. Bedrock exposure is measured before the pick sequence. Material is never erased, reset or glued to the tool at stage transitions.",
+        "retention": "experimental",
+        "selection": "matter_layers",
+        "implements": [
+          "Configure",
+          "Advance",
+          "Report",
+          "Mesh",
+          "Release"
+        ],
+        "sources": [
+          "Physics/matter/layered.rs",
+          "Physics/matter/coupling.rs",
+          "Physics/matter/turf.rs",
+          "Physics/matter/solid.rs",
+          "Physics/matter/solid_geometry.rs",
+          "Physics/matter/mod.rs",
+          "Physics/matter/tools.rs",
+          "Physics/matter/skin.rs"
+        ],
+        "checks": [
+          {
+            "id": "layered_ground_section_observation",
+            "kind": "behavior",
+            "expectation": "A visible turf/soil/rock section supports top-down excavation with retained sod, soil and chips. Interlayer roots carry reactions and tear permanently. The shovel meets rock resistance; a pick can fracture exposed rock. Covered rock is not treated as exposed. Last valid geometry survives errors, all material mass remains accounted for, and the combined appearance stays within the existing mobile mesh budget.",
+            "procedure": "Compile native/iOS. User observes the longer automatic sequence, including interlayer support, deposits, obstruction, measured exposure, tool exchange and rock fracture. Inspect mass and per-layer reports; compilation alone cannot establish successful excavation or phone throughput."
+          }
+        ]
+      },
+      {
+        "id": "playable_material_domains",
+        "description": "The whole landform is an implicit resting material volume with turf, dirt, fine sand, stone and bedrock. Water occupies its configured fluid volume. Interaction refines occupied volume into the workshop constitutive/contact solvers; it never invokes a workshop specimen constructor. Retained geometry, player contact and water collision follow accepted explicit matter. Shovel and pickaxe presses remove one existing piece from a deterministic world-fixed tetrahedral tiling. Six tetrahedra share each lattice cell; neighboring cells reuse identically displaced vertices and triangular interfaces. Aim selects a piece but never creates its shape. Geological occupancy trims the tiling at surface and cave boundaries. Display and collision share the removed tetrahedra. This explicitly retires aim-oriented pyramid stamping for normal gameplay; legacy box and pyramid edits remain readable. Secondary presses restore an aimed cut. Axe and bucket effort is charge controlled; fracture is governed by contact forces and persistent material interfaces. Equipped tools are finite-mass rigid bodies driven by two force-limited hand anchors; current-frame IK reach constrains the same OGC contact solve. Physical shafts, continuous rigid stroke targets and accepted-pose hand feedback replace detached ray-target animation. Tree activation refines axial fibre stations around the first strike height; the intact upper section shares support across its fibres. The hand actuator now models activation/relaxation, reach and shortening-speed strength, fatigue and target-velocity tracking, with stroke-timed effort. This is a reduced actuator model, not anatomical muscles or a dynamic full-body character. November9 felling update: cross-grain interfaces inside the initial axe-cut band now carry finite compliant support instead of merging the entire rooted crown into rigid longitudinal bundles. Crown weight and actual contact load the surviving hinge; tensile/shear compliance increases with damage while compression retains support. The anchored stump and stiff fibres outside the cut band remain. No cut count, timer or commanded fall angle separates a tree. Hinge fracture evaluates local edge tension/shear so opposite bending tractions cannot cancel out of the fracture criterion.",
+        "retention": "experimental",
+        "selection": "The atlas-ground-plus-local-specimen implementation is superseded at the user's 2026-10-29 request. Visible rest material and refined material share substance selection, palettes and turf crown geometry. No twelve-site gameplay quota. Finite local resolution still approximates boundaries; distinct refined regions do not yet exchange two-way forces. Regional water is an implicit reservoir with finite transfers, without regional refill/return feedback. Lower tree trunks fracture and carry the original crown; upper branches do not independently fracture. Session state is not saved. Surface activation is limited to the upper 0.45 m; deeper unstrained material remains implicit. Each refined region retains its own native contact context. The existing scheduler advances the selected region every frame and at most one awake background region per frame; benchmark region counts are not simultaneous full-rate simulation counts.",
+        "implements": [
+          "GameStep",
+          "GameFrame",
+          "GameHeight",
+          "GameResolveBody",
+          "GameCollision",
+          "GameWater",
+          "GameWaterSample",
+          "GamePause",
+          "GameClose"
+        ],
+        "sources": [
+          "Physics/matter/game.rs",
+          "Physics/matter/game_materials.rs",
+          "Physics/matter/layered.rs",
+          "Physics/matter/tools.rs",
+          "Physics/matter/solid.rs",
+          "Physics/matter/sand.rs",
+          "Physics/matter/turf.rs",
+          "Physics/WaterSnapshot.rs",
+          "Physics/planet.rs",
+          "Terrain/MaterialDomain.rs",
+          "Terrain/ToolCut.rs",
+          "Terrain/Underground.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerTwo/VegetationSystem.rs",
+          "Vegetation/mod.rs",
+          "Water/runtime.rs",
+          "Water/surface_mesh.rs",
+          "Render/MaterialHUD.m",
+          "Platform/iOS/Touch.rs",
+          "Platform/iOS/App.m",
+          "README.md",
+          "Physics/matter/world_field.rs",
+          "Host/MiningBenchmark.rs",
+          "Physics/matter/material.rs",
+          "Physics/matter/mod.rs",
+          "Host/Host.rs",
+          "BaseEntity.rs",
+          "BaseSystem/LayerTwo/EntitySystem.rs",
+          "BaseSystem/LayerFour/EnvironmentGeometry.rs",
+          "Water/hydrology.rs",
+          "Physics/matter/game_hand.rs",
+          "Physics/rigid_contact.rs",
+          "Physics/matter/muscle.rs",
+          "Physics/matter/climate.rs",
+          "Physics/matter/thermal.rs"
+        ],
+        "checks": [
+          {
+            "id": "playable_material_transfer",
+            "kind": "behavior",
+            "expectation": "Visible ground has the same material before and after refinement. No atlas ground or workshop specimen mound appears on work. Dirt/sand/stone extraction respects air and ownership. Bedrock remains unexcavatable, tree material replaces the original standing tree, and navigation uses accepted material support. Regional boundaries and water transfers need playtesting.",
+            "procedure": "Compile native and iOS; user playtests digging, chopping, water scooping, pour and tool changes. Until observed these behaviors remain unverified."
+          },
+          {
+            "id": "mining_cpu_stress",
+            "kind": "behavior",
+            "expectation": "Activating and revisiting real material regions preserves finite accepted states, matter mass and contact/solver work. Bounded contact and spatial caches reduce CPU cost without dropping contacts or decreasing active-region substeps.",
+            "procedure": "Run the opt-in release Host/MiningBenchmark.rs benchmark, including multiple sites, revisits, native water snapshots and collision-index updates. Report activation, mean/p95/worst step, retained regions, sleeping state and simulation time separately. Mac CPU measurements are not phone or rendered FPS evidence."
+          },
+          {
+            "id": "held_tool_contact_and_tree_cut",
+            "kind": "behavior",
+            "expectation": "Tools remain held during carry, insertion, levering, chopping, withdrawal and walking. Unreachable work is rejected before material activation. The shovel bowl lifts upward; the axe crosses grain at the aimed cut. Wood removal and tree separation require contact work and broken bonded interfaces. GameStep optionally accepts boolean tools_suspended: an empty tool releases its grasp and parks outside material contact while material simulation continues; a loaded tool refuses suspension without changing its payload or support. Resuming restores the empty tool at the current hands without sweeping its previous pose through material.",
+            "procedure": "Compile native/iOS, run tool_suspension_checks and inspect routes. User playtests the same mobile/desktop work controls against turf and a standing tree, including weak/strong strokes, backing away from a lodged blade, camera turns and repeated cuts. Check phone pickup with empty and loaded tools, cancellation of charged work on refused pickup, continued material settling while holding the phone, and tool resume after walking. Compilation does not establish successful digging or felling. Upper branches remain a rigid crown and axial refinement is centered on the initial strike."
+          },
+          {
+            "id": "body_collision_bounds_equivalence",
+            "kind": "behavior",
+            "expectation": "Collision-only region and contiguous triangle-block bounds reject only impossible body contacts. Accepted contacts retain original triangle order, local coordinates and response calculations. Replacing or cloning collision geometry preserves matching bounds; invalid bounds fall back to exhaustive queries. Simulation rates, ray queries and appearance geometry remain unchanged.",
+            "procedure": "Run collision_bounds_checks and the explicit material_body_collision_benchmark against the exhaustive reference path, then the existing release mining_stress workload across retained sites and revisits with water and CPU terrain presentation enabled. Compare body response parity, body-query time and total GameStep time separately."
+          },
+          {
+            "id": "tree_felling_support_and_gravity",
+            "kind": "behavior",
+            "expectation": "An intact initial cut band supports the retained crown under gravity. Cross-grain cutting weakens the load-bearing hinge; after support fractures the crown moves under gravity while the stump remains anchored and all wood mass remains accounted for. Preparing a cut does not prebreak interfaces.",
+            "procedure": "Run felling_checks for intact support, loaded hinge stress, severed crown free fall, finite state, anchored stump and mass conservation. These solver-level checks prescribe a completed cut only to isolate its consequence; they do not prove axe work or terrain collision. Native playtest repeated weak/strong axe strokes against generated trees, hinge bending, completed felling, stump and fallen-crown collision. Upper branches remain rigid; initial axial resolution and uncalibrated material/solver parameters remain limitations."
+          }
+        ]
+      },
+      {
+        "id": "supported_worker_material_workshops",
+        "description": "A visible player-mesh worker digs a turf/soil/stone section and chops a standing generated game tree. Planted-leg and two-arm IK follow a supported body motor and accepted finite-mass tool. The shared gameplay hand actuator supplies timed, reach/velocity/fatigue-limited force. Contact and material fracture use OGC and the existing constitutive laws; no material is erased or attached to force a successful scoop. Actual contact, work, grip error and carried samples remain observable. This isolates the shared tool/material path; it does not run the full game navigation controller or a dynamic ragdoll.",
+        "retention": "experimental",
+        "selection": "matter_worker_dig, matter_worker_axe and the worker in matter_snow; all explicit workshop graphics backends",
+        "implements": [
+          "Configure",
+          "Advance",
+          "Report",
+          "Mesh",
+          "Release"
+        ],
+        "sources": [
+          "Physics/mod.rs",
+          "Physics/matter/worker.rs",
+          "Physics/matter/muscle.rs",
+          "Physics/matter/tools.rs",
+          "Physics/matter/game_hand.rs",
+          "Physics/matter/game.rs",
+          "Physics/matter/layered.rs",
+          "BaseSystem/LayerTwo/PlayerModelSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "worker_contact_and_posture",
+            "kind": "behavior",
+            "expectation": "Hands remain on accepted handles; stance and effort make insertion, levering and chopping legible. Material response requires actual contact. Workers do not fake lift or tree separation. Frames show the full body and specimen.",
+            "procedure": "Compile native and iOS. User observes digging and tree chopping with current contact force, work and grip metrics. Compilation/contract inspection alone leave physical success and presentation unverified."
+          }
+        ]
+      },
+      {
+        "id": "snow_ice_and_temperature",
+        "description": "Snow uses APIC transport with compressive plastic projection, permanent densification and hardening. Ice has brittle bonded cells, submerged-volume hydrostatic buoyancy, and convective enthalpy accounting. Heat warms frozen matter to zero and then pays latent heat; phase conversion preserves mass into bath water or explicit liquid parcels. A finite warm bath cools as ice absorbs heat. Mechanics remain ordinary speed while workshop thermal acceleration is explicit. Game air varies with calendar, elevation and authored weather; active water parcels exchange heat at normal time. Convection constants are approximations, the bath is hydrostatic and ice melts cellwise; no refreezing, internal conduction, precipitation or world snow coverage is claimed.",
+        "retention": "experimental",
+        "selection": "matter_snow, matter_ice, matter_ice_air; active water regions in GameStep",
+        "implements": [
+          "Configure",
+          "Advance",
+          "Report",
+          "Mesh",
+          "GameStep",
+          "Release"
+        ],
+        "sources": [
+          "Physics/matter/material.rs",
+          "Physics/matter/sand.rs",
+          "Physics/matter/thermal.rs",
+          "Physics/matter/ice.rs",
+          "Physics/matter/solid.rs",
+          "Physics/matter/climate.rs",
+          "Physics/matter/mod.rs"
+        ],
+        "checks": [
+          {
+            "id": "winter_material_behavior",
+            "kind": "behavior",
+            "expectation": "Snow compresses without becoming loose granular sand. Ice can fracture and floats according to displaced volume. A warm bath melts it faster than warm air; temperature and latent heat determine phase conversion and transferred mass is accounted for. Thermal acceleration is labelled.",
+            "procedure": "Compile native and iOS. User observes snow compression/shoveling and both ice cases, including late complete melt and reset. Compare reported specimen mass, bath temperature and thermal clock. No device or simulation run is inferred from compilation."
+          }
+        ]
+      },
+      {
+        "id": "felled_tree_crafting_transfer",
+        "description": "GameCraftTree accepts only a materialized generated tree whose crown is disconnected from every anchored cell and whose fitted trunk-up axis is near horizontal (absolute local vertical component <=0.4). The crown centre must be within 4 metres of the blueprint. A specified site ID prevents ingredient substitution. Consumption clears that physical tree region and marks contact topology dirty while keeping the vegetation transfer suppressed. A consumed tree cannot be selected again. The stump is consumed with this first whole-tree recipe.",
+        "retention": "supported",
+        "selection": "First ground plank recipe.",
+        "implements": [
+          "GameCraftTree"
+        ],
+        "sources": [
+          "Physics/matter/game.rs",
+          "Physics/matter/solid.rs",
+          "Physics/mod.rs"
+        ],
+        "checks": [
+          {
+            "id": "felled_tree_transfer",
+            "kind": "behavior",
+            "expectation": "Standing, severed-but-upright, distant and wrong-ID trees are rejected. A fallen tree transfers exactly once with no residual render/collision mesh.",
+            "procedure": "Run crafting_material_checks and crafting_tree_checks; playtest actual axe fracture, falling, recipe radius, consumption and subsequent tool use. Fixtures isolate the completed-cut consequence and do not prove axe felling."
+          }
+        ]
+      }
+    ]
+  }
+}

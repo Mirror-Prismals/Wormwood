@@ -1,0 +1,51 @@
+Authored regional layout, November 12, 2026
+
+This direction supersedes the earlier forest at town and repeated local ridges. World units are metres, including the requested blocks. East is +X. Distances are relative to the existing town center at X=125, Z=-125. The town is in open plains without generated trees. The existing forest starts 1,000 metres east, spans 20,000 metres eastward, and continues north and south. At 21,000 metres east it becomes desert. The desert contains a shining city of stained glass and continues for 7,000 metres to a coast near 28,000 metres east, with cliffs, beaches and rough waves. Coastline inlets vary locally around that distance.
+
+A much higher mountain ridge spans north to south 8,000 metres west of town. Beyond it are open plains, containing a modern, futuristic utopian city another 3,000 metres west. The desert city's center is placed midway through the desert. Cities have broad pedestrian boulevards; the western city has white terraces, cyan glass, roof gardens and sky bridges. Existing town structures remain in place.
+
+Mirror terrain and excavation
+Current gameplay direction, November 7, 2026
+
+Keep the rolling Pennsylvania landscape between excavations. A single tool press removes one world-aligned 0.65 metre cell at the aimed surface. Shovels work turf, soil and sediment. Pickaxes work exposed rock, including bedrock. Adjacent cuts can form steps, shafts and tunnels. A secondary press against a cut face restores its adjacent missing cell, including its original soil layers and surface cover. The footprint is deliberately legible. Grass, earth and rock use softly mottled diffuse colors and sparse blades for a late-2000s rendered landscape.
+
+The following October 25 direction records the physical excavation experiment. The workshop retains that work. The click-and-refill interaction above supersedes it for shovel and pickaxe gameplay.
+
+Original design direction, October 25, 2026
+
+The intended landscape is a realistic, destructible planet reminiscent of central Pennsylvania between State College and Harrisburg. It is not a block world. The existing black grid is a development reference and does not define the world's structure or final appearance. High visual fidelity is an explicit goal.
+
+The regional reference is the folded sedimentary terrain of the Ridge and Valley province. Geological structure and resistance to weathering should influence landforms and exposed materials together. Long ridges, paired crests, valleys, folded ridge ends, rock exposures, drainage gaps, and slope deposits belong to the regional design vocabulary. The result is intended to evoke this region; no surveyed reconstruction or one-to-one geographic scale has been selected.
+
+Penn State's Nittany Valley field guide describes the Bald Eagle and Tuscarora sandstone ridges at Tussey, separated by more readily eroded Juniata strata. This supplies a concrete reference for relationships between bedding, rock resistance, and landform. Geological formations must not be treated as uniform material-property values: weathering, fractures and moisture can vary within them. Visual resemblance alone does not validate geology or mechanics.
+
+Excavation is intended to result from a tool interacting with material. Tool geometry and its motion define the contact region. Material response determines displacement, yielding, separation and the amount that comes loose. The detached material has geometry, volume, mass and motion; it is not an unrelated cosmetic spawn. Any numerical remeshing or change of representation must account for that material. The existing fixed-radius parabolic subtraction is an experimental prototype, not the intended excavation model.
+
+Offset Geometric Contact supplies the contact boundary. It does not itself supply a soil constitutive law, rock fracture, geometric cutting or remeshing. Those responsibilities require explicit operations alongside contact. Contact cannot simply allow a shovel to penetrate an intact, undeforming ground mesh and then call the resulting subtraction physical excavation. The material must deform, yield or separate as the tool advances. Changes to topology must establish a valid contact state before simulation continues.
+
+The solid terrain representation must contain information below its visible surface. A single-valued height field cannot be the final authority for excavated volumes, undercuts or overhangs. A non-voxel volumetric representation is required for those interactions. Adaptive, unstructured tetrahedral solids are a candidate; a separate representation for loose granular material may also be appropriate. The constitutive laws, failure criteria, mesh updates, contact coupling and transition between coherent and loose material remain design decisions. None is established merely by naming OGC.
+
+Regional geological generation and the active material simulation operate at different scales. Geological generation can produce a stable bedrock-and-surface description without continuously simulating tectonic history. Detailed mechanics need to operate around active interactions, with explicit limits and preserved state outside them. The distant rendering mesh and the local mechanical mesh may differ in resolution, but must agree about the material boundary. Scheduling and spatial storage are unresolved; this design does not inherit the earlier engine's terrain implementation.
+
+The proposed first mechanical milestone is one bounded patch of soil over bedrock, one visible tool, and a controlled digging stroke. Acceptance requires tool contact, material response and separation attributable to the stroke, an intact remainder, accounted detached volume and mass, and stable contact after separation. A click deleting an arbitrary volume does not meet that milestone. Exact material models and performance budgets must be selected before claiming the milestone implemented.
+
+Application Systems originate the digging Audicle and own its Ready, Go and Finished lifecycle. Presentation supplies the tool and material appearances as tracked Entities. Named material operations handle deformation, failure, topology changes and persistence. The existing layer-one OGC client handles its declared external contact work. New capabilities need contracts, registry entries, function signatures and intent checks before they participate in the game. Material simulation and geometry work stay out of real-time audio callbacks.
+
+Current implementation status
+
+This document establishes direction and identifies unresolved choices. It does not implement physical tool excavation or a Pennsylvania landscape. The running game still uses its existing radial height field, parabolic excavation stamps and coarse fragment simulation. Those paths remain retained until an explicit replacement and migration are ready. Existing saved terrain is not modified by this design change.
+
+Research references
+
+Pennsylvania DCNR, Geology of Pennsylvania. Geological maps, landforms and state survey data:
+https://www.pa.gov/agencies/dcnr/conservation/geology/geology-of-pa
+
+Terry Engelder, Penn State Department of Geosciences, An Introduction to the Geology of the Nittany Valley. Local bedding, lithology and differential weathering:
+https://personal.ems.psu.edu/~jte2/references/link108.pdf
+
+Chen et al., Offset Geometric Contact, SIGGRAPH 2025. Contact model and scope; not a cutting or material-failure model:
+https://graphics.cs.utah.edu/research/projects/ogc/
+
+Southern seas and jungle continent, November 12, 2026
+
+South is +Z from town. The coastline starts 16,000 metres south. A 40,000-metre sea spans east to west before the southern snowy island. The rounded island is approximately 100,000 metres east to west and 100,000 metres north to south, with ocean on both sides. Another 100,000 metres of ocean separates it from the jungle continent, whose north coast starts 256,000 metres south of town. The jungle island has approximately 4,000,000 by 4,000,000 metre chart extents, rounded corners and sandy beaches. Its futuristic city stands 1,000 metres inland with lava below clear glass walkways. These requested distances take priority over the phrase other side of the world; the existing planet radius remains 6,371,000 metres. The snowy island is an authored polar biome, not the geometric planetary pole.

@@ -1,0 +1,63 @@
+{
+  "system": "GlassesSystem",
+  "layer": 5,
+  "functions": {
+    "Configure": {
+      "calls": [
+        "GlassesRenderSystem.Load"
+      ]
+    },
+    "Input": {
+      "calls": [
+        "TerrainGeometrySystem.Capture",
+        "TerrainGeometrySystem.Trace",
+        "PhysicsSystem.GameFrame"
+      ]
+    },
+    "Grip": {
+      "calls": []
+    },
+    "Status": {
+      "calls": []
+    },
+    "Close": {
+      "calls": []
+    }
+  },
+  "init_steps": [
+    "Configure"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "wearable_daw_access",
+        "description": "F picks or places a mesh-hit pair in reach; B toggles held/worn. E opens/closes wearable DAW access. AR freezes player and camera and uses only the current real view; no plain backdrop or security cameras. VR keeps WASD walking and pointer-delta look in player view, permits plain backdrop and security cameras, and hands WASD to remote camera controls while viewing them. The DAW ray toggle persists on exit, and world rays require worn AR or VR glasses. Focus, phone and interaction guards remain.",
+        "retention": "supported",
+        "selection": "Independent AR frozen-view and VR mobile-view workstation access.",
+        "implements": [
+          "Configure",
+          "Input",
+          "Grip",
+          "Status",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/GlassesSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "Render/window.rs",
+          "Host/GlassesTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "glasses_interaction",
+            "kind": "behavior",
+            "expectation": "F picks or places a mesh-hit pair in reach; B toggles held/worn. E opens/closes wearable DAW access. AR freezes player and camera and uses only the current real view; no plain backdrop or security cameras. VR keeps WASD walking and pointer-delta look in player view, permits plain backdrop and security cameras, and hands WASD to remote camera controls while viewing them. The DAW ray toggle persists on exit, and world rays require worn AR or VR glasses. Focus, phone and interaction guards remain.",
+            "procedure": "Inspect Blender review and runtime exports; run focused glasses regressions. Manually check both pairs in the theatre: F pickup/place with obstruction and range, B wear/remove, E opens the existing embedded DAW, exit returns to the retained world. Check held tool suspension, phone arbitration, pause, held-key edges and cleanup. Native interaction remains unverified until actually exercised. Verify AR cannot select plain/cameras; VR C switches player/camera and V cycles remote cameras, with no player motion in camera mode. Verify rays hide immediately when glasses are removed."
+          }
+        ]
+      }
+    ]
+  }
+}

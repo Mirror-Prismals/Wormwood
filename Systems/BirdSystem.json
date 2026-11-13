@@ -1,0 +1,110 @@
+{
+  "system": "BirdSystem",
+  "layer": 5,
+  "functions": {
+    "Step": {
+      "calls": [
+        "VegetationSystem.QueryPerches",
+        "EntitySystem.Create",
+        "EntitySystem.Remove",
+        "ChuckConnectionSystem.Compile",
+        "ChuckConnectionSystem.Remove",
+        "ChuckConnectionSystem.Poll",
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel"
+      ]
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Close": {
+      "calls": [
+        "EntitySystem.Remove",
+        "ChuckConnectionSystem.Remove",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "four_bird_habitat_calls",
+        "description": "Restore four independent original bird scripts and perches, local-up flight arcs, moving sound sources and attributed finite-call completion.",
+        "retention": "experimental",
+        "selection": "Authorized Mirror restoration; shared integration and native validation pending.",
+        "implements": [
+          "Step",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "Audio/birds.rs",
+          "BaseSystem/LayerFive/BirdSystem.rs",
+          "Procedures/chuck/birds/cardinal.ck",
+          "Procedures/chuck/birds/chickadee.ck",
+          "Procedures/chuck/birds/warbler.ck",
+          "Procedures/chuck/birds/wood_thrush.ck"
+        ],
+        "checks": [
+          {
+            "id": "restoration_review",
+            "kind": "behavior",
+            "expectation": "Restore four independent original bird scripts and perches, local-up flight arcs, moving sound sources and attributed finite-call completion.",
+            "procedure": "Rewrite owns validation: compare retained Cardinal formulas/scripts, run new unit checks, wire registered hooks into Mirror, verify native macOS and iOS output, source movement/removal, failure cleanup and callback underrun telemetry. Source presence and compilation alone are not audible verification."
+          },
+          {
+            "id": "audicle_routes",
+            "kind": "declared_calls",
+            "expectation": "Bird appearances and calls use declared Entity, ChucK and Audicle operations.",
+            "targets": [
+              "VegetationSystem.QueryPerches",
+              "EntitySystem.Create",
+              "EntitySystem.Remove",
+              "ChuckConnectionSystem.Compile",
+              "ChuckConnectionSystem.Remove",
+              "ChuckConnectionSystem.Poll",
+              "AudicleSystem.Create",
+              "AudicleSystem.Ready",
+              "AudicleSystem.Go",
+              "AudicleSystem.Finish",
+              "AudicleSystem.Cancel"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rigged_cardinal_appearance",
+        "description": "Use the author's northern cardinal model for all four bird appearances, with a lightweight eight-bone skin, looping perch/head/tail motion, wingbeats and tucked legs in flight, and an animated bill while each original bird call is active. Smooth flight and call transitions and align the model with planetary up and travel heading. The four existing species call scripts and habitat behavior remain independently selected.",
+        "retention": "supported",
+        "selection": "All Mirror bird visual instances; the cardinal mesh is shared by the four existing audio species until additional models are authored.",
+        "implements": [
+          "Step",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/BirdSystem.rs",
+          "BaseSystem/LayerFour/CardinalRig.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BuildSupport/Blender/rig_cardinal.py",
+          "Procedures/Assets/Birds/cardinal.bin",
+          "Art/Birds/Cardinal/Cardinal_Rigged.blend"
+        ],
+        "checks": [
+          {
+            "id": "cardinal_skin_and_lifecycle",
+            "kind": "behavior",
+            "expectation": "Every spawned bird uses the exported cardinal topology; finite cyclic skin frames move wings, maintain planetary orientation, fit the scene budget, and clean up through the original Entity/Audicle lifecycle.",
+            "procedure": "Run cardinal_clips_are_finite_bounded_and_move_wings, view_presentation_accepts_eight_registered_scene_instances_and_cleans_up, and Audio bird habitat checks. Inspect rendered Perch, Flight and Call poses. Run a bounded native macOS planet scene; inspect moving birds in gameplay. iOS device checks remain deferred."
+          }
+        ]
+      }
+    ]
+  }
+}

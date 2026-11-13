@@ -1,0 +1,117 @@
+{
+  "system": "WorkstationExportSystem",
+  "layer": 5,
+  "functions": {
+    "Open": {
+      "calls": [
+        "WorkstationDataSystem.Snapshot"
+      ]
+    },
+    "Begin": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Fail",
+        "WorkstationDataSystem.ExportBegin",
+        "WorkstationDataSystem.ExportCancel"
+      ]
+    },
+    "Step": {
+      "calls": [
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "AudicleSystem.Fail",
+        "WorkstationDataSystem.ExportStep",
+        "WorkstationDataSystem.ExportStatus"
+      ]
+    },
+    "Pump": {
+      "calls": [
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "AudicleSystem.Fail",
+        "AudicleSystem.Resume",
+        "WorkstationDataSystem.Snapshot",
+        "WorkstationDataSystem.ExportBegin",
+        "WorkstationDataSystem.ExportStep",
+        "WorkstationDataSystem.ExportCancel",
+        "WorkstationDataSystem.ExportStatus"
+      ]
+    },
+    "Status": {
+      "calls": [
+        "WorkstationDataSystem.ExportStatus"
+      ]
+    },
+    "Cancel": {
+      "calls": [
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "AudicleSystem.Fail",
+        "WorkstationDataSystem.ExportCancel",
+        "WorkstationDataSystem.ExportStatus"
+      ]
+    },
+    "Close": {
+      "calls": [
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "AudicleSystem.Fail",
+        "WorkstationDataSystem.ExportCancel",
+        "WorkstationDataSystem.ExportStatus"
+      ]
+    }
+  },
+  "init_steps": [],
+  "entry_steps": [
+    "Open",
+    "Begin",
+    "Step",
+    "Pump",
+    "Status",
+    "Cancel",
+    "Close"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "export_workflow",
+        "description": "Expose Cardinal four-stem export as an explicit user workflow with seconds range, four names, sample rate and a new destination folder. A macOS native dialog opens with Cmd/Ctrl+Shift+E; progress, cancellation and file errors are visible. The stereo listening master and game environment sound are excluded.",
+        "retention": "supported",
+        "selection": "Open/Pump handle explicit user input, Begin prepares one export and originates its Audicle, Step advances bounded work, and Close/Cancel release owned output. No automatic startup export, new device or AI operation occurs. The workflow also exposes typed hooks for non-UI clients; the native dialog is currently macOS only.",
+        "implements": [
+          "Open",
+          "Begin",
+          "Step",
+          "Pump",
+          "Status",
+          "Cancel",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/WorkstationExportSystem.rs",
+          "Workstation/ExportDialog.rs",
+          "Workstation/ExportDialog.m",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Render/window.rs",
+          "Host/WorkstationExportTests.rs",
+          "Workstation/ExportDialogTests.m"
+        ],
+        "checks": [
+          {
+            "id": "export_lifecycle_and_ui",
+            "kind": "behavior",
+            "expectation": "Each export has Ready/Go then exactly one Finished, Cancelled or Failed outcome; other live Audicle context is restored. Completion means four files were successfully finalized. Closing the workstation cancels its export and invalidates queued starts. Stale workflow tokens retire only their own Audicle without affecting a replacement data job. Validation errors remain visible; MIDI uses the same explicit built-in renderer as native transport. Cmd/Ctrl+Shift+E is retained as a key-press event even when press and release arrive between two frame samples; modifier state is captured at the press, and key repeat does not enqueue extra opens.",
+            "procedure": "Run Host export workflow tests for contract calls, immutable mix, cancellation, registry disablement guards and terminal trace evidence. Native test: open shortcut, set seconds/names/destination, export a populated audio document, cancel a longer range and inspect resulting four WAVs. Compile Workstation/ExportDialogTests.m alone with ARC, Cocoa and QuartzCore and run in a macOS GUI session for pending-start cancellation, teardown, exact source rate and native error retention."
+          }
+        ]
+      }
+    ]
+  }
+}

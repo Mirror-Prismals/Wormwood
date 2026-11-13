@@ -1,0 +1,159 @@
+{
+  "system": "VegetationSystem",
+  "layer": 2,
+  "functions": {
+    "QueryPerches": {
+      "calls": []
+    },
+    "QueryPlants": {
+      "calls": []
+    },
+    "QueryGeometry": {
+      "calls": []
+    },
+    "AdvanceGrowth": {
+      "calls": []
+    },
+    "ApplyDamage": {
+      "calls": []
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Restore": {
+      "calls": []
+    },
+    "QueryWood": {
+      "calls": []
+    },
+    "MaterialTree": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "stable_living_vegetation",
+        "description": "Derive reusable tree structure, curved leaves, bark and coherent wind from stable plant identity and explicit age/damage state. Habitat and perch queries use continuous world coordinates independently of the render list. Authored venue clearings suppress geometry/wood/perches while preserving persistent plant identity. November 12 regional geography selects generated trees through the shared forest membership, including the eastern forest between 1 km and 21 km east, its northwest extension, and the forest 11 to 41 km north. Polar snow, seas, plains and desert have no generated trees. This selection applies to nearby discovery and direct root lookup.",
+        "retention": "supported",
+        "selection": "Mirror vegetation replacement. Architectural profiles are artistic approximations; explicit growth steps do not establish complete recruitment, competition, hydrology or ecological calibration. Damage state commits only after the application has accepted a material interaction; this operation does not create physical wood. Discovery now applies Pennsylvania habitat density; exact root-ID resolution retains the original placement membership so existing saved individuals remain resolvable. Visual season does not advance ecological age. Central-PA species replace the generic profile mixture for generated sites; existing IDs and roots remain. Old saved branch damage applies to the corresponding branch IDs on the new species architecture; exact historical silhouettes are not preserved. Previously stored physical bodies retain their stored branches. Original generic profiles remain available for regression and explicit callers. The author rejects full-crown geometric LODs that change species silhouette. The solid conical hemlock and generic crossed crown envelopes are explicitly retired as desktop forest representations. Desktop distant trees now use multi-angle cutouts baked from production detailed meshes; damaged or mechanically moving trees retain surviving geometry. iOS retains geometric Far meshes pending device-specific integration. Author-requested November 10 expansion adds sugar maple, black cherry and yellow birch, and raises occupancy multiplier .95 to 1.25 without moving candidate roots. Seven-species desktop cutouts replace the four-species atlas. Existing species/damage interpretation can change; stored physical branch bodies remain unchanged. The former saved-root membership expectation is superseded outside the authored forest regions; retained physical wood bodies are not deleted.",
+        "implements": [
+          "QueryPerches",
+          "QueryPlants",
+          "QueryGeometry",
+          "AdvanceGrowth",
+          "ApplyDamage",
+          "Snapshot",
+          "Restore",
+          "QueryWood",
+          "MaterialTree"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/VegetationSystem.rs",
+          "BaseSystem/LayerFour/VegetationGeometry.rs",
+          "Vegetation/Forest.rs",
+          "Host/Host.rs",
+          "Vegetation/mod.rs",
+          "Vegetation/Math.rs",
+          "Vegetation/Profiles.rs",
+          "Vegetation/BranchGraph.rs",
+          "Vegetation/Geometry.rs",
+          "Procedures/Shaders/vegetation.gl.vert",
+          "Procedures/Shaders/vegetation.gl.frag",
+          "Procedures/Shaders/vegetation.vert",
+          "Procedures/Shaders/vegetation.frag",
+          "Procedures/Shaders/vegetation.wgsl",
+          "Procedures/Shaders/vegetation.ios.vert",
+          "Procedures/Shaders/vegetation.ios.frag",
+          "Procedures/Shaders/vegetation.shadow.frag",
+          "Procedures/Shaders/vegetation.shadow.vk.frag",
+          "Procedures/Shaders/vegetation.shadow.ios.frag",
+          "Vegetation/Packet.rs",
+          "Render/Vegetation/mod.rs",
+          "Render/Vegetation/opengl.rs",
+          "Render/Vegetation/vulkan.rs",
+          "Render/Vegetation/webgpu.rs",
+          "Render/Scene.rs",
+          "Vegetation/Season.rs",
+          "Terrain/Woodland.rs",
+          "Vegetation/Species.rs",
+          "Art/Trees/species.json",
+          "Art/Trees/make_trees.py",
+          "Render/TreeCheck.rs",
+          "Audio/Volumes.rs",
+          "Vegetation/Impostor.rs",
+          "Vegetation/ImpostorBake.rs",
+          "Art/Trees/LOD/bounds.json",
+          "Art/Trees/LOD/impostors.rgba",
+          "Art/Trees/make_hardwoods.py",
+          "Terrain/Regions.rs"
+        ],
+        "checks": [
+          {
+            "id": "identity_state_habitat",
+            "kind": "behavior",
+            "expectation": "Tree and branch IDs survive camera movement and detail changes; snapshots preserve growth/damage. Perches respect caller distance bounds, stay separate, and exclude removed branches and trees. Invalid snapshots do not change state. Targeted occupied-perch refresh resolves stable keys without habitat ranking and distinguishes confirmed removal from unresolved lookup.",
+            "procedure": "Run vegetation state/geometry checks through integration owner; exercise registered QueryPerches and QueryGeometry hooks in the live application and restore a saved snapshot. Verify every caller handles an empty habitat result. Tests and runtime results remain separate. Run targeted_perches_follow_wind_and_distinguish_removal_from_lookup_miss. Validate native indexed packet bounds and192-byte Scene packing with native_packet_retains_indexed_layout_and_integer_shadow_option. Run plant_identity_encodes_face_and_signed_coordinates_without_xor_aliases and the unchanged root-equality assertions in tree_identity_is_not_a_render_query_index. Snapshot schema2 retains current age/damage; legacy ambiguous schema1 must fail before state mutation. Run direct_site_resolution_matches_discovery_roots_across_faces_and_seams; targeted refresh/damage must resolve exact IDs independently of candidate truncation. ApplyDamage prepare:true returns exact detached subtree without changing living state. An expected_revision commit must reject stale plans before mutation; descriptors retain parent and both tapered branch radii. Physical material acceptance remains the application/material owner responsibility."
+          },
+          {
+            "id": "leaf_tree_hillside_realism",
+            "kind": "behavior",
+            "expectation": "Solid placeholder crowns are replaced in the live scene by layered foliage with gaps, inner branches, curved varied leaves, bark relief, backlighting, silhouette-matched shadows and shared branch/leaf wind. Distant detail remains bounded without changing plant identity.",
+            "procedure": "Capture comparable leaf, whole-tree and hillside views in front light and backlight on selected desktop and iPhone paths. Inspect silhouettes, crown depth, shadow silhouettes, wind attachment and detail transitions. Measure total scene frame time, shadow cost, memory and triangle limits. The October30 performance implementation caches branch meshes, freezes independent leaf flutter at its rest pose, and adds approximate geometric canopy envelopes up to6km, with a reserved distant budget. That historical desktop envelope implementation is superseded by the species_lod_silhouette_continuity check: desktop crowns now use multi-view images baked from actual detailed meshes, preserving full-tree silhouettes. The iOS geometric path remains separate. Detailed twigs retain volumetric sprays alongside nearby individual leaves. Verify projected foliage coverage from both horizontal axes and absence of flat fan silhouettes. Review the handover from detailed trees to these silhouettes, habitat clearings, seasonal colors, damage invalidation and camera travel at1/3/6km; existing near leaf/branch quality remains required. Check QueryGeometry cache/forest counters, total16384live triangles and worst-case32768reflected triangles. Compare native numeric and diagnostic JSON transport. Source shaders and compilation do not prove that native passes are connected, images are realistic or FPS improved."
+          },
+          {
+            "id": "central_pa_species",
+            "kind": "behavior",
+            "expectation": "White oak, red maple, eastern white pine and eastern hemlock use Blender-authored branch graphs and leaf outlines. Stable habitat-weighted selection agrees in discovery and exact-ID resolution. Evergreens retain green foliage in winter. Species differ in crown, foliage and bark without altering site roots or the geometry budget.",
+            "procedure": "Run pa_species tests and existing vegetation identity, damage, perching, packet and budget regressions. Review Blender lineup and native near/middle/distant views in summer and winter; validate wind, cutting, shadows and frame cost separately."
+          },
+          {
+            "id": "authored_tree_wood_bound",
+            "kind": "behavior",
+            "expectation": "QueryWood retains all branches of up to 128 queried trees. Acoustic ingestion uses the same bound derived from the largest authored branch graph, including 88-branch conifers. No silent branch truncation or disabled live audio is used to pass in-game DAW validation.",
+            "procedure": "Run authored_conifer_wood_bound_accepts_complete_query_and_rejects_overflow, then run the in-game workstation benchmark through the real theatre computer transition with live EnvironmentAudioSystem and verify normal cleanup and zero wood-volume errors."
+          },
+          {
+            "id": "authored_branch_identity_bounds",
+            "kind": "behavior",
+            "expectation": "Every perch emitted by an authored tree can be refreshed by identity, including IDs above30. Damage and vegetation/physical-wood restore accept the same complete authored branch graphs and reject out-of-range identities without mutation.",
+            "procedure": "Run authored_high_branch_perches_refresh_and_damage_roundtrip and vegetation regressions, then an extended normal Play Mirror session with birds/audio enabled plus the embedded game DAW. Preserve unresolved lookup versus confirmed removal semantics."
+          },
+          {
+            "id": "species_lod_silhouette_continuity",
+            "kind": "behavior",
+            "expectation": "Desktop forest LOD retains the corresponding detailed species crown and branches, exact root and growth scale, season and orientation. No solid conical replacement or grid of generic leaf ellipses is emitted for whole crowns. The total geometry budget remains bounded. Broken branches never reappear through an undamaged baked image.",
+            "procedure": "Run vegetation tests including baked atlas layers/root bounds, stable identity and total forest budget. Run --check-trees WebGPU/OpenGL; compare near versus baked LOD and real production forest packets at 24/48/80 metres. Review native silhouette overlap, summer/winter, representative angles, lighting and real-game launch/travel. Check 16384 scene/32768 reflected triangle limits. Elevated flight, 16-angle transitions, shadow projection and frame cost remain independent visual/performance obligations."
+          }
+        ]
+      },
+      {
+        "id": "pa_understory_colonies",
+        "description": "Render original Blender-authored Christmas fern, mountain laurel and mayapple colonies on woodland terrain through the native vegetation packet. Ground flora is visual decoration and does not create tree, perch or wood identities. Include witch-hazel, wood sorrel, Pennsylvania sedge and decorative sandstone/shale/streamstone colonies.",
+        "retention": "supported",
+        "selection": "Requested Pennsylvania fern hollow and laurel/mayapple understory. Three authored variants and three decimated mesh levels per species. Stable six-metre cube-face colony seeds; soil, moisture, woodland, water and venue-clearance filters. Flora shares the existing total geometry budget, using at most one quarter, within 40 metres. Mayapple is visible on calendar days 85 through 230; fern and laurel remain. Laurel flowering is currently fixed artwork. No ecological growth, wind, cutting, plant collision or gathering is established by this visual integration. November 10 expansion raises candidate colony occupancy from 0.58 to 0.86 and small colony sizes from four to six; original colonies retain their species. New deciduous shrub/herb artwork hides outside days 85..300. Stones have no collision or material-transfer claim.",
+        "implements": [
+          "QueryGeometry"
+        ],
+        "sources": [
+          "Vegetation/Understory.rs",
+          "Vegetation/mod.rs",
+          "BaseSystem/LayerFour/VegetationGeometry.rs",
+          "Art/Understory/export_runtime.py",
+          "Art/Understory/runtime.json",
+          "Art/Understory/make_woodland_expansion.py"
+        ],
+        "checks": [
+          {
+            "id": "understory_native_placement_budget",
+            "kind": "behavior",
+            "expectation": "Meshes retain authored material colors, finite Y-up geometry and decreasing LOD costs. Colony roots remain stable across camera anchors, avoid water and venue clearings, and fit the shared vegetation packet budget.",
+            "procedure": "Run authored_understory and colonies tests plus vegetation regressions. Run native WebGPU/OpenGL game captures near woodland ground and inspect fern silhouettes, laurel flowers, mayapple leaves, terrain contact and tree coexistence. Check runtime packet counts; independently evaluate LOD transitions and frame cost. Compilation and Blender previews alone do not establish native appearance."
+          }
+        ]
+      }
+    ]
+  }
+}

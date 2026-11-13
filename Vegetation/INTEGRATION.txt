@@ -1,0 +1,189 @@
+Vegetation lane handoff, October 26, 2026
+
+All files are new. No original terrain/soil/tool sources or immutable releases
+were changed. This is reusable parameterized technology, not a species asset pack.
+The two current profiles are architectural demonstrations, not calibrated species.
+
+Integration owner: Rewrite. Add #[path="Vegetation/mod.rs"] pub(crate) mod
+vegetation to lib.rs; add the layer-two VegetationSystem module; store
+vegetation::State in the owning Host and route contracted hooks to
+vegetation_system::dispatch(&mut host.vegetation,hook,input). Register system,
+function signatures, enabled flag, source bindings and caller declarations.
+Only layer-five application Systems originate Audicles and supply explicit time.
+
+QueryGeometry input: position world metres [f64;3], time seconds, max_distance
+1..6000 metres, max_triangles <=32768 (default16384). Output: camera-relative
+vertices with 16-float stride, indices, instance/site ranges, origin and revision.
+Layout: xyz position, xyz normal, uv, rgb color, material, transmission,
+roughness, occlusion, bark ridge scale. GL attributes locations0..5 have sizes
+3,3,2,3,4,1 and byte offsets0,12,24,32,44,60, stride64. Indexed triangles, CCW,
+two-sided foliage. Canonical projection matrices use depth0..1; GL/GLES vertex
+sources convert Z. Vulkan reverses Y; WebGPU uses its own standard clip mapping.
+Profiles and generated geometry are CPU-owned pure data. Current wind is CPU
+deformation from a shared analytic field; perches can request identical time.
+
+Native color shader sources are vegetation.gl.vert/.frag, vegetation.vert/.frag
+(Vulkan), vegetation.ios.vert/.frag, vegetation.wgsl. The color shader needs
+viewProjection, sunViewProjection, sunDirection, sunColor, ambientColor and a
+shadow depth map. Vulkan/WGSL Scene UBO layout is two mat4 then four vec4 records:
+sunDirection, sunColor, ambientColor, options (u32[4], first enables shadows).
+Binding0=Scene, binding1=shadow depth. Vulkan uses sampled combined depth image;
+WGSL uses texture_depth_2d with integer textureLoad PCF, no sampler binding.
+GL/GLES use corresponding standalone uniforms and sampler2D shadowDepth.
+Shadow color/receiver origins must be identical camera-relative metres. Bind
+viewProjection=sunViewProjection in the GLSL depth pass and use the matching
+vegetation.shadow*.frag silhouette; WGSL has vs_shadow/fs_shadow entry points.
+Use a separate shadow target/pass. Existing depth testing alone is not sunlight
+shadowing. The shader exposes shadowsEnabled=false only for explicit unshadowed
+debugging, never as proof the full target is finished. Terrain receiving tree
+shadows still needs shared native renderer support from the integration owner.
+
+Replace old solid tree crowns in EnvironmentGeometry when the live material
+path is wired. Do not draw both. Keep grass/clods and authoritative terrain and
+soil collision separate. Set vegetation budget from measured remaining scene
+capacity, not an assumption of extra headroom. October 30 replaces the previous
+nearest-first-only render budget with cached near/middle/far branch meshes plus
+a hierarchy of branched silhouettes and treetop patches covering up to6km. Existing tree sites and habitat
+remain authoritative. The game reserves half its16384triangle budget for detailed
+trees and uses the remainder for distant coverage, coarsening hierarchy cells
+before emitting geometry. Worst-case water-plane clipping fits32768triangles.
+The geometry samples existing tree sites and uses the emitted triangle count for level selection.
+Only near branch meshes carry analytic wind; independent leaf flutter is frozen
+at their cached rest pose. Packet/Host numeric adapters retain named routes,
+permissions, tracing and validation without serializing live vertex arrays.
+QueryGeometry retains JSON diagnostics including forest cell/budget/cache counts.
+Do not claim forested mountains or improved FPS verified from source alone.
+
+QueryPerches input: {position,up,min_distance,max_distance,limit<=12,seed,time?}.
+Output {revision,perches:[{site_id,branch_id,position,up,suitable:true}]}.
+World positions, final perch annulus, >=7m candidate separation; empty result
+means no habitat. No fake fallback. Uses state, not visible trees. Bird relocation
+distance >=8m remains the bird caller's check. Soil support/flood/water clearing
+must be provided through shared accepted world-state operations before claiming
+those habitat effects. Existing suitability uses terrain descriptors only.
+
+Snapshot/Restore are pure value operations. The application owner must wire
+atomic session persistence and error handling; generating a snapshot is not
+proof of saving to disk. AdvanceGrowth requires explicit ecological years <=1
+per call, bounded region, advances stored individuals and materializes state;
+no arbitrary fast-forward or background planet-wide ecology was selected.
+ApplyDamage resolves the actual stable site near the supplied world position,
+removes a branch subtree or whole tree, returns every detached structural branch
+and explicitly reports physical_material_created=false. Only invoke after an
+accepted physical transfer. Wood/root material creation, failure thresholds,
+mass accounting and contact remain Rewrite ownership. These are not implemented
+by deleting appearance. No calls originate in real-time audio callbacks.
+
+Tests are authored in Vegetation/mod.rs and Geometry.rs. None were run here;
+Rewrite owns all checks/builds. Shader source parity is not validated rendering.
+Full integration, native shader checks, leaf/tree/hillside visual review, physical
+destructibility, ecological recruitment/competition and measured mobile budgets
+remain required work, not retired requirements.
+
+Pepper source reconciliation: corrected curved-leaf normals for physical aspect
+ratio and the clamped wind Jacobian outside the bending interval. Added unrun
+finite-difference tangent/normal regressions and transitive trunk-damage geometry
+coverage. No ecological recruitment, material-transfer or native integration
+claim follows from these fixes. All shared integration gaps above remain.
+
+Native typed adapter: vegetation::packet::Packet::from_geometry(value,Scene)
+parses QueryGeometry output, bounds indices/vertices, retains f64 origin/u64
+revision and exposes64-byte vertex_bytes()/u32 index_bytes(). Scene contains
+column-major view_projection and sun_view_projection plus sun_direction,
+sun_color, ambient_color vec4s and options:u32[4]. Scene.bytes() explicitly packs
+192bytes; options[0] enables shadows. Caller supplies matrices and lighting in
+the packet origin, and supplies actual shadow targets/passes. Existing shaders
+remain unchanged. GL uniforms can use Scene fields directly.
+
+QueryPerches targeted refresh input: {time,keys:[{site_id,branch_id,position}]}
+maximum12unique keys. position is last-known world perch position, used for
+bounded48m root lookup. No annulus/ranking applies. Response adds removed and
+unresolved arrays of {site_id,branch_id}; perches retain original record shape.
+Only confirmed dead/damaged/blocked branches enter removed. Lookup misses enter
+unresolved and MUST NOT be interpreted as removal. Discovery shape unchanged.
+Plum owns bird caller adaptation. Two additional regressions authored, unrun.
+
+Stable plant identity correction: site IDs now encode cube face and two signed
+20-bit site coordinates in disjoint u64 fields (high bit marks this layout).
+The former XOR-folded coordinate value remains only a placement noise seed,
+so existing root jitter, habitat selection and architectural profile selection
+are preserved. Opposite signed odd coordinate pairs no longer alias state.
+Snapshot schema is now2. Legacy schema1 lacks coordinates and may have combined
+two plants into one state key; Restore rejects it before mutation, with explicit
+identity-migration error. No legacy files are overwritten or automatically
+retargeted. A reliable legacy migration needs original root/coordinate evidence;
+there is no universally correct mapping from the old ID alone. New age/damage
+snapshots round-trip under schema2. Branch/perch wind time never changes roots.
+
+Native iPhone GLES helper implemented behind unchanged Render/Vegetation/GLES.h
+in NEW Render/Vegetation/GLES.m (Objective-C, matching current iOS build language).
+shader_root is application asset root. All5header functions supplied. Parent
+provides owning current EAGL GLES3 context for create/shadow/draw/destroy,
+registers this translation unit in build, invokes passes before presentation,
+and destroys helper before context teardown. No dispatch, drawable or present
+is owned here. Wrong-context destruction is refused; caller must retry while
+correct owning context is current, or resources cannot be released safely.
+
+Indexed buffers enforce64bytevertices/u32indices and bounded finite input.
+Sunlight target is sampleable DEPTH_COMPONENT24 texture/depth-only FBO,
+clear1/LESS, existing silhouette shader. Color draws do not clear opaque target.
+Standalone uniforms are populated; unit4 uses NEAREST/clampedge/compareNONE.
+Shadow geometry/index copies and sun matrix must match color inputs exactly.
+Header has no origin/revision fields: parent must enforce both at packet edge;
+local byte equality is not evidence of absent metadata. Color and shadow use
+canonical0..1matrices, with GLdepthconversion in existing vertex shader.
+
+Framebuffer/requested viewport restored on every GL-mutating return path;
+invalid dimensions restore previous viewport. Parent scissor/blend/cull/stencil/
+sampling/raster-discard/polygon-offset/depth-range/clear-depth states restored.
+Depthtest/write/LESS and color writes remain enabled per header. Parent rebinds
+program/VAO/textures. Allocation/compile/link/draw failures return bounded errors;
+failed shadow pass invalidates exported depth texture and color shadow parity.
+
+Native evidence remains pending: compile/link shaders on GLES device, compare
+leaf holes in color/depth, sample shadow texture on real terrain receiver, test
+stale matrix/geometry rejection and failure framebuffer/viewport restoration,
+resize depth target, destroy in owning context and inspect GLerrors. No native
+compiler/test/job executed by Pepper. No clang-format binary found in normal
+PATH or usual Homebrew LLVM paths; source manually formatted, no trailing spaces.
+
+Resumed implementation: site_by_id resolves schema2identity directly into the
+exact deterministic root/profile/habitat values. Targeted perch refresh now
+resolves at most12sites, not twelve neighborhood discovery scans. Last position
+is still validated within48m; unresolved remains distinct from confirmed
+removal. ApplyDamage uses the same exact ID resolver with48m proximity, avoiding
+nearest-list truncation and supporting branch contact beyond the old32m bound.
+Added direct_site_resolution_matches_discovery_roots_across_faces_and_seams;
+new regression remains unrun pending shared serialized validation.
+
+Damage transfer preparation: ApplyDamage prepare:true returns the proposed
+detached subtree, parent keys and matching tapered radii without changing state.
+Caller can accept actual physical transfer then invoke ApplyDamage with
+expected_revision equal to original revision; stale plans fail before mutation.
+Response includes state_committed/planned_revision. This existing-hook extension
+does not create wood, accept contact or validate mass; shared material owner
+must perform actual transfer and coordinate rollback/commit. Default commit
+behavior retained for existing accepted-interaction callers.
+
+October 26 woodland/season boundary:
+QueryGeometry uses sampled Eastern calendar fields supplied by Appearance.View.
+Season affects mesh leaf coverage and color only, leaving branches and plant age
+unchanged. Vertex float15 now packs bark tile*1000 + ridge scale; native shaders
+unpack the tile/ridges while preserving the 64-byte indexed vertex ABI and
+192-byte Scene UBO. Oak/hickory texels are the existing atlas artwork. Native
+Vulkan/WebGPU color groups borrow the scene's read-only asset storage, including
+reflection clients; parent lifetime remains the resource owner. GL/GLES own the
+small material texture. New seasonal mesh tests use the actual source module.
+
+November 8 central-PA species extension:
+The generic two-profile mixture is superseded for generated sites by white oak,
+red maple, eastern white pine and eastern hemlock. Original generic profiles are
+retained. Art/Trees/README.txt describes the authored assets, normalized branch
+and leaf export, artistic habitat selection and existing-save interpretation.
+Both discovery and exact-ID resolution call profiles::select with identical
+placement/soil/moisture inputs. Tree roots and habitat density are unchanged.
+Native material kinds 3/4 are needle sprays, 5 is a distant hemlock envelope;
+color/depth silhouette equations match across source backends. Profile bark_tile
+replaces the two-profile conditional; the vertex/storage ABI is unchanged.
+High-resolution Blender/GLB meshes are authoring assets; the live path consumes
+embedded species.json graphs/outlines and retains existing bounded LOD selection.

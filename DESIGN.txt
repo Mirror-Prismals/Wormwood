@@ -275,3 +275,59 @@ The graphics interface is intended to support OpenGL, Vulkan, and WebGPU through
 Audio integration uses a connection System that is a client of JACK. Server startup and lifetime management are explicit operations. ChucK provides a VM integration through its own connection boundary. Native dependencies retain their own interfaces and lifetimes while the engine accounts for the operations it submits to them.
 
 The broader goal is to make application behavior inspectable and composable through data. Existing System capabilities can be arranged into events without writing new source for each occurrence. New capabilities are implemented through Systems and integrated through the same contracts, registries, layer boundaries, and tracking rules. The engine's organization should make it possible to see what is allowed to run, what is running, and why.
+
+Intended behavior is part of the System contract. Each behavior has a stable name within its owning System, a plain-language description, selection conditions, named functions that implement it, source bindings and verification obligations. Several Systems can cooperate in a behavior through their declared calls. A source binding identifies material for inspection; it does not establish that every statement in the file is necessary or correct.
+
+Retention and execution state are separate. Supported and experimental behaviors remain accounted for while their Systems are disabled and when their selection conditions are inactive. Retired behavior requires an explicit decision. Missing descriptions and missing execution records do not imply retirement. Runtime activation continues to use the System registry independently of these descriptions.
+
+Behavior descriptions express the intended application independently of its implementation. A change to an approved expectation must be identified and explained separately from a source change. An implementation must not be declared correct by silently changing its expectation to fit it. New behavior and meaningful implementation alternatives need their own intended descriptions. Ordinary calculations remain within the responsibility of their named operation.
+
+Inspection compares intended descriptions with named-function declarations, dependency routes, source bindings and verification obligations. Declared routes describe permitted relationships. Their presence does not establish actual execution. Verification of a declared route is separate from verification of the behavior it is intended to support. Behavioral equivalence requires appropriate source review and executable or human-observed checks; an AI explanation alone does not establish it.
+
+The verification plan exists before the application runs. Each behavioral obligation states its expected outcome and how that outcome is to be checked. Inspection distinguishes structural agreement, missing or contradictory declarations, and behavior that remains unverified. Runtime traces can provide supporting evidence without defining the full scope of verification. Inspection and reporting stay outside real-time audio callbacks.
+
+Pruning uses explicit retirement and dependency information across retained behaviors, including disabled Systems, experiments and declared entry points. Undocumented functions remain protected pending review. A retired function without a declared retained user is a review candidate. Source callers, callbacks, supporting code, platform variants and resources must be considered before removal. Inspection never deletes code automatically.
+
+Mirror's planetary terrain is intended to resemble the geology and landforms of central Pennsylvania between State College and Harrisburg. Geological structure, exposed materials and landscape form must be related. The visual target is realistic, high-fidelity terrain. The development grid does not define the terrain's physical representation.
+
+Excavation is intended to follow physical interaction between tools and materials. Contact, constitutive material response, failure, geometry changes and persistence have distinct responsibilities. Offset Geometric Contact supplies contact behavior; additional models are required for yielding, cutting and fracture. Material detached by excavation must remain accounted for in the resulting geometry and simulation. The non-voxel volumetric representation and its detailed material models remain to be selected.
+
+Mirror presents no gameplay HUD. Touch input is interpreted through invisible
+gestures, and interaction feedback uses color emotions within the tracked
+appearance system. The digging palette is lime and pink. The pickup palette
+is orange and green. Color feedback reflects an interaction's charge state;
+material removal must be established by the terrain operation itself.
+
+Gameplay terrain sessions begin unmodified unless persistence is explicitly
+selected in their procedure data. Prior saved experimental states are retained
+in archives without becoming part of a new session.
+
+The audio workstation uses persistent, independently composited artwork for gem
+panels, controls and other expensive visual elements. Lighting, reflection and
+refraction are baked offline into disk assets and loaded for image composition.
+Their appearance remains fixed as surrounding content changes. Interaction only
+changes placement, scale, clipping, image selection and inexpensive unlit text
+or display data. Normal workstation rendering does not recalculate gem lighting
+or refresh baked illumination after interaction settles. Missing artwork must
+be repaired in the asset build rather than invoking a live optical fallback.
+
+While the audio workstation owns the paused game, the completed game-camera
+image is retained independently of workstation artwork. Visual water animation
+holds with that paused image. Observer or world changes, resumption and resizing
+refresh the view. Workstation interaction and audio processing remain active.
+Normal gameplay retains its own ongoing scene rendering.
+
+Fixed stage-lighting rehearsal uses stable fixture identities with authored
+positions, aim and geometry. CC curves can control fixture color and intensity
+against the audible transport position. These visual parameters are independent
+of audio rendering. The theatre observer can present the actual venue under
+those parameters without recomputing outdoor scenery or workstation artwork.
+
+Outdoor wind is represented by an omnidirectional emitter whose position follows
+local roof cover and directly escaping outdoor directions. The solid angle of
+openings controls its descent and dominant direction controls its lateral
+placement. The emitter eases between its sheltered position above the roof and
+its ordinary position near the listener. Closed interiors retain roof cover.
+Player and microphone receivers maintain independent placement state. Acoustic
+placement runs outside the real-time audio callback. A session-local,
+cheats-gated control exposes sound emitters as omnidirectional speaker models.

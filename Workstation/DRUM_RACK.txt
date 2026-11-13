@@ -1,0 +1,93 @@
+Cardinal drum rack port
+
+The right panel's page-zero DRUM RACK button toggles a floating four-row,
+sixteen-step popup inside the workstation. Drag its DRUMRACK title to move it;
+CLOSE or Escape dismisses it. The popup stays within the available canvas and
+never resizes or reserves space in the timeline. + ROW creates a
+linked MIDI lane; click its name to choose a WAV sample on macOS. Left-drag
+paints enabled steps and right-drag erases. Fast sweeps include intervening
+cells and the release position. M toggles rack mute; drag the percentage gem
+to change its linear volume. PLAY previews the rack independently of timeline
+playback; the > indicator follows its producer sample clock. STOP ends preview. Leaving/suspending the workstation stops preview.
+Closing only the rack panel retains Cardinal's ongoing-preview behavior.
+
+Drag :: onto that row's linked MIDI lane to place a pattern. Its four quarters
+use the rack's own BPM, with sixteen sixteenth-step positions, MIDI root 48 and
+half-step note lengths. BPM +/- edits the rack clock; rack step/tempo edits
+synchronize still-linked instances without moving their elapsed start positions.
+Explicitly editing a pattern with PutClip detaches that instance from future
+rack pattern synchronization; its MIDI lane retains the sample instrument.
+Ordinary notes at MIDI 48 on linked lanes also trigger the sample. Other pitches
+are silent in this port, matching the original rack's root-note trigger test.
+The rack does not add live keyboard/pad sampling or pitched sample playback.
+
+Every row owns one retriggering one-shot voice. Note length does not truncate
+the sample. Stereo channels retain independent LSFFR destinations, and identical
+bus destinations sum both channels. Rack volume/mute precedes existing track
+gain, CC gain, mute/solo, inserts and routing. Sine fallback is excluded on rack
+lanes. Producer-side linear interpolation adapts decoded source rate to output
+rate. Contiguous playback sequences retain sample tails through natural loop
+wraps; seeks and direct ranges reconstruct their absolute note phase. Export
+uses frozen source Arcs and rack state with preview disabled.
+
+The sample chooser is modeless. Loading occurs through the registered document
+operation, never the native audio callback. Accepted WAV files are bounded to
+8 MiB: mono/stereo PCM 8/16/24/32 or IEEE float32 at 8–192 kHz. Malformed chunks,
+non-finite/out-of-range samples, source collisions, memory/capacity overflow and
+stale revisions fail without committing document changes. Existing source IDs
+can be bound directly. The full Cardinal file browser/decoder and its renderer
+are not dependencies. Other platforms can use the import/source API; a native
+sample chooser is currently macOS only. Existing document persistence is unchanged.
+
+The mesh poses and pointer regions share one layout. GemButton_Wide and
+GemButton_Mini come from the existing authored Timeline kit. Labels use its
+embedded engraving atlas. No placeholder surface or new optical material is
+introduced. The rack floats above the unchanged timeline canvas. At small
+window sizes, collapse side/bottom panels for enough room to expose MIDI lanes.
+The rack and visible timeline share the 192-instance gem pool; very dense views
+need zooming or scrolling to reduce their visible clip count.
+
+Registered control API
+
+WorkstationDataSystem.DrumRack requires document_revision and action:
+  add: track (new stable ID), name, optional source (decoded source ID).
+  steps: channel (zero-based), steps (16-bit unsigned mask).
+  mix: channel, optional volume (0..1), mute (boolean).
+  source: channel, source, optional name.
+  import: channel, source (new stable ID), path (WAV path, <=4096 bytes).
+  tempo: bpm (1..1000).
+  preview: enabled (boolean).
+  place: channel, id (new clip ID), start_seconds.
+Snapshot/shared Snapshot includes drum_rack with channels, clock, preview and
+linked instance identities. Every accepted command advances document revision.
+AudioWorkstationSystem.DrumRack accepts action=open for presentation or forwards
+an edit using the current document revision. Both hooks are typed Host entries;
+all layer-five calls and cleanup routes are declared in their System contracts.
+
+Reference: Salamander137/BaseSystem/DawChannelRackSystem.cpp and the matching
+DawChannelRackContext in Salamander137/Host.h. Cardinal and Martin were not edited.
+
+Verification
+
+20 focused checks pass: document/clock behavior, atomic rejection, capacity,
+stereo routing, track/rack mute, split ranges, resampling, preview isolation,
+natural-loop tails/retrigger, sweep/erase/release, cancelled drag, WAV safety,
+registered Host routing, preview cleanup, small-canvas visibility, frozen WAV
+export and authored gem packet packing. Existing playback
+regressions (15) and backend document checks (21) also pass. Intent inspection
+reports zero structural mismatches. A three-frame native OpenGL run displays all four rows and closes with zero
+remaining Entities and no invocation errors. Its capture and validation logs
+are under output/checks/drum-rack/. Native file-chooser interaction, device
+listening and other graphics backends remain unverified. The existing packaged
+app was not replaced; the source and debug executable contain this port.
+
+Popup presentation correction, November 7
+
+The timeline launcher and reserved rack strip are retired. The right-panel
+page-zero button now toggles the popup, including in an empty document. Popup
+controls and the ruby backing are placed in front of timeline geometry; dragging
+its title moves the shared drawing/picking rectangles. Escape dismisses the rack
+before workstation/fullscreen handling. Closing retains the existing preview
+policy. Five production-UI harness checks and cargo check --offline --locked --tests
+pass. Native visual verification and
+packaging of this correction remain pending.

@@ -57,6 +57,14 @@
         "RouteChanged": {
           "input": "EntityRef",
           "output": "Boolean"
+        },
+        "Attach": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Info": {
+          "input": "EntityRef",
+          "output": "AudioData"
         }
       }
     },
@@ -73,6 +81,10 @@
         },
         "Remove": {
           "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Update": {
+          "input": "EntityUpdate",
           "output": "Unit"
         }
       }
@@ -97,6 +109,14 @@
           "output": "Unit"
         },
         "Cancel": {
+          "input": "AudicleRef",
+          "output": "Unit"
+        },
+        "Fail": {
+          "input": "AudicleFailure",
+          "output": "Unit"
+        },
+        "Resume": {
           "input": "AudicleRef",
           "output": "Unit"
         }
@@ -149,6 +169,58 @@
         "SetView": {
           "input": "TriangleBatch",
           "output": "Unit"
+        },
+        "Caption": {
+          "input": "CaptionRequest",
+          "output": "Unit"
+        },
+        "InputMode": {
+          "input": "InputModeRequest",
+          "output": "Unit"
+        },
+        "Texture": {
+          "input": "TextureRequest",
+          "output": "Unit"
+        },
+        "ReleaseTexture": {
+          "input": "TextureOwner",
+          "output": "Unit"
+        },
+        "Suspend": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Resume": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "CursorLabel": {
+          "input": "CursorLabelRequest",
+          "output": "Unit"
+        },
+        "PluginSurface": {
+          "input": "PluginSurfaceRequest",
+          "output": "Unit"
+        },
+        "SelectionRange": {
+          "input": "SelectionRangeRequest",
+          "output": "Unit"
+        },
+        "CcParameterPicker": {
+          "input": "CcParameterPickerRequest",
+          "output": "Unit"
+        },
+        "PrewarmWorkstation": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "ParkWorkstation": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "FocusWorkstation": {
+          "input": "EntityRef",
+          "output": "Unit"
         }
       }
     },
@@ -199,6 +271,22 @@
         "Release": {
           "input": "EntityRef",
           "output": "Unit"
+        },
+        "Complete": {
+          "input": "EntityRef",
+          "output": "Boolean"
+        },
+        "RouteChanged": {
+          "input": "EntityRef",
+          "output": "Boolean"
+        },
+        "Attach": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Info": {
+          "input": "EntityRef",
+          "output": "AudioData"
         }
       }
     },
@@ -230,6 +318,10 @@
         "Stop": {
           "input": "Unit",
           "output": "Unit"
+        },
+        "Abort": {
+          "input": "FailureReason",
+          "output": "Unit"
         }
       }
     },
@@ -243,6 +335,1552 @@
         "Stop": {
           "input": "Unit",
           "output": "Unit"
+        },
+        "Configure": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Pause": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Abort": {
+          "input": "FailureReason",
+          "output": "Unit"
+        }
+      }
+    },
+    "OGCConnectionSystem": {
+      "layer": 1,
+      "functions": {
+        "Configure": {
+          "input": "PhysicsScene",
+          "output": "Unit"
+        },
+        "Project": {
+          "input": "ContactRequest",
+          "output": "ContactResult"
+        },
+        "Release": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Synchronize": {
+          "input": "ContactSync",
+          "output": "Unit"
+        },
+        "Ownership": {
+          "input": "Unit",
+          "output": "ContactOwnership"
+        },
+        "Respond": {
+          "input": "ContactResponseRequest",
+          "output": "ContactResponseResult"
+        }
+      }
+    },
+    "PhysicsSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "SimulationRequest",
+          "output": "PhysicsReport"
+        },
+        "Advance": {
+          "input": "Unit",
+          "output": "PhysicsReport"
+        },
+        "Report": {
+          "input": "Unit",
+          "output": "PhysicsReport"
+        },
+        "Mesh": {
+          "input": "Unit",
+          "output": "EntitySpec"
+        },
+        "Release": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "GameStep": {
+          "input": "GameMaterialInput",
+          "output": "GameMaterialData"
+        },
+        "GameFrame": {
+          "input": "Unit",
+          "output": "GameMaterialData"
+        },
+        "GameHeight": {
+          "input": "SurfaceQuery",
+          "output": "MaterialHeight"
+        },
+        "GamePause": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "GameClose": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "GameResolveBody": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "GameCollision": {
+          "input": "Unit",
+          "output": "GameMaterialData"
+        },
+        "GameWater": {
+          "input": "Unit",
+          "output": "WaterData"
+        },
+        "GameWaterSample": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "GameCraftTree": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "WorkshopSystem": {
+      "layer": 5,
+      "functions": {
+        "Benchmark": {
+          "input": "SimulationRequest",
+          "output": "SimulationReport"
+        },
+        "Run": {
+          "input": "SimulationRequest",
+          "output": "SimulationReport"
+        }
+      }
+    },
+    "PlanetSurfaceSystem": {
+      "layer": 2,
+      "functions": {
+        "Frame": {
+          "input": "Unit",
+          "output": "PlanetFrame"
+        },
+        "Height": {
+          "input": "SurfaceQuery",
+          "output": "SurfaceHeight"
+        },
+        "Excavate": {
+          "input": "ExcavationRequest",
+          "output": "ExcavationResult"
+        },
+        "Advance": {
+          "input": "Unit",
+          "output": "PlanetFrame"
+        },
+        "Save": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "SuspendMaterial": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "MineCell": {
+          "input": "MineCell",
+          "output": "ToolCutResult"
+        },
+        "BladeCut": {
+          "input": "BladeCut",
+          "output": "Unit"
+        },
+        "Reset": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "RefineMaterial": {
+          "input": "RefineMaterial",
+          "output": "Unit"
+        },
+        "CollisionSnapshot": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "ReleaseMaterials": {
+          "input": "Unit",
+          "output": "Unit"
+        }
+      }
+    },
+    "PlayerModelSystem": {
+      "layer": 2,
+      "functions": {
+        "Load": {
+          "input": "Unit",
+          "output": "PlayerModelData"
+        }
+      }
+    },
+    "InverseKinematicsSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "PlayerModelData",
+          "output": "Unit"
+        },
+        "Solve": {
+          "input": "RigInput",
+          "output": "RigPose"
+        },
+        "Active": {
+          "input": "Unit",
+          "output": "Boolean"
+        },
+        "Release": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "SolveChains": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "PlayerRigSystem": {
+      "layer": 4,
+      "functions": {
+        "Prepare": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Advance": {
+          "input": "RigInput",
+          "output": "RigView"
+        },
+        "Release": {
+          "input": "EntityRef",
+          "output": "Unit"
+        },
+        "Plan": {
+          "input": "RigInput",
+          "output": "RigPose"
+        }
+      }
+    },
+    "ShovelSystem": {
+      "layer": 5,
+      "functions": {
+        "Step": {
+          "input": "ShovelInput",
+          "output": "ShovelView"
+        },
+        "Active": {
+          "input": "Unit",
+          "output": "Boolean"
+        },
+        "Close": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Abort": {
+          "input": "FailureReason",
+          "output": "Unit"
+        },
+        "ConstrainMovement": {
+          "input": "ToolBodyMotion",
+          "output": "ToolBodyConstraint"
+        }
+      }
+    },
+    "ShovelSoilSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "ShovelConfiguration",
+          "output": "ShovelState"
+        },
+        "Step": {
+          "input": "ShovelStep",
+          "output": "ShovelState"
+        },
+        "Mesh": {
+          "input": "Unit",
+          "output": "EntitySpec"
+        },
+        "Report": {
+          "input": "Unit",
+          "output": "ShovelState"
+        },
+        "Release": {
+          "input": "Unit",
+          "output": "Unit"
+        }
+      }
+    },
+    "ColorEmotionSystem": {
+      "layer": 4,
+      "functions": {
+        "Advance": {
+          "input": "ColorEmotionInput",
+          "output": "ColorEmotionView"
+        },
+        "Active": {
+          "input": "Unit",
+          "output": "Boolean"
+        },
+        "Release": {
+          "input": "Unit",
+          "output": "Unit"
+        }
+      }
+    },
+    "TerrainToolSystem": {
+      "layer": 2,
+      "functions": {
+        "Aim": {
+          "input": "ToolRay",
+          "output": "ToolAim"
+        },
+        "Cut": {
+          "input": "ToolCut",
+          "output": "ToolCutResult"
+        },
+        "Advance": {
+          "input": "ToolMotion",
+          "output": "ToolContact"
+        },
+        "Frame": {
+          "input": "Unit",
+          "output": "RemovedSoilFrame"
+        },
+        "Release": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "SurfaceHeight": {
+          "input": "SurfaceQuery",
+          "output": "MaterialHeight"
+        },
+        "Prepare": {
+          "input": "ToolMotion",
+          "output": "ToolContact"
+        }
+      }
+    },
+    "RegistrySystem": {
+      "layer": 2,
+      "functions": {
+        "State": {
+          "input": "Unit",
+          "output": "RegistryState"
+        },
+        "SetEnabled": {
+          "input": "SystemToggle",
+          "output": "RegistryState"
+        }
+      }
+    },
+    "TideSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Step": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Sample": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Close": {
+          "input": "WaterData",
+          "output": "WaterData"
+        }
+      }
+    },
+    "OceanWaveSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Step": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Sample": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Snapshot": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Close": {
+          "input": "WaterData",
+          "output": "WaterData"
+        }
+      }
+    },
+    "WaterFlowSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Step": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Sample": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Close": {
+          "input": "WaterData",
+          "output": "WaterData"
+        }
+      }
+    },
+    "WaterSlideSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Edit": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Course": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "CollisionMesh": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Snapshot": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Close": {
+          "input": "WaterData",
+          "output": "WaterData"
+        }
+      }
+    },
+    "FloodGateSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Step": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Close": {
+          "input": "WaterData",
+          "output": "WaterData"
+        }
+      }
+    },
+    "SoftBodyWaterSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Step": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Gates": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Sample": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Disturb": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Snapshot": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Close": {
+          "input": "WaterData",
+          "output": "WaterData"
+        }
+      }
+    },
+    "TerrainSurfaceHydrologySystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Update": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Raycast": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Sample": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "SurfaceMesh": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Revision": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Snapshot": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Close": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Drainage": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "MaterialDomain": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "MaterialPreview": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "AudioSources": {
+          "input": "WaterData",
+          "output": "WaterData"
+        }
+      }
+    },
+    "WaterRenderSystem": {
+      "layer": 4,
+      "functions": {
+        "Prepare": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Update": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Frame": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Close": {
+          "input": "WaterData",
+          "output": "WaterData"
+        }
+      }
+    },
+    "WaterSystem": {
+      "layer": 5,
+      "functions": {
+        "Configure": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Step": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Frame": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Sample": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Disturb": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Edit": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Pause": {
+          "input": "WaterData",
+          "output": "WaterData"
+        },
+        "Close": {
+          "input": "WaterData",
+          "output": "WaterData"
+        }
+      }
+    },
+    "VegetationSystem": {
+      "layer": 2,
+      "functions": {
+        "QueryPerches": {
+          "input": "VegetationData",
+          "output": "VegetationData"
+        },
+        "QueryPlants": {
+          "input": "VegetationData",
+          "output": "VegetationData"
+        },
+        "QueryGeometry": {
+          "input": "VegetationData",
+          "output": "VegetationData"
+        },
+        "AdvanceGrowth": {
+          "input": "VegetationData",
+          "output": "VegetationData"
+        },
+        "ApplyDamage": {
+          "input": "VegetationData",
+          "output": "VegetationData"
+        },
+        "Snapshot": {
+          "input": "VegetationData",
+          "output": "VegetationData"
+        },
+        "Restore": {
+          "input": "VegetationData",
+          "output": "VegetationData"
+        },
+        "QueryWood": {
+          "input": "VegetationData",
+          "output": "VegetationData"
+        },
+        "MaterialTree": {
+          "input": "VegetationData",
+          "output": "VegetationData"
+        }
+      }
+    },
+    "ChuckConnectionSystem": {
+      "layer": 1,
+      "functions": {
+        "Prepare": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Compile": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Remove": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Poll": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "SetRoutes": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Telemetry": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Release": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "AttachOutput": {
+          "input": "OutputAttachment",
+          "output": "Unit"
+        },
+        "RefreshMix": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "SetMicrophoneRoutes": {
+          "input": "AudioData",
+          "output": "AudioData"
+        }
+      }
+    },
+    "RayTracedAudioSystem": {
+      "layer": 2,
+      "functions": {
+        "Advance": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Snapshot": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Invalidate": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "AdvanceMicrophone": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "AdvanceTerrain": {
+          "input": "AudioData",
+          "output": "AudioData"
+        }
+      }
+    },
+    "SoundPhysicsSystem": {
+      "layer": 2,
+      "functions": {
+        "Apply": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "ApplyMicrophone": {
+          "input": "AudioData",
+          "output": "AudioData"
+        }
+      }
+    },
+    "BirdSystem": {
+      "layer": 5,
+      "functions": {
+        "Step": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Snapshot": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Close": {
+          "input": "AudioData",
+          "output": "AudioData"
+        }
+      }
+    },
+    "TerrainGeometrySystem": {
+      "layer": 2,
+      "functions": {
+        "Capture": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Trace": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "MaterialIntervals": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "EnvironmentAudioSystem": {
+      "layer": 5,
+      "functions": {
+        "Begin": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Frame": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Close": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Status": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Transport": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Pump": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "DrainCapture": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "MidiInput": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "MidiKeyboard": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "Retrospective": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "RefreshMix": {
+          "input": "AudioData",
+          "output": "AudioData"
+        },
+        "PreviewAudio": {
+          "input": "AudioData",
+          "output": "AudioData"
+        }
+      }
+    },
+    "CaveSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "Unit",
+          "output": "CaveData"
+        },
+        "Snapshot": {
+          "input": "Unit",
+          "output": "CaveData"
+        },
+        "Sample": {
+          "input": "CaveData",
+          "output": "CaveData"
+        },
+        "Support": {
+          "input": "CaveData",
+          "output": "CaveData"
+        },
+        "Mesh": {
+          "input": "CaveData",
+          "output": "CaveData"
+        },
+        "ResolveBody": {
+          "input": "CaveData",
+          "output": "CaveData"
+        }
+      }
+    },
+    "CloudSystem": {
+      "layer": 4,
+      "functions": {
+        "Frame": {
+          "input": "ViewRequest",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "WorkstationDataSystem": {
+      "layer": 2,
+      "functions": {
+        "Snapshot": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "PutTrack": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "PutClip": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "RemoveClip": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "MoveClip": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetMidiTempo": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SnapMidi": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "PianoRoll": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "AnalyzeMaster": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "LocatePanel": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ProjectPanel": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "BeginMasterAnalysis": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetTrackMix": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetCcTarget": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ReorderTracks": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ImportAudio": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "PutSource": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SnapClip": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "RenderRange": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ExportBegin": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ExportStep": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ExportCancel": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ExportStatus": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "CreateRangeClips": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "AddSpectralMask": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "UndoSpectralMask": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ClearSpectralMasks": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ClipEditorPreview": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetClipWarp": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetWarpMap": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "PumpWarp": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "RebaseTimeline": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetMusicalTime": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "CaptureInput": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "CaptureStatus": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "CycleMidiTake": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "AudioPlaylist": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "BeginRetrospectiveAudio": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "AppendRetrospectiveAudio": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "CommitRetrospectiveAudio": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "AbortRetrospectiveAudio": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "InsertRetrospectiveMidi": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "UndoRetrospective": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "RedoRetrospective": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "DrumRack": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "TrimAudioClip": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetClipGain": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SplitClip": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetClipFades": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Undo": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Redo": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "UndoStatus": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "BeginUndoTransaction": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "CommitUndoTransaction": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "CancelUndoTransaction": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ClearUndo": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "TrackFreezeBegin": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "TrackFreezeStep": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "TrackFreezeAccept": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "TrackFreezeCancel": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "TrackFreezeFlatten": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "TrackFreezeStatus": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "StageLighting": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "PutBus": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetBus": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "RemoveBus": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "RemoveTrack": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "MixPreview": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetClipRouting": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        }
+      }
+    },
+    "WorkstationPanelSystem": {
+      "layer": 4,
+      "functions": {
+        "Load": {
+          "input": "Unit",
+          "output": "EntitySpec"
+        },
+        "View": {
+          "input": "WorkstationData",
+          "output": "Unit"
+        },
+        "Release": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Suspend": {
+          "input": "Unit",
+          "output": "Unit"
+        }
+      }
+    },
+    "AudioWorkstationSystem": {
+      "layer": 5,
+      "functions": {
+        "Run": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Begin": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "Step": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "SetPanel": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Close": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Status": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "OpenPianoRoll": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Suspend": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Resume": {
+          "input": "WorkstationEntry",
+          "output": "WorkstationData"
+        },
+        "RunEmbedded": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "ComputerKeyboard": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "PreparePlugins": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Prewarm": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "DrumRack": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Background": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "PrimeWorld": {
+          "input": "Unit",
+          "output": "Unit"
+        }
+      }
+    },
+    "TheatreSystem": {
+      "layer": 2,
+      "functions": {
+        "Configure": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Status": {
+          "input": "Unit",
+          "output": "GeometryData"
+        },
+        "Mesh": {
+          "input": "ViewRequest",
+          "output": "GeometryData"
+        },
+        "ResolveBody": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Trace": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "AcousticGeometry": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "ChairInput": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "AudioRayVisualizerSystem": {
+      "layer": 4,
+      "functions": {
+        "Frame": {
+          "input": "ViewRequest",
+          "output": "GeometryData"
+        },
+        "Clear": {
+          "input": "Unit",
+          "output": "Unit"
+        }
+      }
+    },
+    "WorkstationExportSystem": {
+      "layer": 5,
+      "functions": {
+        "Open": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "Begin": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Step": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "Pump": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Status": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "Cancel": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "Close": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        }
+      }
+    },
+    "PluginConnectionSystem": {
+      "layer": 1,
+      "functions": {
+        "Status": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        },
+        "Command": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Menu": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        }
+      }
+    },
+    "PhoneSystem": {
+      "layer": 5,
+      "functions": {
+        "Configure": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Input": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Frame": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Grip": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Status": {
+          "input": "Unit",
+          "output": "GeometryData"
+        },
+        "Close": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Check": {
+          "input": "Unit",
+          "output": "GeometryData"
+        },
+        "CheckScene": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "PhoneRenderSystem": {
+      "layer": 4,
+      "functions": {
+        "Load": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Frame": {
+          "input": "ViewRequest",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "SecurityCameraSystem": {
+      "layer": 5,
+      "functions": {
+        "View": {
+          "input": "WorkstationData",
+          "output": "WorkstationData"
+        },
+        "Status": {
+          "input": "Unit",
+          "output": "WorkstationData"
+        }
+      }
+    },
+    "DeerSystem": {
+      "layer": 5,
+      "functions": {
+        "Step": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Snapshot": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Close": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "GlassesSystem": {
+      "layer": 5,
+      "functions": {
+        "Configure": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Close": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Status": {
+          "input": "Unit",
+          "output": "GeometryData"
+        },
+        "Input": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Grip": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "GlassesRenderSystem": {
+      "layer": 4,
+      "functions": {
+        "Load": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Frame": {
+          "input": "ViewRequest",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "CraftingSystem": {
+      "layer": 5,
+      "functions": {
+        "Configure": {
+          "input": "Unit",
+          "output": "GeometryData"
+        },
+        "Input": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Frame": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Grip": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Status": {
+          "input": "Unit",
+          "output": "GeometryData"
+        },
+        "Close": {
+          "input": "Unit",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "CraftingRenderSystem": {
+      "layer": 4,
+      "functions": {
+        "Load": {
+          "input": "Unit",
+          "output": "Unit"
+        },
+        "Frame": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "NpcSystem": {
+      "layer": 5,
+      "functions": {
+        "Step": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Snapshot": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Close": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "LaboratorySystem": {
+      "layer": 5,
+      "functions": {
+        "Step": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Snapshot": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Close": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "MonasterySystem": {
+      "layer": 5,
+      "functions": {
+        "Input": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Snapshot": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Close": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "MonasteryRenderSystem": {
+      "layer": 4,
+      "functions": {
+        "Frame": {
+          "input": "ViewRequest",
+          "output": "GeometryData"
+        }
+      }
+    },
+    "SilverSpiderCrabSystem": {
+      "layer": 5,
+      "functions": {
+        "Step": {
+          "input": "GeometryData",
+          "output": "GeometryData"
+        },
+        "Close": {
+          "input": "GeometryData",
+          "output": "GeometryData"
         }
       }
     }

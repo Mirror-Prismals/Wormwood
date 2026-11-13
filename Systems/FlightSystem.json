@@ -8,12 +8,19 @@
         "AudicleSystem.Ready",
         "AudicleSystem.Go",
         "AudicleSystem.Finish",
-        "AppearanceSystem.View"
+        "AppearanceSystem.View",
+        "AudicleSystem.Fail",
+        "AudicleSystem.Resume"
       ]
     },
     "Stop": {
       "calls": [
         "AudicleSystem.Finish"
+      ]
+    },
+    "Abort": {
+      "calls": [
+        "AudicleSystem.Fail"
       ]
     }
   },

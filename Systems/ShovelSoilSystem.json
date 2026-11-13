@@ -1,0 +1,70 @@
+{
+  "system": "ShovelSoilSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": [
+        "OGCConnectionSystem.Configure"
+      ]
+    },
+    "Step": {
+      "calls": [
+        "OGCConnectionSystem.Project",
+        "OGCConnectionSystem.Configure"
+      ]
+    },
+    "Mesh": {
+      "calls": []
+    },
+    "Report": {
+      "calls": []
+    },
+    "Release": {
+      "calls": [
+        "OGCConnectionSystem.Release"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "physical_shovel_clod_contact",
+        "description": "A rigid kinematic shovel enters the prepared slit under a pre-separated cohesive elastic soil clod, lifts by OGC contact and dumps by tipping. Soil nodes never attach to the shovel. Invalid contact/material states halt explicitly and retain the last accepted state.",
+        "retention": "experimental",
+        "selection": "The planet application's registered digging Audicle requests the bounded experimental stroke. Reset restores only the experiment fixture.",
+        "implements": [
+          "Configure",
+          "Step",
+          "Mesh",
+          "Report",
+          "Release"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/ShovelSoilSystem.rs",
+          "Physics/shovel.rs",
+          "Physics/mod.rs"
+        ],
+        "checks": [
+          {
+            "id": "shovel_contact_routes",
+            "kind": "declared_calls",
+            "expectation": "Material work has explicit native contact preparation, projection and release routes.",
+            "targets": [
+              "OGCConnectionSystem.Configure",
+              "OGCConnectionSystem.Project",
+              "OGCConnectionSystem.Release"
+            ]
+          },
+          {
+            "id": "shovel_clod_manual_review",
+            "kind": "behavior",
+            "expectation": "The displayed rigid shovel matches the accepted collision pose. A dynamic clod is supported by contact, falls when tipped, and is never pinned or translated with the tool. Failures are visible. The fixture does not claim intact soil fracture or terrain excavation.",
+            "procedure": "Inspect Configure/Step/Mesh/Release, the 240 Hz fixed-step work bound, context ownership checks, conservative-clip rollback and tetrahedron/intersection halts. Play one full insertion/lift/tip/return stroke; inspect contact counters, soil centroid and blocked telemetry. Reset and close to verify resource cleanup. Recheck separately on each requested graphics/platform path. Behavior remains unverified until observed."
+          }
+        ]
+      }
+    ]
+  }
+}

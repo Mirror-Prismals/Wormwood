@@ -1,0 +1,335 @@
+{
+  "system": "TheatreSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": []
+    },
+    "Status": {
+      "calls": []
+    },
+    "Mesh": {
+      "calls": []
+    },
+    "ResolveBody": {
+      "calls": []
+    },
+    "Trace": {
+      "calls": []
+    },
+    "AcousticGeometry": {
+      "calls": []
+    },
+    "ChairInput": {
+      "calls": []
+    }
+  },
+  "init_steps": [
+    "Configure"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "continuous_spawn_theatre",
+        "description": "Place the authored continuous theatre, flown cabinet rig and FOH computer on the planet at spawn. Geometry, contact and acoustic queries share metric placement; vegetation reserves the foundation footprint without deleting plant identity.",
+        "retention": "experimental",
+        "selection": "Authored spawn theatre enabled in the game; DAW only mode shares the same session model.",
+        "implements": [
+          "Configure",
+          "Status",
+          "Mesh",
+          "ResolveBody",
+          "Trace",
+          "AcousticGeometry"
+        ],
+        "sources": [
+          "Theatre/mod.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs",
+          "Procedures/theatre_line_array.json",
+          "Art/Theatre/make_theatre.py",
+          "Art/Theatre/make_interior.py",
+          "Theatre/Lighting.rs",
+          "Art/Theatre/StageLighting/make_lights.py",
+          "Procedures/theatre_lighting.json"
+        ],
+        "checks": [
+          {
+            "id": "continuous_spawn_theatre_behavior",
+            "kind": "behavior",
+            "expectation": "The original 16 flown elements, four subs and four fills retain connected pivots and source bus identities. The stage, terraces, FOH and exits are traversable without voxel collision. Blender cabinet/computer meshes are loaded from the packaged runtime asset. The FOH computer accepts up to 6000 authored triangles, while the assembled theatre remains capped at 80000. The deliberate budget increase accommodates six detailed fixed fixtures and a half-metre deck sampling mesh; contact and acoustic envelopes remain unchanged.",
+            "procedure": "Validate model counts/pivots and immutable acoustic placement, traverse floor/ramp/stage/FOH/walls, reset to the venue and move outside. Verify actual Blender exports and a native desktop frame. Compilation alone does not establish visual quality or collision behavior."
+          }
+        ]
+      },
+      {
+        "id": "theatre_waterpark",
+        "description": "Connect the theatre road to doubled-height magenta and enclosed lime slides, both descending into deep Depths cavern pools with a carved timbered mine staircase and surface splash garden.",
+        "retention": "experimental",
+        "selection": "Authored Wormwood park; seated free-body contact replaces the retired centerline ride.",
+        "implements": [
+          "Configure",
+          "ResolveBody",
+          "Mesh",
+          "Trace",
+          "AcousticGeometry"
+        ],
+        "sources": [
+          "Theatre/Waterpark.rs",
+          "Theatre/mod.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs",
+          "ModSources/prismals/BuildSupport/Waterpark/build_waterpark.py",
+          "ModSources/prismals/Assets/Procedures/Assets/Waterpark/waterpark.json",
+          "Terrain/Underground.rs",
+          "Procedures/caves.json",
+          "BaseSystem/LayerFive/PlayerControls.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFive/WaterSystem.rs",
+          "Audio/geometry.rs"
+        ],
+        "checks": [
+          {
+            "id": "theatre_waterpark_behavior",
+            "kind": "behavior",
+            "expectation": "Both gravity/contact-driven seated descents reach the deep receiving pools without snapping to centerlines or imposing forward speed. Z changes sitting posture; WASD steers; Space jumps. Lime is enclosed throughout; magenta encloses its high-speed turns. O near each launch toggles its inflow, with conservative downstream film drainage. Matching geological excavations clear all tubes, the blue-rock lagoon cavern and the 24-flight timbered return stair above bedrock. Surface jets use conserved water parcels. Render, collision, acoustic and scene geometry remain within bounded budgets (immutable acoustic geometry permits 65536 triangles).",
+            "procedure": "Run cargo test --offline --locked --lib waterpark and player_controls. Review overview.png, depths.png and WORMWOOD_CHECK_WATERPARK=1 native theatre exterior captures. Validate registered navigation input and full-game sit, steering, jump, valves, pools and mine traversal; automated contact and shader checks alone do not establish play feel."
+          }
+        ]
+      },
+      {
+        "id": "town_church_and_greenhouse_commissary",
+        "description": "Extend the town with a 304 by 240 metre vegan commissary and outdoor general store including a greenhouse wing, and a huge experimental dark organic Gothic church with a carpeted main sanctuary and upper balcony, altar, plain suspended cross and full-wall Progress Pride banner. Reuse the theatre red carpet. Animal products and firearms are excluded from merchandise. The northern civic quarter contains an enterable courthouse, pawn shop, thrift store and mall arcade.",
+        "retention": "supported",
+        "selection": "TheatreSystem Configure loads the civic buildings with the existing theatre, park and neighborhood.",
+        "implements": [
+          "Configure",
+          "Mesh",
+          "ResolveBody",
+          "Trace",
+          "AcousticGeometry"
+        ],
+        "sources": [
+          "ModSources/prismals/src/world/Civic.rs",
+          "ModSources/prismals/BuildSupport/Town/build_civic.py",
+          "ModSources/prismals/BuildSupport/Town/build_goods.py",
+          "ModSources/prismals/Assets/Procedures/Assets/Town/civic.json",
+          "ModSources/prismals/Assets/Procedures/Assets/Town/commissary_catalog.json",
+          "Render/TheatreExteriorCheck.rs",
+          "ModSources/prismals/BuildSupport/Town/surface_textures.py"
+        ],
+        "checks": [
+          {
+            "id": "civic_scale_and_access",
+            "kind": "behavior",
+            "expectation": "The commissary floor area is approximately four times the theatre circular floor area. The church stairs reach its upper balcony; rails protect the open nave and the store entrance has physical floor support. The complete town stays within the shared scene capacity.",
+            "procedure": "Run cargo test --offline --locked --lib civic_ -- --nocapture. Review WORMWOOD_CHECK_CIVIC=1 --check-theatre-exterior native WebGPU captures. Full game traversal remains a separate manual check."
+          },
+          {
+            "id": "civic_appearance_and_merchandise",
+            "kind": "behavior",
+            "expectation": "A plain cross hangs before the huge Progress Pride banner; theatre carpet covers sanctuary and gallery. The store has vegan food, outdoor gear, clothing, toys and growing beds. Twenty-one individual products have editable Blender meshes and packed texture tiles sampled offline into the native vertex-colour assets. Merchandise is display-only; purchases and item ownership are unfinished.",
+            "procedure": "Review the saved Blender source and church/commissary preview images, runtime asset and catalog, then native church exterior, sanctuary, balcony, food hall and greenhouse captures."
+          }
+        ]
+      },
+      {
+        "id": "town_authored_marsh_nature_center",
+        "description": "One fixed marsh nature center beyond the northern town esplanade, with a contained shallow-water bed, authored sedge islands, walk-in exhibit pavilion and connected boardwalk network with a perimeter route, cross-marsh paths, branches and roofed bird hides. No procedural biome system.",
+        "retention": "experimental",
+        "selection": "TheatreSystem Configure loads the offline marsh asset after the civic buildings.",
+        "implements": [
+          "Configure",
+          "Mesh",
+          "ResolveBody",
+          "AcousticGeometry"
+        ],
+        "sources": [
+          "ModSources/prismals/src/world/Marsh.rs",
+          "ModSources/prismals/BuildSupport/Town/build_marsh.py",
+          "ModSources/prismals/Assets/Procedures/Assets/Town/marsh.json",
+          "BaseSystem/LayerTwo/TheatreSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "marsh_access_and_budget",
+            "kind": "behavior",
+            "expectation": "The esplanade connects to both pavilion doorways and a continuous supported boardwalk network with open T and cross junctions. The entire town stays within the shared venue triangle capacity. Wetland geometry is confined to this authored site.",
+            "procedure": "Run cargo test --offline --locked --lib marsh_complete_site -- --nocapture. Review Art/Town/marsh_overview.png and traverse the real game entrance, loop and viewing decks; preview rendering alone does not verify native appearance."
+          }
+        ]
+      },
+      {
+        "id": "independent_office_chair",
+        "description": "Independent wheeled office chair on the FOH deck; walking pushes its five casters and looking at it while scrolling adjusts the gas-lift seat from 0.65 to 1.45 metres. Computer focus does not reposition furniture or the observer.",
+        "retention": "supported",
+        "selection": "Production theatre furniture; replaces the fixed drafting chair. Rolling stays on the level FOH deck.",
+        "implements": [
+          "Configure",
+          "Mesh",
+          "ResolveBody",
+          "ChairInput"
+        ],
+        "sources": [
+          "Theatre/OfficeChair.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs",
+          "BaseSystem/LayerFour/TheatreAppearance.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "independent_office_chair_behavior",
+            "kind": "behavior",
+            "expectation": "Chair rolls under walking contact, stops at deck edges and solid fixtures, seat adjustment stays bounded, and computer focus preserves the observer pose.",
+            "procedure": "Run office_chair and computer_focus_preserves_game_texture_document_and_workstation_layout tests; review native caster motion, desk contact, scrolling and computer entry/release."
+          }
+        ]
+      },
+      {
+        "id": "town_connected_plan",
+        "description": "Terrain-supported curved roads connect civic buildings, 54 varied suburban homes on six connected streets with continuous sidewalks, pedestrian greenways, topiary, two playgrounds and shared garden commons, a soccer field, a compact nine-hole golf course and growing vegetable/orchard farm with farmhouse. Packed Blender tiles feed offline vertex colour exports. Static opaque faces are spatially ordered for the existing bounded culler. Reflection culling retains the union of primary and actual reflected water frusta; missing plane metadata preserves the complete fallback mesh. Fully enclosed auditorium content is rejected only from exterior viewpoints behind its sole front portal, considering actual reflected cameras as well. Interior/front-portal views retain full detail.",
+        "retention": "supported",
+        "selection": "TheatreSystem Configure loads the authored district after civic and marsh sites. WORMWOOD_TOWN_REVIEW=1 selects its separate bounded area-soak diagnostic route.",
+        "implements": [
+          "Configure",
+          "Mesh",
+          "ResolveBody"
+        ],
+        "sources": [
+          "ModSources/prismals/src/world/Plan.rs",
+          "ModSources/prismals/BuildSupport/Town/build_plan.py",
+          "ModSources/prismals/BuildSupport/Town/surface_textures.py",
+          "ModSources/prismals/Assets/Procedures/Assets/Town/plan.json",
+          "BaseSystem/LayerTwo/TheatreSystem.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "BaseSystem/LayerFour/TheatreAppearance.rs",
+          "ModSources/prismals/BuildSupport/Town/validate_suburbs.py"
+        ],
+        "checks": [
+          {
+            "id": "planned_town_connectivity_support_and_performance",
+            "kind": "behavior",
+            "expectation": "Every named road node is connected to Park Avenue; roads and driveways have collision support and solid terrain skirts. New destinations stay within the shared venue/scene budgets. Added farm crops and golf/football facilities are authored scenery; farming and sports game rules are not introduced. The expanded suburb has 54 homes and 62 total sites; both playgrounds and Linden Common remain accessible along the connected street and pedestrian network.",
+            "procedure": "Run python3 BuildSupport/Town/validate_suburbs.py for parcel separation, pedestrian gaps, graph connectivity and asset bounds. Run planned_town tests; review native WORMWOOD_TOWN_REVIEW=1 flight captures, entrances and road grades. Compare identical 1200-frame area-soak native WebGPU runs before/after using frame-time and fresh-scene telemetry. Do not claim preview imagery verifies native physics. Run reflection_union and original hierarchy tests, plus fixed native reflection reference/candidate captures. Check auditorium_ portal preservation and the complete packaged town flight, including the large aerial view from the farm."
+          }
+        ]
+      },
+      {
+        "id": "regional_cities",
+        "description": "Present a luminous colored stained-glass desert city at 24.5 km east of town and a white, cyan-glass, terraced futuristic city with roof gardens and sky bridges 11 km west. Each has a pedestrian cross-axis and solid building contact on shared terrain. Cities are independent bounded meshes selected near the viewer, with no duplicate theatre furniture. A separate cyan-white ice city with faceted spires stands 43 km north of town in the treeless polar region, with solid building contact and independent bounded geometry.",
+        "retention": "supported",
+        "selection": "Default Wormwood surface when within 6 km of a regional city.",
+        "implements": [
+          "Mesh",
+          "ResolveBody",
+          "Trace",
+          "AcousticGeometry"
+        ],
+        "sources": [
+          "Theatre/RegionalCities.rs",
+          "Theatre/mod.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs",
+          "BaseSystem/LayerFour/TheatreAppearance.rs",
+          "Terrain/Regions.rs",
+          "Render/RegionalCheck.rs",
+          "Render/TheatreExteriorCheck.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "regional_city_geometry",
+            "kind": "behavior",
+            "expectation": "Both cities have bounded finite rendered geometry, bright glass panels, traceable building solids, and body collision. The original theatre continues rendering around town.",
+            "procedure": "Run regional_cities tests and native city screenshot review. Test the registered Mesh, ResolveBody and Trace paths at both city coordinates; visual review is separate from a passing geometry test."
+          },
+          {
+            "id": "northern_ice_city",
+            "kind": "behavior",
+            "expectation": "The ice city sits on polar snow 43 km north; its finite bounded geometry has cyan-white faceted architecture and solid building contact.",
+            "procedure": "Run regional_cities tests and inspect the native northern-ice-city view. No thermal melting simulation or optical transmission is implied by the city artwork."
+          }
+        ]
+      },
+      {
+        "id": "town_laboratory_zoo",
+        "description": "Independent authored laboratory and zoo sites occupy free town lots, each with a surveyed physical foundation, working entrance and graded connection to the existing town road. The red-yarn installations have a clear circular aperture.",
+        "retention": "supported",
+        "selection": "Normal TheatreSystem configuration.",
+        "implements": [
+          "Configure",
+          "Mesh",
+          "ResolveBody",
+          "AcousticGeometry"
+        ],
+        "sources": [
+          "Theatre/Laboratory.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs",
+          "ModSources/prismals/BuildSupport/Laboratory/build_laboratory.py"
+        ],
+        "checks": [
+          {
+            "id": "site_geometry",
+            "kind": "behavior",
+            "expectation": "Lab entrance and zoo floor support the player; existing streets and buildings remain clear; complete venue remains within the scene budget.",
+            "procedure": "Run laboratory doorway/ground tests and existing town/NPC regression tests, then review native site images and walking access."
+          }
+        ]
+      },
+      {
+        "id": "zen_monastery_site",
+        "description": "A walkable Zen monastery and raked gravel garden stand west of the residential lane. F picks up/returns the altar lighter; hold F while aiming at incense for two seconds to ignite it. One 14 cm stick consumes over 1800 real elapsed seconds, leaves ash, then stops emitting smoke after five seconds. F replaces a spent stick. Ignition may be interrupted; a lit stick keeps burning during absence, pause and embedded DAW use. The session ends on Close. Smoke is a bounded analytic visual approximation, not fluid or combustion chemistry simulation.",
+        "selection": "Normal Wormwood overworld with the monastery configured. Interactions are blocked by menus and held tools.",
+        "retention": "supported",
+        "implements": [
+          "Configure",
+          "Mesh",
+          "ResolveBody",
+          "Trace",
+          "AcousticGeometry"
+        ],
+        "sources": [
+          "Theatre/Monastery.rs",
+          "BaseSystem/LayerFive/MonasterySystem.rs",
+          "ModSources/prismals/src/gameplay/MonasterySystem.rs",
+          "BaseSystem/LayerFour/MonasteryRenderSystem.rs",
+          "ModSources/prismals/src/render/MonasteryRenderSystem.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "incense_lifecycle",
+            "kind": "behavior",
+            "expectation": "Proximity and occlusion gate interaction, ignition requires a sustained hold, stick length halves at 15 minutes, ash remains at 30 minutes, smoke dissipates, no held-key repeat or duplicate event, Close cancels ownership. Monastery doors and path support walking within scene budgets.",
+            "procedure": "Run monastery focused tests, registered Host lifecycle and complete-town budget/contact tests; review native monastery exterior, garden, ignition, midpoint and spent-stick captures; playtest F interaction and pause/DAW return."
+          }
+        ]
+      },
+      {
+        "id": "southern_jungle_city",
+        "description": "A bounded futuristic city one kilometre inland on the jungle coast has cyan towers, roof gardens and raised lava channels under clear, framed glass walkways. Clear pane centers are represented without opaque triangles; independent thin solid slabs provide walking contact, with visible edge seals and reflection streaks. Lava is emissive scenery, not a fluid simulation. Geometry is generated in a local double-precision frame before f32 storage.",
+        "retention": "supported",
+        "selection": "Existing regional-city proximity selection.",
+        "implements": [
+          "Mesh",
+          "ResolveBody",
+          "Trace",
+          "AcousticGeometry"
+        ],
+        "sources": [
+          "Theatre/RegionalCities.rs",
+          "BaseSystem/LayerFour/TheatreAppearance.rs",
+          "BaseSystem/LayerTwo/TheatreSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "southern_city_geometry",
+            "kind": "behavior",
+            "expectation": "City selection routes to bounded local geometry, lava has a distinct luminous material, clear walkways have solid contact, and original cities remain selectable.",
+            "procedure": "Run southern_city and regional_cities tests and review native jungle-city and walkway captures."
+          }
+        ]
+      }
+    ]
+  }
+}

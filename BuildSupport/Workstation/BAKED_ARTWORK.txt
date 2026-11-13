@@ -1,0 +1,74 @@
+AUTHOR DECISION — 2026-11-08
+
+The production macOS WebGPU DAW composes independent disk artwork. Fixed gem
+lighting, reflection and refraction are deliberate. Do not restore live optical
+freshness for movement, pressure, changed text, meters, clips, zoom or settling.
+Do not run a baker at application startup. Missing art is an asset-build error,
+not permission to fall back to live optics. See AGENTS.md and DESIGN.txt.
+
+Render/WorkstationBaked.rs packs independent image and glyph instances.
+Render/WorkstationBaked.wgsl only samples images and draws unlit live content.
+Its transitive shader-entry check rejects optical-lighting dependencies.
+The legacy renderer is retained only for explicit REFERENCE_OPTICS research.
+
+Rebuild artwork explicitly from this directory's fixed authoring fixture:
+1. Create an output directory and copy BakedFixture.json there as captured.json.
+2. Set WORMWOOD_OPTICAL_PROBE_DIRECTORY to that directory and run:
+   cargo test --offline --locked --release export_captured_optical_fixture_for_probe -- --ignored
+   This uses the production immutable geometry loader to write scene.bin.
+3. If EQ geometry changed, set WORMWOOD_BAKED_DEFINITIONS to an authoring JSON
+   destination and run the ignored export_stock_art_definitions test. Review
+   and update BakedStock.json explicitly.
+4. Build compute_probe.cpp with the wgpu-native headers/library as documented
+   in README.txt. It needs native Metal access, but no application window.
+5. Run bake_daw_art.py with --scene <output>/scene.bin --stock BakedStock.json
+   and --probe <compute-probe-executable>. The output defaults to
+   Art/AudioWorkstation/Baked. Optional --reuse accepts only matching input
+   signatures. A changed source/geometry requires an explicit asset rebuild.
+
+The disk manifest records the canonical shader hash, original mesh bounds,
+material palette and image offsets. Images retain scene-linear radiance plus
+coverage, depth and material/normal data. Panels, controls, meters, faders,
+clips, EQ variants, note membranes and audio spheres have independent artwork.
+Text, meter LEDs, waveform values, playhead/selection and other live display
+content remain inexpensive and unlit. Live camera/world rendering is separate.
+
+The local app packager copies these completed files. It does not invoke optics.
+
+ENGRAVING SAMPLING: each offline image camera footprint must match its own
+bounds and output resolution. The original whole-DAW camera span catastrophically
+mip-filters40mmtransport engraving; symbols disappear. Keep camera rows2/3
+scaled to the isolated art bounds before optical authoring. Dynamic labels use
+one front density layer in composition. Three displaced interior fracture layers
+belong to the legacy refracting renderer, not three direct copies of live text.
+
+TRANSPARENT SILHOUETTES: gemEnterPanel misses retain the requested panel ID
+but return a negative distance. Require a positive finite hit distance before
+writing either radiance alpha or auxiliary coverage. Misses must contain zero
+RGBA, never white/black matte pixels or color-keyed highlights. The compositor
+must reveal the live/background image at cut-off panel corners. Keep the
+panel_cut_corners_are_transparent_and_centers_covered disk-asset regression.
+
+BUBBLE TRANSLUCENCY AND ANIMATION (November9 correction):
+The original native-material single BubbleNote image remains in the static atlas
+for compatibility, but the production compositor no longer uses it. Build actual
+Cycles material frames explicitly with:
+  Blender --background Art/AudioWorkstation/BubbleNotes/BubbleNotes.blend \
+    --python BuildSupport/Workstation/bake_bubble_art.py -- \
+    --output Art/AudioWorkstation/BubbleNotes/Baked
+The.blend is read-only. Preserve its flowing thin-film nodes, illumination and
+AgX; transparent-glass film removes the authoring floor/background from the RGBA
+image, allowing the application's existing background to show through. Source
+EXRs retain premultiplied scene-linear reflected light and transmission alpha.
+Grade reflected radiance before unpremultiplication, then pack display reflection
+RGB and occlusion alpha separately as schema2 RGBA8. Composite E+(1-alpha)*B with
+premultiplied blending; never multiply reflected light by transmission alpha a
+second time. The intermediate PNGs contain opaque reflection color only; the
+raw bank also carries the source alpha. Do not apply AgX again at runtime.
+Each of four authored lengths includes18 placement frames and32 idle film frames.
+Temporal interpolation smooths12fps source samples; a four-frame crossfade wraps
+the nonperiodic film without a hard jump. This finite soft loop is an explicit
+artwork approximation, not an indefinitely evolving Cycles simulation. Runtime
+only selects/interpolates images and transforms rounded duration shoulders.
+Missing flipbooks fail explicitly; startup never runs Blender or a baker.
+Film redraws do not invalidate the retained paused-world image.

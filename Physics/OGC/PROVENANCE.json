@@ -1,0 +1,21 @@
+{
+  "source": "Explicitly authorized reusable contact module; the Cardinal System wrapper and terrain implementation are excluded.",
+  "upstream_note": "The original source attributes its adaptation to Anka He Chen Gaia under Apache-2.0, revision c229692. Preserve that attribution; this provenance is not independent verification of equivalence to the paper.",
+  "files": {
+    "OffsetGeometricContact.h": {
+      "source": "/Users/mira/Documents/Code/Languages/_cpp/Projects/SALAMANDER/WORKSPACE_SEPT_29/Salamander137/Structures/OffsetGeometricContact.h",
+      "sha256": "176a1bf1b61bf1d8250e7a27a9482bd7e0eed419f0389ea7c90977dbc8836042"
+    },
+    "OffsetGeometricContact.cpp": {
+      "source": "/Users/mira/Documents/Code/Languages/_cpp/Projects/SALAMANDER/WORKSPACE_SEPT_29/Salamander137/Structures/OffsetGeometricContact.cpp",
+      "sha256": "80c3bd4b60f85f9cb2411d908e22f172b6a9037a007a00561177768ee855ecfe"
+    }
+  },
+  "wormwood_changes": [
+    "Optional element labels and exclusions support finite-element contact. Rooted soil currently excludes only vertices of the same tetrahedron; every distinct tetrahedron remains collidable, including cohesive neighbours.",
+    "Prescribed rigid vertices retain native force, Hessian and conservative displacement responses; a six-degree-of-freedom Newton solve uses full-spade mass/inertia, bounded hand wrench and the contact Hessian metric.",
+    "The bounded C bridge exposes forces, Hessians, bounds, element filters and accepted-pose synchronization through contracted native operations. Synchronization retains the fixed-step previous positions for friction without rebuilding unchanged topology.",
+    "This remains a CPU adaptation with independent strict crossing/inversion rejection, coarse cohesive tetrahedral material and massless tension roots. It is not a calibrated soil model or a claim of equivalence to the authors' implementation or benchmarks.",
+    "The Rust rigid solver projects optional anatomical grasp workspace and shaft-slide constraints together with native conservative contact bounds; held and released modes are explicit request data. This adds no native test-only or System-ID exception."
+  ]
+}

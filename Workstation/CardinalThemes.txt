@@ -1,0 +1,76 @@
+Cardinal 2D themes in Wormwood
+
+The 3D gem ruby is still Wormwood's main theme and the default. The Cardinal
+2D presentation is an opt-in alternative for customization and reduced artwork
+memory. Selecting it changes presentation, not the audio graph, document,
+transport, arrangement, piano editor, or input ownership.
+
+Settings > Workspace > Theme cycles the bundled presets. Apply changes the
+appearance and saves the selection. Cancel leaves the selection unchanged.
+The first entry is 3D gem ruby (main). Command-line and environment selections
+have priority over a saved preference. Theme switching loads immutable artwork
+on the control thread; it never runs an offline baker or touches audio callbacks.
+
+From the Wormwood directory:
+
+  ./target/debug/wormwood --daw-only WebGPU --theme cardinal
+  ./target/debug/wormwood --daw-only WebGPU --theme RubyDaw
+  ./target/debug/wormwood --daw-only WebGPU --theme "/path/to/custom.json"
+  ./target/debug/wormwood --list-themes
+  ./target/debug/wormwood --check-theme "/path/to/custom.json"
+  ./target/debug/wormwood --copy-theme "/path/to/source.json" "/path/to/copy.json"
+
+WORMWOOD_THEME accepts the same names or paths. ruby-3d explicitly selects the
+main theme. The current 2D integration uses the desktop WebGPU compositor.
+Other backends reject the selection explicitly rather than displaying a
+misleading substitute. A custom GLB style and a Cardinal theme cannot be
+selected together. Their authoring formats are separate.
+
+Art/AudioWorkstation/CardinalThemes contains byte-for-byte copies of Cardinal's
+18 saved presets, excluding Cardinal's last-selected _state.json. Loading a
+preset never selects its builtin flag as Wormwood's default. Colors are
+RRGGBBAA, as in Cardinal; they are not ARGB. Version 1 through 5 is accepted.
+Unknown fields are retained when copying a preset. Bundled originals are not
+edited by the theme chooser. Customize a copy's color maps and material fields.
+
+The renderer maps panel_top/bottom/left/right; transport rewind/stop/record/play;
+button, text and surface color maps; fader defaults; timeline and clip colors;
+gradients with Cardinal's five anchors and warp equations; the original baked
+grain texture; emission; MIDI pitch
+colors; and all three meter palettes. Per-track overrides use Wormwood's
+visible track/clip identifiers. The 2D panels keep Wormwood's current layout and
+hit regions so switching appearance does not change editing gestures.
+
+Original material panels use Cardinal's bright top and dark left bevel colors.
+Jelly surfaces use the color and rounded-silhouette equations from UiJellyNote.
+Crystal material surfaces sample explicit offline images of Cardinal's original
+DawGem.frag.wgsl shader with the original absorption, IOR, cut, tilt, exposure,
+and finite studio emitters. Three aspect families are fitted to live controls;
+illumination stays fixed while controls move or resize. Crystal images use RGBA8 display colors
+and bilinear sampling. This follows Wormwood's
+existing offline-artwork policy; it is not a claim of pixel identity with
+Cardinal's position-dependent, dynamically cached lighting.
+
+Rebuild crystal artwork explicitly after editing a crystal preset:
+
+  python3 BuildSupport/Workstation/bake_cardinal_themes.py /path/to/custom.json
+
+The command needs the macOS native WebGPU development library. It writes into
+Art/AudioWorkstation/CardinalThemes/Baked/<preset name>. The application rejects
+missing or stale crystal artwork, and never bakes on startup as a fallback.
+The default original-material theme does not require a crystal atlas. The
+2D path does not load the large 3D gem atlas or animated bubble pixel bank.
+This reduces image memory and removes bubble animation redraws, but it still
+shares the host's existing geometry packets. Hardware performance needs direct
+measurement; an appearance selection alone is not proof of a speedup.
+
+Compatibility boundary
+
+The original JSON data is preserved, including fields not implemented by this
+host. Animated/video/ChuGL backdrops, cursor trails, stickers, Cardinal-specific
+text font/outline controls and the old quick-paint
+editor are not ported by this presentation adapter. Specular/gloss
+values are validated and preserved but are not rendered yet. The current
+background uses the preset color and the existing Wormwood passthrough control.
+These remaining features must not be reported as an exact or complete port of
+Cardinal's theme editor. Keep them explicit when extending this adapter.

@@ -13,12 +13,123 @@
         "FlightSystem.Step",
         "FlightSystem.Stop",
         "PlanetNavigationSystem.Step",
-        "PlanetNavigationSystem.Stop"
+        "PlanetNavigationSystem.Stop",
+        "GraphicsConnectionSystem.InputMode",
+        "GraphicsConnectionSystem.Caption",
+        "PlanetNavigationSystem.Pause",
+        "PlayerRigSystem.Prepare",
+        "PlayerRigSystem.Release",
+        "FlightSystem.Abort",
+        "PlanetNavigationSystem.Abort",
+        "EnvironmentAudioSystem.Begin",
+        "EnvironmentAudioSystem.Close",
+        "VegetationSystem.Snapshot",
+        "VegetationSystem.Restore",
+        "WaterSystem.Configure",
+        "WaterSystem.Close",
+        "TheatreSystem.Trace",
+        "GraphicsConnectionSystem.Suspend",
+        "GraphicsConnectionSystem.Resume",
+        "AudioWorkstationSystem.RunEmbedded",
+        "PhoneSystem.Input",
+        "PhoneSystem.Close",
+        "AudioWorkstationSystem.Prewarm",
+        "EnvironmentAudioSystem.RefreshMix",
+        "GlassesSystem.Input",
+        "GlassesSystem.Close",
+        "CraftingSystem.Input",
+        "CraftingSystem.Close",
+        "AudioWorkstationSystem.Background",
+        "AudioWorkstationSystem.Close",
+        "AudioWorkstationSystem.PrimeWorld",
+        "TheatreSystem.ChairInput",
+        "PhoneSystem.Configure",
+        "MonasterySystem.Input",
+        "MonasterySystem.Close"
       ]
     }
   },
   "init_steps": [],
   "entry_steps": [
     "Run"
-  ]
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "environment_source_lifetime",
+        "description": "The application restores vegetation state before preparing the planet scene and saves it atomically on close. Water and audio have independent explicit lifetimes; failure cleanup runs before native scene destruction. Existing invalid or legacy vegetation saves are preserved.",
+        "retention": "supported",
+        "selection": "Planet-surface application with the corresponding enabled Systems.",
+        "implements": [
+          "Run"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFive/GameFrameTiming.rs",
+          "Host/TraceOutput.rs",
+          "Host/PerformanceTelemetry.rs"
+        ],
+        "checks": [
+          {
+            "id": "environment_lifetime_review",
+            "kind": "behavior",
+            "expectation": "A successful close retains plant growth and damage and releases water/audio/scene resources. A rejected save load cannot be overwritten by shutdown.",
+            "procedure": "Inspect and exercise normal and partial-startup cleanup, save write failures, stale snapshot versions and repeated open/close separately; source edits do not establish device correctness."
+          }
+        ]
+      },
+      {
+        "id": "in_world_computer_focus",
+        "description": "The front-of-house computer locks the player at the current observer pose and focuses the shared workstation on its physical display. E or Escape returns to the preserved game; headsets retain immersive entry.",
+        "retention": "experimental",
+        "selection": "Left-click the physical screen within four metres with macOS baked WebGPU. DAW only mode remains an independent diagnostic path.",
+        "implements": [
+          "Run"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "computer_focus_reopen",
+            "kind": "behavior",
+            "expectation": "Entering/exiting/reopening preserves game Entity, player pose, texture, document, panel motion and audio lifetime. Failed workstation preparation restores the game. Native presentation is recreated because render pipelines are selected at construction.",
+            "procedure": "Run computer_focus_preserves_game_texture_document_and_workstation_layout and failed_computer_presentation_can_restore_and_retry_retained_game; verify native click, Escape, failed assets, window close and mobile gesture mode separately."
+          }
+        ]
+      },
+      {
+        "id": "opt_in_combined_workstation_benchmark",
+        "description": "The explicit finite benchmark locates the authored theatre computer and reuses the production game suspend, embedded workstation, and game restore transition. It selects physical computer, AR, VR or security-camera observers, validates embedded geometry and retains measured timing before cleanup.",
+        "retention": "experimental",
+        "selection": "Only --benchmark-game-workstation; ordinary gameplay and DAW-only entry are unchanged.",
+        "implements": [
+          "Run"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Host/Host.rs",
+          "Platform/Desktop.rs"
+        ],
+        "checks": [
+          {
+            "id": "combined_benchmark_native",
+            "kind": "behavior",
+            "expectation": "A completed capture has a real computer, embedded camera geometry, drawn measured frames, correct DAW GPU category and zero remaining entities. User preferences and the installed app remain untouched.",
+            "procedure": "Run explicit_bounded_combined_entry and ordinary_entries_remain_distinct, then the guarded finite combined benchmark; inspect actual mode, GPU source, frame timing and cleanup evidence."
+          },
+          {
+            "id": "five_mode_native_suite",
+            "kind": "behavior",
+            "expectation": "The serial suite distinguishes physical computer, real AR/VR pairs, standalone DAW and normal game. DAW replay uses monotonic elapsed-time input, VR observer motion uses normal navigation without diagnostic rays, and reports reject wrong modes, fixed-step motion, interrupted draws and incomplete audio counters.",
+            "procedure": "Run python3 -m unittest discover -s BuildSupport/Workstation -p test_benchmark_modes.py; build a fresh app and run BuildSupport/Workstation/benchmark_modes.py --app APP. Inspect all modes, observer metadata, actual VR positions, moving-frame timing, GPU query coverage and cleanup. Game-only audio lifetime counters are not measured-window deltas."
+          }
+        ]
+      }
+    ]
+  }
 }

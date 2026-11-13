@@ -1,0 +1,85 @@
+{
+  "system": "WaterRenderSystem",
+  "layer": 4,
+  "functions": {
+    "Prepare": {
+      "calls": []
+    },
+    "Update": {
+      "calls": [
+        "TerrainSurfaceHydrologySystem.SurfaceMesh",
+        "WaterSlideSystem.CollisionMesh",
+        "EntitySystem.Create",
+        "EntitySystem.Update",
+        "EntitySystem.Remove"
+      ]
+    },
+    "Frame": {
+      "calls": []
+    },
+    "Close": {
+      "calls": [
+        "EntitySystem.Remove"
+      ]
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "native_water_optics",
+        "description": "Tracked continuous water appearances retain refraction chromatic IOR, depth absorption, micro waves/ripples, Fresnel sky and actual reflected-scene optics, river streaks and trough presentation. The surface mesh retains 1.5-metre central sampling and adds six-metre outer sampling to 240 metres per chart axis. Beyond 48 metres, generated river/lake presentation may use the analytic drainage bed when accepted triangle coverage is absent; this display-only approximation never establishes physics occupancy. Native helpers borrow existing devices and immutable opaque/reflection inputs, with a private depth/layer and composite; they never create a new window/device/swapchain. Clear presentation retains neutral reflection fallback colors and actual sky colors, with zero murkiness by default. The water layer contains a complete transmitted-scene/Fresnel-reflection result and composites at full coverage; historical Cardinal91 low material alpha is not applied again to that already-composed result. Sky reflections use the actual sky palette without a fixed blue wash. Time-of-day brightness dims the neutral fallback, never the sky blend weight, so darkness cannot select a white reflection.",
+        "retention": "experimental",
+        "selection": "The configured water application is active; pause retains frozen persistent appearance and resumes under a new tracked water event.",
+        "implements": [
+          "Prepare",
+          "Update",
+          "Frame",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFour/WaterRenderSystem.rs",
+          "Water/surface_mesh.rs",
+          "Water/visibility.rs",
+          "Water/optics.rs",
+          "Render/Water/data.rs",
+          "Render/Water/mod.rs",
+          "Render/Water/reflection.rs",
+          "Render/Water/opengl.rs",
+          "Procedures/Water/Shaders/water.wgsl",
+          "Procedures/Water/Shaders/composite.wgsl",
+          "Render/Scene.rs",
+          "Render/Water/vulkan.rs",
+          "Render/Water/webgpu.rs",
+          "Render/opengl.rs",
+          "Render/vulkan.rs",
+          "Render/webgpu.rs",
+          "Render/ios_gl.rs",
+          "BaseSystem/LayerFour/AppearanceSystem.rs",
+          "Water/presentation.rs"
+        ],
+        "checks": [
+          {
+            "id": "native_water_optics_routes",
+            "kind": "declared_calls",
+            "expectation": "Required cross-System routes are explicit.",
+            "targets": [
+              "EntitySystem.Create",
+              "EntitySystem.Remove",
+              "EntitySystem.Update",
+              "TerrainSurfaceHydrologySystem.SurfaceMesh",
+              "WaterSlideSystem.CollisionMesh"
+            ]
+          },
+          {
+            "id": "native_water_optics_behavior",
+            "kind": "behavior",
+            "expectation": "Tracked continuous water appearances retain refraction chromatic IOR, depth absorption, micro waves/ripples, Fresnel sky and actual reflected-scene optics, river streaks and trough presentation. The surface mesh retains 1.5-metre central sampling and adds six-metre outer sampling to 240 metres per chart axis. Beyond 48 metres, generated river/lake presentation may use the analytic drainage bed when accepted triangle coverage is absent; this display-only approximation never establishes physics occupancy. Native helpers borrow existing devices and immutable opaque/reflection inputs, with a private depth/layer and composite; they never create a new window/device/swapchain. Clear presentation retains neutral reflection fallback colors and actual sky colors, with zero murkiness by default. The water layer contains a complete transmitted-scene/Fresnel-reflection result and composites at full coverage; historical Cardinal91 low material alpha is not applied again to that already-composed result. Sky reflections use the actual sky palette without a fixed blue wash. Time-of-day brightness dims the neutral fallback, never the sky blend weight, so darkness cannot select a white reflection.",
+            "procedure": "Verify shader attribute/uniform layout on GL/ES, Vulkan and WebGPU independently. Render actual opaque refraction and reflected-camera clipped scene, with stable geometric depth vs optical normal; inspect occlusion, overlapping water, ripple wakes, submerged/dry views, river streaks, cover handling, resizing and native cleanup. Readback/rendered proof is required; CPU optics/reference or compilation alone is not presentation verification. Preserve upstream global grading/Panini/audio responsibilities."
+          }
+        ]
+      }
+    ]
+  }
+}

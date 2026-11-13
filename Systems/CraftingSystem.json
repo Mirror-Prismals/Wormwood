@@ -1,0 +1,76 @@
+{
+  "system": "CraftingSystem",
+  "layer": 5,
+  "functions": {
+    "Configure": {
+      "calls": [
+        "CraftingRenderSystem.Load"
+      ]
+    },
+    "Input": {
+      "calls": [
+        "TerrainGeometrySystem.Capture",
+        "TerrainGeometrySystem.Trace",
+        "PhysicsSystem.GameFrame",
+        "PhysicsSystem.GameCraftTree",
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go"
+      ]
+    },
+    "Frame": {
+      "calls": [
+        "PhysicsSystem.GameCraftTree",
+        "AudicleSystem.Resume",
+        "AudicleSystem.Finish"
+      ]
+    },
+    "Grip": {
+      "calls": []
+    },
+    "Status": {
+      "calls": []
+    },
+    "Close": {
+      "calls": [
+        "AudicleSystem.Cancel"
+      ]
+    }
+  },
+  "init_steps": [
+    "Configure"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "ground_plank_crafting",
+        "description": "Cave jars yield a specific single-use plank blueprint. F carries and places it on supported ground. Shift-left-click reserves one physically severed, horizontal tree within 4 metres. Sixty seconds of local work consumes tree and sheet and makes six individually F-carried planks. Rate is 1 within 10 metres, exponential to 0.01 at 20, then remains 0.01. Missing/moved ingredients pause progress. Session state only; no offline progress.",
+        "retention": "supported",
+        "selection": "First Mirror ground crafting recipe.",
+        "implements": [
+          "Configure",
+          "Input",
+          "Frame",
+          "Grip",
+          "Status",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/CraftingSystem.rs",
+          "Host/CraftingTests.rs",
+          "BaseSystem/LayerFive/ApplicationSystem.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "crafting_playtest",
+            "kind": "behavior",
+            "expectation": "Cave jars are reachable, ground recipes require felled wood, no input leaks to tools, completion produces six distinct movable planks.",
+            "procedure": "Run focused crafting regressions and inspect Blender review; playtest real cave discovery, felling, F placement, Shift-click, walking 10/15/20 metres away, returning, completion, individual pickup, pause and cleanup. Compilation is not native interaction evidence."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -89,9 +89,12 @@ struct Rt {
     tail: u32,
 }
 struct Callback {
+    sample_rate: f64,
+    stream: UnsafeCell<Option<crate::audio::chuck::Output>>,
     buffer: Buffer,
     outputs: [*mut c_void; 2],
     monitor: *mut c_void,
+    physical_inputs: Box<[*mut c_void]>,
     samples: Box<[f32]>,
     rt: UnsafeCell<Rt>,
     go: AtomicBool,
@@ -107,7 +110,8 @@ struct Callback {
 unsafe extern "C" fn process(n: u32, arg: *mut c_void) -> c_int {
     // SAFETY: pinned Box lives until jack_client_close succeeds; JACK owns callback scheduling.
     let s = unsafe { &*(arg as *const Callback) };
-    let rt = unsafe { &mut *s.rt.get() };
+    let _performance = crate::host::performance_telemetry::AudioScope::new(n, s.sample_rate);
+    crate::host::performance_telemetry::mark_xrun_supported();
     let a = unsafe { (s.buffer)(s.outputs[0], n) } as *mut f32;
     let b = unsafe { (s.buffer)(s.outputs[1], n) } as *mut f32;
     let input = unsafe { (s.buffer)(s.monitor, n) } as *const f32;
@@ -116,6 +120,26 @@ unsafe extern "C" fn process(n: u32, arg: *mut c_void) -> c_int {
         return 0;
     }
     let go = s.go.load(Ordering::Acquire);
+    if go {
+        if let Some(stream) = unsafe { &mut *s.stream.get() } {
+            let left = unsafe { std::slice::from_raw_parts_mut(a,n as usize) };
+            let right = unsafe { std::slice::from_raw_parts_mut(b,n as usize) };
+            left.fill(0.);
+            right.fill(0.);
+            let mut inputs:[&[f32];crate::audio::input_capture::MAX_INPUTS]=[&[];crate::audio::input_capture::MAX_INPUTS];
+            for (index,port) in s.physical_inputs.iter().enumerate(){
+                let pointer=unsafe{(s.buffer)(*port,n)} as *const f32;
+                if pointer.is_null(){s.invalid.store(true,Ordering::Relaxed);}else{inputs[index]=unsafe{std::slice::from_raw_parts(pointer,n as usize)};}
+            }
+            stream.render_with_inputs(left,right,&inputs[..s.physical_inputs.len()]);
+            let peak=left.iter().chain(right.iter()).fold(0f32,|peak,value|peak.max(value.abs()));
+            s.peak.fetch_max(peak.to_bits(),Ordering::Relaxed);
+            s.produced.fetch_add(n as u64,Ordering::Relaxed);
+            s.callbacks.fetch_add(1,Ordering::Relaxed);
+            return 0;
+        }
+    }
+    let rt = unsafe { &mut *s.rt.get() };
     let mut peak = f32::from_bits(s.peak.load(Ordering::Relaxed));
     let mut produced = 0;
     // One bounded pass over the buffer JACK supplied; no allocation, locks, I/O,
@@ -149,6 +173,7 @@ unsafe extern "C" fn process(n: u32, arg: *mut c_void) -> c_int {
 unsafe extern "C" fn xrun(arg: *mut c_void) -> c_int {
     let s = unsafe { &*(arg as *const Callback) };
     s.xruns.fetch_add(1, Ordering::Relaxed);
+    crate::host::performance_telemetry::record_xrun();
     0
 }
 
@@ -163,10 +188,16 @@ pub(super) struct Session {
     rate: u32,
     size: u32,
     started: bool,
+    streaming: bool,
     owned_server: bool,
     server_name: String,
     start_xruns: u64,
     output_device: String,
+    input_device: Option<String>,
+    #[cfg(target_os="macos")]
+    aggregate: Option<super::route::Aggregate>,
+    follows_default_input: bool,
+    physical_input_ports: Vec<String>,
     follows_default: bool,
     route_checked: Instant,
     route_changed: bool,
@@ -216,10 +247,16 @@ impl Session {
             rate: 0,
             size: 0,
             started: false,
+            streaming: false,
             owned_server: false,
             server_name,
             start_xruns: 0,
             output_device,
+            input_device: if cfg!(target_os="macos") {std::env::var("WORMWOOD_JACK_INPUT").ok().or_else(||super::route::default_input_uid().ok())}else{None},
+            #[cfg(target_os="macos")]
+            aggregate: None,
+            follows_default_input: cfg!(target_os="macos") && std::env::var_os("WORMWOOD_JACK_INPUT").is_none(),
+            physical_input_ports:Vec::new(),
             follows_default,
             route_checked: Instant::now(),
             route_changed: false,
@@ -289,23 +326,27 @@ impl Session {
                     "2",
                 ]);
             } else {
-                let device = &s.output_device;
+                #[cfg(target_os="macos")]
+                if let Some(input)=s.input_device.as_deref().filter(|input|*input!=s.output_device) {
+                    s.aggregate=Some(super::route::Aggregate::create(input,&s.output_device)?);
+                }
                 command.args([
                     "-n",
                     &s.server_name,
                     "-d",
                     "coreaudio",
-                    "-P",
-                    &device,
                     "-r",
                     "48000",
                     "-p",
                     "256",
-                    "-i",
-                    "0",
                     "-o",
                     "2",
                 ]);
+                #[cfg(target_os="macos")]
+                let aggregate=s.aggregate.as_ref().map(|a|(a.uid.as_str(),a.input_start,a.input_count));
+                #[cfg(not(target_os="macos"))]
+                let aggregate=None;
+                command.args(coreaudio_device_args(&s.output_device,s.input_device.as_deref(),aggregate));
             }
             s.server = Some(
                 command
@@ -326,9 +367,7 @@ impl Session {
                     .try_wait()
                     .map_err(|e| e.to_string())?
                 {
-                    return Err(format!(
-                        "JACK server exited {code}; see output/jack-server.log"
-                    ));
+                    return Err(server_exit_error(root,&code.to_string()));
                 }
                 s.client = unsafe {
                     (s.api.open)(
@@ -375,10 +414,29 @@ impl Session {
         if outputs.iter().any(|p| p.is_null()) || monitor.is_null() {
             return Err("JACK port registration failed".into());
         }
+        let capture_ports=unsafe{(s.api.ports)(s.client,std::ptr::null(),c"32 bit float mono audio".as_ptr(),2|4)};
+        let mut capture_sources=Vec::new();
+        if !capture_ports.is_null(){
+            for index in 0..crate::audio::input_capture::MAX_INPUTS{
+                let name=unsafe{*capture_ports.add(index)};if name.is_null(){break;}
+                capture_sources.push(unsafe{CStr::from_ptr(name)}.to_owned());
+            }
+            unsafe{(s.api.free)(capture_ports.cast())};
+        }
+        let mut physical_inputs=Vec::with_capacity(capture_sources.len());
+        for (index,source) in capture_sources.iter().enumerate(){
+            let name=CString::new(format!("in_{}",index+1)).unwrap();
+            let input=register(&name,1);if input.is_null(){return Err("JACK capture port registration failed".into());}
+            physical_inputs.push(input);
+            s.physical_input_ports.push(source.to_string_lossy().into_owned());
+        }
         s.callback = Some(Box::new(Callback {
+            sample_rate: s.rate as f64,
+            stream: UnsafeCell::new(None),
             buffer: s.api.buffer,
             outputs,
             monitor,
+            physical_inputs:physical_inputs.into_boxed_slice(),
             samples,
             rt: UnsafeCell::new(Rt { cursor: 0, tail: 0 }),
             go: AtomicBool::new(false),
@@ -397,6 +455,9 @@ impl Session {
         }
         if unsafe { (s.api.activate)(s.client) } != 0 {
             return Err("JACK activation failed".into());
+        }
+        for (source,input) in capture_sources.iter().zip(s.callback.as_ref().unwrap().physical_inputs.iter()){
+            if unsafe{(s.api.connect)(s.client,source.as_ptr(),(s.api.name)(*input))}!=0{return Err("JACK physical input connection failed".into());}
         }
         let ports = unsafe {
             (s.api.ports)(
@@ -438,7 +499,20 @@ impl Session {
         let realtime = unsafe { (self.api.realtime)(self.client) } != 0;
         let priority = unsafe { (self.api.priority)(self.client) };
         let max_priority = unsafe { (self.api.max_priority)(self.client) };
-        json!({"realtime":realtime,"client_priority":priority,"max_client_priority":max_priority,"sample_rate_hz":self.rate,"buffer_frames":self.size,"buffer_budget_ms":1000.0*self.size as f64/self.rate as f64,"owned_server":self.owned_server,"output_device_uid":self.output_device,"follows_system_default":self.follows_default,"server":self.server_name,"tone_hz":440,"duration_ms":750,"peak_amplitude":0.025,"entity":self.entity,"audicle":self.audicle})
+        let mut info=json!({"realtime":realtime,"client_priority":priority,"max_client_priority":max_priority,"sample_rate_hz":self.rate,"buffer_frames":self.size,"buffer_budget_ms":1000.0*self.size as f64/self.rate as f64,"owned_server":self.owned_server,"output_device_uid":self.output_device,"follows_system_default":self.follows_default,"server":self.server_name,"tone_hz":440,"duration_ms":750,"peak_amplitude":0.025,"entity":self.entity,"audicle":self.audicle});
+        info["physical_input_ports"]=json!(self.physical_input_ports);
+        info["input_device_uid"]=json!(self.input_device);
+        #[cfg(target_os="macos")]
+        {info["managed_duplex_device_uid"]=json!(self.aggregate.as_ref().map(|a|&a.uid));}
+        if self.streaming {
+            for key in ["tone_hz","duration_ms","peak_amplitude"] {info.as_object_mut().unwrap().remove(key);}
+            let cb=self.callback.as_ref().unwrap();
+            info["mode"]=json!("embedded_chuck");
+            info["stream_output_peak"]=json!(f32::from_bits(cb.peak.load(Ordering::Relaxed)));
+            info["samples_produced"]=json!(cb.produced.load(Ordering::Relaxed));
+            info["callbacks"]=json!(cb.callbacks.load(Ordering::Relaxed));
+        }
+        info
     }
     pub(super) fn start(&mut self) -> Result<(), String> {
         if self.started {
@@ -459,9 +533,10 @@ impl Session {
         Ok(())
     }
     pub(super) fn route_changed(&mut self) -> bool {
-        if self.follows_default && self.route_checked.elapsed() >= Duration::from_millis(100) {
+        if (self.follows_default || self.follows_default_input) && self.route_checked.elapsed() >= Duration::from_millis(100) {
             self.route_changed |=
-                super::route::changed(true, &self.output_device, super::route::default_uid());
+                super::route::changed(self.follows_default, &self.output_device, super::route::default_uid());
+            if self.follows_default_input{self.route_changed |= super::route::default_input_uid().ok()!=self.input_device;}
             self.route_checked = Instant::now();
         }
         self.route_changed
@@ -510,9 +585,25 @@ impl Session {
         }
         Ok(report)
     }
+    pub(super) fn attach_output(&mut self, output: &mut Option<crate::audio::chuck::Output>) -> Result<(),String> {
+        let cb = self.callback.as_ref().ok_or("JACK callback missing")?;
+        if self.started || cb.go.load(Ordering::Acquire) {
+            return Err("attach output before the first Go".into());
+        }
+        // Before Go, the callback never touches this separate cell. The Release
+        // store in start publishes the completed attachment to its Acquire read.
+        let slot = unsafe { &mut *cb.stream.get() };
+        if slot.is_some() || output.is_none() { return Err("output attachment is not available".into()); }
+        *slot = output.take();
+        self.streaming=true;
+        Ok(())
+    }
     pub(super) fn release(&mut self) -> Result<(), String> {
         self.close()?;
-        self.stop_server()
+        self.stop_server()?;
+        #[cfg(target_os="macos")]
+        if let Some(aggregate)=self.aggregate.as_mut(){aggregate.release()?;}
+        Ok(())
     }
     fn stop_server(&mut self) -> Result<(), String> {
         if let Some(server) = self.server.as_mut() {
@@ -575,6 +666,14 @@ impl Drop for Session {
     }
 }
 
+fn server_exit_error(root:&Path,code:&str)->String{
+    use std::io::Read;
+    let path=root.join("jack-server.log");let mut text=String::new();
+    if let Ok(file)=std::fs::File::open(&path){let _=file.take(8192).read_to_string(&mut text);}
+    let detail=text.lines().find(|line|["Too many","Failed","Cannot","Error","ERROR"].iter().any(|word|line.contains(word)))
+        .unwrap_or("no further startup detail").chars().take(240).collect::<String>();
+    format!("JACK server exited {code}: {detail}; log: {}",path.display())
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -587,9 +686,12 @@ mod tests {
         let mut right = [99.0f32; 8];
         let mut input = [0.0f32; 8];
         let s = Callback {
+            sample_rate: 48000.,
+            stream: UnsafeCell::new(None),
             buffer,
             outputs: [left.as_mut_ptr().cast(), right.as_mut_ptr().cast()],
             monitor: input.as_mut_ptr().cast(),
+            physical_inputs:Vec::new().into_boxed_slice(),
             samples: vec![0.01, 0.02, 0.0, -0.01, -0.02].into_boxed_slice(),
             rt: UnsafeCell::new(Rt { cursor: 0, tail: 0 }),
             go: AtomicBool::new(false),
@@ -618,5 +720,43 @@ mod tests {
         assert_eq!(s.produced.load(Ordering::Relaxed), 5);
         unsafe { xrun(p) };
         assert_eq!(s.xruns.load(Ordering::Relaxed), 1);
+    }
+}
+
+#[cfg(test)]mod launch_failure_tests{
+ use super::*;
+ #[test]fn startup_error_uses_actual_output_root_and_server_reason(){
+  let p=std::env::temp_dir().join(format!("wormwood-jack-error-{}",std::process::id()));std::fs::create_dir_all(&p).unwrap();
+  std::fs::write(p.join("jack-server.log"),"Too many servers already active\nFailed to open server\n").unwrap();
+  let error=server_exit_error(&p,"255");assert!(error.contains("Too many servers already active"));assert!(error.contains(&p.join("jack-server.log").display().to_string()));
+  std::fs::remove_file(p.join("jack-server.log")).unwrap();std::fs::remove_dir(&p).unwrap();
+ }
+}
+
+// A single CoreAudio device bypasses JACK2's legacy aggregate creation path.
+// Explicit input mapping preserves the selected microphone even when the
+// selected output interface also exposes its own input channels.
+fn coreaudio_device_args(output:&str,input:Option<&str>,aggregate:Option<(&str,u32,u32)>)->Vec<String>{
+    if let Some((uid,start,count))=aggregate {
+        return vec!["-d".into(),uid.into(),"-i".into(),count.to_string(),"-n".into(),
+            (start..start+count).map(|i|i.to_string()).collect::<Vec<_>>().join(" ")];
+    }
+    let mut args=vec!["-P".into(),output.into()];
+    if let Some(input)=input{args.extend(["-C".into(),input.into()]);}
+    else{args.extend(["-i".into(),"0".into()]);}
+    args
+}
+#[cfg(test)]
+mod duplex_routing_tests {
+    use super::coreaudio_device_args;
+    #[test]
+    fn selected_microphone_skips_inputs_on_output_interface(){
+        assert_eq!(coreaudio_device_args("speakers",Some("mic"),Some(("owned",4,2))),
+            ["-d","owned","-i","2","-n","4 5"]);
+    }
+    #[test]
+    fn single_device_and_output_only_preserve_explicit_selection(){
+        assert_eq!(coreaudio_device_args("usb",Some("usb"),None),["-P","usb","-C","usb"]);
+        assert_eq!(coreaudio_device_args("speakers",None,None),["-P","speakers","-i","0"]);
     }
 }

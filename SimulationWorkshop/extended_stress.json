@@ -1,0 +1,128 @@
+{
+  "scope": "Extended probes of the corrected contact integration; still incomplete. Rotation telemetry was added after these probes.",
+  "runs": {
+    "cloth_twist": {
+      "entities_remaining": 0,
+      "mode": "simulation_workshop",
+      "physics": {
+        "build_profile": "debug",
+        "case": "cloth_twist",
+        "contact": {
+          "broad_ms": 0.004,
+          "contact_overflows": 0,
+          "edge_edge_contacts": 183,
+          "narrow_ms": 0.463667,
+          "positions": null,
+          "truncated_displacements": 304,
+          "vertex_face_contacts": 24
+        },
+        "continuous_collision_detection": false,
+        "differences": "CPU XPBD distance/bending/volume constraints plus existing OGC adaptation; reduced mesh scale; procedural geometry. ",
+        "failure": "minimum step rejected: 1 intersection pairs, 0 inverted tetrahedra; last valid state retained",
+        "frames": 224,
+        "halted": true,
+        "iterations_per_substep": 4,
+        "last_rejected_step": {
+          "candidate_time": 3.722642421722412,
+          "dt": 0.0001302083401242271,
+          "intersection_pairs": 1,
+          "inverted_tetrahedra": 0,
+          "non_finite": false
+        },
+        "nodes": 85,
+        "peak_contact_pairs": 210,
+        "simulated_seconds": 3.7225122451782227,
+        "simulated_seconds_per_wall_second": 0.4613575698229201,
+        "step_ms_average": 36.02056045982143,
+        "step_ms_max": 114.954375,
+        "substeps_per_frame": 4,
+        "tetrahedra": 0,
+        "triangles": 130,
+        "verification_retries": 6,
+        "verified_intersections": 0
+      }
+    },
+    "yarn_twist": {
+      "entities_remaining": 0,
+      "mode": "simulation_workshop",
+      "physics": {
+        "build_profile": "debug",
+        "case": "yarn_twist",
+        "contact": {
+          "broad_ms": 0.029042,
+          "contact_overflows": 0,
+          "edge_edge_contacts": 1095,
+          "narrow_ms": 3.285917,
+          "positions": null,
+          "truncated_displacements": 840,
+          "vertex_face_contacts": 138
+        },
+        "continuous_collision_detection": false,
+        "differences": "CPU XPBD distance/bending/volume constraints plus existing OGC adaptation; reduced mesh scale; procedural geometry. ",
+        "failure": "minimum step rejected: 1 intersection pairs, 0 inverted tetrahedra; last valid state retained",
+        "frames": 440,
+        "halted": true,
+        "iterations_per_substep": 4,
+        "last_rejected_step": {
+          "candidate_time": 7.321415424346924,
+          "dt": 0.0001302083401242271,
+          "intersection_pairs": 1,
+          "inverted_tetrahedra": 0,
+          "non_finite": false
+        },
+        "nodes": 412,
+        "peak_contact_pairs": 1233,
+        "simulated_seconds": 7.321285247802734,
+        "simulated_seconds_per_wall_second": 0.08685171888009831,
+        "step_ms_average": 191.5826752613637,
+        "step_ms_max": 457.509834,
+        "substeps_per_frame": 4,
+        "tetrahedra": 0,
+        "triangles": 770,
+        "verification_retries": 7,
+        "verified_intersections": 0
+      }
+    },
+    "volumetric_mat": {
+      "entities_remaining": 0,
+      "mode": "simulation_workshop",
+      "physics": {
+        "build_profile": "debug",
+        "case": "volumetric_mat",
+        "contact": {
+          "broad_ms": 0.026208,
+          "contact_overflows": 0,
+          "edge_edge_contacts": 0,
+          "narrow_ms": 2.176333,
+          "positions": null,
+          "truncated_displacements": 20,
+          "vertex_face_contacts": 0
+        },
+        "continuous_collision_detection": false,
+        "differences": "CPU XPBD distance/bending/volume constraints plus existing OGC adaptation; reduced mesh scale; procedural geometry. ",
+        "failure": "minimum step rejected: 0 intersection pairs, 3 inverted tetrahedra; last valid state retained",
+        "frames": 115,
+        "halted": true,
+        "iterations_per_substep": 8,
+        "last_rejected_step": {
+          "candidate_time": 1.9093213081359863,
+          "dt": 5.208333459449932e-05,
+          "intersection_pairs": 0,
+          "inverted_tetrahedra": 3,
+          "non_finite": false
+        },
+        "nodes": 354,
+        "peak_contact_pairs": 1,
+        "simulated_seconds": 1.9092692136764526,
+        "simulated_seconds_per_wall_second": 0.02522398010873987,
+        "step_ms_average": 658.1967206173913,
+        "step_ms_max": 1040.12975,
+        "substeps_per_frame": 10,
+        "tetrahedra": 864,
+        "triangles": 698,
+        "verification_retries": 7,
+        "verified_intersections": 0
+      }
+    }
+  }
+}

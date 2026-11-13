@@ -13,6 +13,20 @@
     },
     "Release": {
       "calls": []
+    },
+    "Complete": {
+      "calls": []
+    },
+    "RouteChanged": {
+      "calls": []
+    },
+    "Attach": {
+      "calls": [
+        "ChuckConnectionSystem.AttachOutput"
+      ]
+    },
+    "Info": {
+      "calls": []
     }
   },
   "init_steps": []

@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "fixtures": [
+    {
+      "id": 1,
+      "label": "KEY LEFT",
+      "kind": "spot",
+      "position": [
+        -15,
+        14,
+        17
+      ],
+      "target": [
+        -9,
+        3.05,
+        32
+      ],
+      "color": [
+        1,
+        0.68,
+        0.38
+      ],
+      "intensity": 0.55,
+      "range": 44,
+      "inner_degrees": 18,
+      "outer_degrees": 29
+    },
+    {
+      "id": 2,
+      "label": "KEY RIGHT",
+      "kind": "spot",
+      "position": [
+        15,
+        14,
+        17
+      ],
+      "target": [
+        9,
+        3.05,
+        32
+      ],
+      "color": [
+        0.4,
+        0.65,
+        1
+      ],
+      "intensity": 0.55,
+      "range": 44,
+      "inner_degrees": 18,
+      "outer_degrees": 29
+    },
+    {
+      "id": 3,
+      "label": "BACK LEFT",
+      "kind": "spot",
+      "position": [
+        -13,
+        14,
+        45
+      ],
+      "target": [
+        -8,
+        3.05,
+        31
+      ],
+      "color": [
+        0.6,
+        0.25,
+        1
+      ],
+      "intensity": 0.55,
+      "range": 44,
+      "inner_degrees": 18,
+      "outer_degrees": 29
+    },
+    {
+      "id": 4,
+      "label": "BACK RIGHT",
+      "kind": "spot",
+      "position": [
+        13,
+        14,
+        45
+      ],
+      "target": [
+        8,
+        3.05,
+        31
+      ],
+      "color": [
+        0.2,
+        1,
+        0.75
+      ],
+      "intensity": 0.55,
+      "range": 44,
+      "inner_degrees": 18,
+      "outer_degrees": 29
+    },
+    {
+      "id": 5,
+      "label": "WASH LEFT",
+      "kind": "wash",
+      "position": [
+        -12,
+        3.28,
+        47
+      ],
+      "target": [
+        -12,
+        3.05,
+        41
+      ],
+      "color": [
+        0.25,
+        0.4,
+        1
+      ],
+      "intensity": 0.4,
+      "range": 44,
+      "inner_degrees": 38,
+      "outer_degrees": 60
+    },
+    {
+      "id": 6,
+      "label": "WASH RIGHT",
+      "kind": "wash",
+      "position": [
+        12,
+        3.28,
+        47
+      ],
+      "target": [
+        12,
+        3.05,
+        41
+      ],
+      "color": [
+        1,
+        0.15,
+        0.35
+      ],
+      "intensity": 0.4,
+      "range": 44,
+      "inner_degrees": 38,
+      "outer_degrees": 60
+    }
+  ]
+}

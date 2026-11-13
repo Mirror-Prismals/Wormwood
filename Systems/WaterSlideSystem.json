@@ -1,0 +1,57 @@
+{
+  "system": "WaterSlideSystem",
+  "layer": 2,
+  "functions": {
+    "Configure": {
+      "calls": []
+    },
+    "Edit": {
+      "calls": []
+    },
+    "Course": {
+      "calls": []
+    },
+    "CollisionMesh": {
+      "calls": []
+    },
+    "Snapshot": {
+      "calls": []
+    },
+    "Close": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "continuous_trough_editing",
+        "description": "Retain Hermite tie/segment editing, radius/lift, green/red materials, graph persistence and open semicircular trough geometry. The exact indexed surface supplies both presentation and fluid collision.",
+        "retention": "experimental",
+        "selection": "Invoked by the tracked WaterSystem application and its presentation/query consumers.",
+        "implements": [
+          "Configure",
+          "Edit",
+          "Course",
+          "CollisionMesh",
+          "Snapshot",
+          "Close"
+        ],
+        "sources": [
+          "BaseSystem/LayerTwo/WaterSlideSystem.rs",
+          "Water/runtime.rs",
+          "Water/slides.rs"
+        ],
+        "checks": [
+          {
+            "id": "continuous_trough_editing_behavior",
+            "kind": "behavior",
+            "expectation": "Retain Hermite tie/segment editing, radius/lift, green/red materials, graph persistence and open semicircular trough geometry. The exact indexed surface supplies both presentation and fluid collision.",
+            "procedure": "Place/connect/new-chain, deselect/clear, radius/material edits and persistence; compare Hermite samples and normals, test actual particles against bottom and side walls, ensure no legacy occupancy-tube substitution. Check finite bounded graphs and invalid/cyclic source courses. Water/tests.rs contains explicit_source_course_selects_its_chain_and_rejects_missing_or_cyclic_paths; execution remains pending. Existing tie selection accepts tie_id or a bounded continuous anchor; reject missing ties without moving selected state, resolve equal-distance picks by stable ID, and never create geometry when selecting."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "system": "OGCConnectionSystem",
+  "layer": 1,
+  "functions": {
+    "Configure": {
+      "calls": [
+
+      ]
+    },
+    "Project": {
+      "calls": [
+
+      ]
+    },
+    "Release": {
+      "calls": [
+
+      ]
+    },
+    "Synchronize": {
+      "calls": [
+
+      ]
+    },
+    "Ownership": {
+      "calls": [
+
+      ]
+    },
+    "Respond": {
+      "calls": [
+
+      ]
+    }
+  },
+  "init_steps": [
+
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "native_contact_client",
+        "description": "Own native OGC contexts and supply contact force/Hessian/bound batches. Synchronize an independently validated rigid surface without re-registering unchanged topology; preserve accepted positions and previous motion for contact/friction. Attribute the shared context to its calling System and reject foreign replacement, projection, synchronization and release. Project may request force, Hessian and conservative-bound responses for every registered surface before projection; omission preserves the existing rigid-only response path. Configured surfaces may identify active query vertices; all referenced triangle vertices must remain active. Unspecified masks preserve existing behavior. Respond synchronizes accepted numeric positions and returns forces, Hessians and bounds without performing unused vertex projection. Its typed Host transport preserves permission, ownership and tracing checks. Native broad-phase caching uses a checked displacement envelope, while forces and bounds are recomputed each call. Independent Apple query workers own separate accumulators and merge before returning; serial mode remains available for numeric comparison.",
+        "retention": "supported",
+        "selection": "Used by the finite material and rigid tool operations through their declared contracts.",
+        "implements": [
+          "Configure",
+          "Project",
+          "Synchronize",
+          "Release",
+          "Ownership",
+          "Respond"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/OGCConnectionSystem.rs",
+          "Physics/OGC/Bridge.cpp",
+          "Physics/OGC/OffsetGeometricContact.cpp",
+          "Physics/OGC/OffsetGeometricContact.h",
+          "Physics/OGC/CacheCheck.cpp"
+        ],
+        "checks": [
+          {
+            "id": "exact_accepted_geometry",
+            "kind": "behavior",
+            "expectation": "Native topology and positions agree with the accepted physical rigid surface; invalid shapes do not commit and cleanup releases the context.",
+            "procedure": "Run the bounded actual-contact/rigid-pose regressions and compare accepted vertices, conservative bounds, crossing/inversion checks and cleanup. Inventory/compilation alone are not contact evidence."
+          },
+          {
+            "id": "exclusive_system_ownership",
+            "kind": "behavior",
+            "expectation": "A second System cannot replace, project, synchronize or release a configured context owned by another System. Rejected replacement preserves the existing context.",
+            "procedure": "Exercise competing registered callers and owner cleanup with native contact enabled."
+          },
+          {
+            "id": "all_surface_contact_response",
+            "kind": "behavior",
+            "expectation": "An all-responses request returns one finite force/Hessian/bound record per registered vertex, including equal-and-opposite dynamic soil and tool reactions; existing requests without the option remain valid.",
+            "procedure": "Exercise configured dynamic tool/soil contact through OGCConnectionSystem.Project, inspect both surfaces and their bounds, and retain existing ownership and synchronization checks."
+          },
+          {
+            "id": "active_surface_vertices",
+            "kind": "behavior",
+            "expectation": "An inactive vertex which belongs to no registered collision triangle does not initiate contact queries; active triangles still participate normally. An omitted mask preserves existing behavior.",
+            "procedure": "Run the native ogc_active_mask_omits_buried_query_vertices regression and existing contact tests; verify exposed tool and soil faces remain active."
+          },
+          {
+            "id": "typed_contact_response",
+            "kind": "behavior",
+            "expectation": "The typed Respond route returns the same per-vertex forces/Hessians/bounds as the JSON all-responses route at equal accepted geometry. Undeclared callers and foreign owners are rejected. Pruning skips only excluded self surfaces or non-overlapping bounds, retaining cross-surface contacts.",
+            "procedure": "Run the targeted OGC response/ownership regressions and compare deterministic workshop state before and after the optimization."
+          },
+          {
+            "id": "bounded_candidate_cache",
+            "kind": "behavior",
+            "expectation": "Candidate caching, movable-vertex masks and unchanged-geometry reuse preserve streamed contact forces, Hessians and conservative bounds. Motion beyond the conservative margin and topology/filter changes invalidate affected pairs. Cache overflow uses complete streaming queries.",
+            "procedure": "Compile and run Physics/OGC/CacheCheck.cpp with the native implementation; exercise self contact, motion, masks, topology/filter changes, fixed support and forced cache overflow. Run the actual-game release mining benchmark separately."
+          }
+        ]
+      }
+    ]
+  }
+}

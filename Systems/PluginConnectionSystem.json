@@ -1,0 +1,163 @@
+{
+  "system": "PluginConnectionSystem",
+  "layer": 1,
+  "functions": {
+    "Status": {
+      "calls": []
+    },
+    "Command": {
+      "calls": [
+        "WorkstationDataSystem.Snapshot"
+      ]
+    },
+    "Menu": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "desktop_native_plugin_host",
+        "description": "Port Cardinal VST3, CLAP, Audio Unit and isolated VST2 hosting into desktop track inserts. Native editors and processing share the original backend code; mobile compiles no plugin host.",
+        "retention": "experimental",
+        "selection": "User requested desktop plugin restoration with mobile exclusion.",
+        "implements": [
+          "Status",
+          "Command",
+          "Menu"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/PluginConnectionSystem.rs",
+          "Audio/Plugins/native/Bridge.mm",
+          "Audio/Plugins/native/Vst3.cpp",
+          "Audio/Plugins/native/Clap.cpp",
+          "Audio/Plugins/native/AudioUnit.mm",
+          "Audio/Plugins/CMakeLists.txt",
+          "Workstation/PluginRender.rs",
+          "Workstation/PluginInserts.rs",
+          "Workstation/EdisonDemo.rs",
+          "BuildSupport/Blender/export_edison_demo.py",
+          "Audio/Plugins/native/NativeUI.mm",
+          "Audio/Plugins/native/Vst2/HostedPlugin.cpp",
+          "Audio/Plugins/native/InsertAssignment.h",
+          "Audio/Plugins/native/StockEq.h",
+          "Audio/Plugins/native/StockEq.cpp",
+          "Workstation/StockEq.rs",
+          "Workstation/PluginBrowser.rs",
+          "Workstation/PluginIntegrationTests.rs",
+          "Workstation/StockEqGems.rs",
+          "Workstation/DecorativeControls.rs",
+          "Render/Workstation.rs",
+          "Workstation/PluginBrowserFeedbackTests.rs",
+          "Audio/Plugins/native/Bridge.h",
+          "Audio/Plugins/native/Host/ParameterMailbox.h",
+          "Audio/Plugins/native/Host/Vst3Host.h",
+          "Audio/Plugins/native/Host/ClapHost.h",
+          "Audio/Plugins/native/AutomationParameters.h",
+          "Workstation/CcAutomation.rs",
+          "BuildSupport/Workstation/test_vst3_parameters.cpp",
+          "BuildSupport/Workstation/vst3_host_probe.cpp",
+          "BuildSupport/Workstation/verify_native_plugin_safety.py"
+        ],
+        "checks": [
+          {
+            "id": "desktop_host_compile",
+            "kind": "behavior",
+            "expectation": "Compile/link the desktop host and vendored SDKs.",
+            "procedure": "Compile-check in this change; native plugin interaction and audio are for desktop playtest."
+          },
+          {
+            "id": "edison_insert_placement_and_input",
+            "kind": "behavior",
+            "expectation": "The selected-track insert chain occupies the bottom panel beside page and track navigation. Socket and plug preserve their authored upright axes; the former decorative tilt and painted extrusion offsets are retired. Connected geometry bounds determine horizontal clearance, scroll limits and visibility while the socket face defines picking. Opening an editor never shifts other inserts. Track arrows appear only on the insert page; mixer input passes through. A reorder requires release within the chain, and offscreen panel content cannot be clicked.",
+            "procedure": "Compile-check the port. Desktop playtest: open and close actual editors, scroll a long chain, switch pages and tracks, drag effects within and outside the chain, and compare placement at narrow and wide panel sizes. Appearance and native interaction require playtest; compilation alone does not verify them."
+          },
+          {
+            "id": "plugin_playback",
+            "kind": "behavior",
+            "expectation": "Load actual installed instruments/effects, edit parameters, play MIDI/PCM, bypass/remove/reorder and verify native close updates Edison. Device/user validation pending.",
+            "procedure": "Compile-check in this change; native plugin interaction and audio are for desktop playtest."
+          },
+          {
+            "id": "mobile_exclusion",
+            "kind": "behavior",
+            "expectation": "Confirm iOS build skips native host, SDKs and plugin workers.",
+            "procedure": "Compile-check in this change; native plugin interaction and audio are for desktop playtest."
+          },
+          {
+            "id": "cardinal_instrument_assignment",
+            "kind": "behavior",
+            "expectation": "Loading a MIDI instrument successfully replaces its previous instrument, including across native formats, without changing effects or other tracks. Failed initialization retains the previous instrument. Newly loaded editors remain closed until the Edison socket is clicked.",
+            "procedure": "Isolated assignment lifecycle tests and native host compile; actual native plug-in factory/window behavior requires desktop playtest."
+          },
+          {
+            "id": "insert_delete_key_ownership",
+            "kind": "behavior",
+            "expectation": "Deleting a selected insert consumes the Delete/Backspace key until key-up, including frames after the insert has disappeared, preventing deletion of an underlying arrangement clip or note.",
+            "procedure": "Run actual PluginInserts UI event handling against controlled host and panel fixtures: select insert, delete outside bottom panel, hold for multiple frames, release. Assert exactly one remove command and ownership through release."
+          },
+          {
+            "id": "cardinal_stock_shaping_eq",
+            "kind": "behavior",
+            "expectation": "U Shaping EQ is the original LShaping stock effect, with stereo Butterworth shelves, seven slope choices, parameter and bypass smoothing, separate realtime/offline filter state, response curve and state save/restore. Its inline graph controls gain, both cutoff edges, slopes, bypass and removal; its title reorders the effect. It has no Edison native editor.",
+            "procedure": "Run the registered Step/drop/graph integration case; compare original and adapted DSP sample-for-sample across cutoff/gain/slopes/bypass/rate changes; exercise the actual native command and PCM bridge. These headless checks do not verify native drawing or device output."
+          },
+          {
+            "id": "cardinal_catalog_release_to_track",
+            "kind": "behavior",
+            "expectation": "The original All/Components/Plugins catalog groups and loaded plugin names appear on the left gem. Press selects and captures; release over an eligible existing timeline track loads once. Stock EQ preserves the original selected-lane fallback when there is no direct row, including outside the timeline. Instrument-to-audio and CC drops reject. Revision/layout/pointer loss and Escape cancel. The port-only native right-click plugin menu is retired because the preserved source uses the browser and Edison chain gestures.",
+            "procedure": "Run PluginBrowser gesture cases, retained category-scroll checks, and cardinal_plugin_browser_drop_stock_graph_and_labels_use_registered_routes. Native installed formats and presentation still require desktop playtest."
+          },
+          {
+            "id": "cardinal_stock_gem_surfaces",
+            "kind": "behavior",
+            "expectation": "The original stock housing, two slopes, B and X are real closed gem surfaces using the current approved bottom-panel cut, IOR, roughness, transmission, volume absorption and GGX energy tables. Stock selection/bypass/press selects bounded immutable variants. Source stock graph lettering/plot stays separate; native surface no longer paints opaque replacement housings. Existing geometry addresses, shader integrator, studio and AgX remain unchanged.",
+            "procedure": "Run stock_gems geometry/material/plane and physical-press tests, initial packet upload test, and registered plugin integration assertions for stock control pose and instance bounds. Native appearance is a separate integration check; no GUI automation is required in this lane."
+          },
+          {
+            "id": "cardinal_browser_hover_and_drop_feedback",
+            "kind": "behavior",
+            "expectation": "Catalog hover and selection fill the original complete rounded row faces while content text remains MiraText. Fractional scroll preserves face alignment. Only successful hosted/stock drops emit Cardinal's eight alternating star/plus glyphs for .55 seconds; cancellation or failed adds do not. Category-column wheel does not move plugin contents.",
+            "procedure": "Run PluginBrowser feedback_tests and cardinal_plugin_browser_drop_stock_graph_and_labels_use_registered_routes. Native overlay syntax has been checked; actual gem-window appearance and installed plugin interaction require desktop playtest."
+          },
+          {
+            "id": "plugin_control_and_preparation_ownership",
+            "kind": "behavior",
+            "expectation": "Plugin lifecycle, device-rate preparation, controller metadata and native editors run on main; worker automation uses prepared metadata and bounded atomic parameter mailboxes, never the UI command route. Final knob values survive arbitrarily many edits before a block. Metadata notifications do not reset DSP; requested I/O changes stop processing until owned bus buffers are rebuilt. Native commands explicitly reject calls outside their creating control thread; third-party discovery and UI require macOS main. Stock-only headless tests may own a host on a test thread.",
+            "procedure": "Run verify_native_plugin_safety.py with an installed VST3 bundle and class name, optionally --asan. Verify mailbox burst/concurrent/final-value delivery, VST3 restart semantics, worker automation vs main-thread controller refresh, and the complete current C bridge ABI. These checks do not open the editor, drive audio hardware, or prove the reported GUI crash has been reproduced."
+          }
+        ]
+      },
+      {
+        "id": "manual_user_catalog_refresh",
+        "description": "Plugin discovery reads only the explicit editable USER root supplied by the application, including packaged runs. A manual import can request a catalog refresh. Repeated refresh reuses loaded VST3/CLAP modules, rebuilds catalog rows without duplicates and retains current insert instances. System-wide plugin directories remain excluded.",
+        "retention": "supported",
+        "selection": "Command scan, with refresh true only when explicitly requested after manual import.",
+        "implements": [
+          "Command"
+        ],
+        "sources": [
+          "BaseSystem/LayerOne/PluginConnectionSystem.rs",
+          "Audio/Plugins/native/Bridge.mm",
+          "Audio/Plugins/native/Vst3.cpp",
+          "Audio/Plugins/native/Clap.cpp",
+          "Audio/Plugins/native/AudioUnit.mm",
+          "Audio/Plugins/native/Vst2/HostedPlugin.cpp",
+          "Audio/Plugins/native/Host/ClapHost.h",
+          "Audio/Plugins/native/Host/Vst2Host.h",
+          "BuildSupport/Workstation/manual_plugin_probe.mm"
+        ],
+        "checks": [
+          {
+            "id": "manual_catalog_refresh",
+            "kind": "behavior",
+            "expectation": "Empty custom USER catalog contains only stock effects. Adding a selected plugin and explicitly refreshing discovers it. Repeated refresh neither duplicates rows nor removes active stock inserts.",
+            "procedure": "Build and run manual_plugin_probe.mm against the current native plugin library with a fresh scratch USER root. No actual third-party DSP is loaded by this probe."
+          }
+        ]
+      }
+    ]
+  }
+}

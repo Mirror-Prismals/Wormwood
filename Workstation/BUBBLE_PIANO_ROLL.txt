@@ -1,0 +1,242 @@
+Floating bubble piano roll
+
+The note field occupies open air between the existing gem panels. It has no
+backing panel, piano-key texture, grid lines or procedural texture. Pitch/time
+coordinates remain exact and local to the MIDI clip. No global BPM is added.
+
+Desktop interaction
+
+Double-click an existing MIDI tape to open it. N auto-creation, timeline Enter
+opening and the invented left-panel clip buttons are retired. Create clips via
+selected timeline range and Command-Shift-M. OpenPianoRoll {id} selects an
+existing MIDI clip through the registered API; omitted id requires a selected
+clip and never creates document content.
+An empty roll initially shows one octave around middle C. Existing notes frame
+their pitch range with padding, within12..84 rows; wider ranges keep an actual
+note visible and can be panned. The keyboard cursor starts in the framed register.
+Subsequent document sync
+preserves the user's pan and zoom rather than repeatedly reframing the view.
+
+Left click draws; drag a note body to move; drag its right edge to resize.
+P selects Draw and B selects Paint. Held right mouse erases. Free placement is
+the default. G toggles a local1/4-quarter snap; snap does not add visible lines.
+Tab/Shift-Tab focuses notes, arrows move, Shift-left/right resizes, Alt-up/down
+changes velocity, Delete removes, and Enter places another note. Command/Control
+Z and Shift-Z undo/redo accepted edits from this editor session. History is
+bounded and is invalidated by an external change to the clip.
+
+Wheel pans pitch; Shift-wheel pans time; Alt-wheel zooms pitch; Command/Control
+wheel zooms time. Escape closes the roll and returns arrow/Shift shortcuts to
+the arrangement. N reopens the piano roll. The arrangement owns blank-field
+clicks while the roll is closed; opening a clip consumes its activation press
+until release so it cannot also draw a note. All hit
+tests use logical pixels and the same note projection as presentation.
+Native N/Enter presses are queued in order even if released between frames.
+The queue retains at most8 presses, consumes one per frame, and clears on focus
+loss. Enter modifiers are captured at the press, and opening a clip consumes
+that press before a distinct later Enter can insert a note. Physical held state
+remains separate; the direct control API still accepts legacy held-key input.
+
+Drawing previews locally until release. PutClip commits with document_revision;
+authoritative Snapshot data acknowledges the edit. Conflicts cancel the draft
+without overwriting other editors. Removed clips close the editor while leaving
+the workstation open. Closing discards uncommitted changes and keeps committed
+document notes. All allocating operations remain on the control thread.
+
+Asset and optical adaptation
+
+BubbleNotes.blend remains the editable authority and is never overwritten by
+the runtime exporter. BubbleNotes_runtime.json/bin retain the actual Short
+mesh's1474 vertices,2944 triangles, source normals and both placement shape-key
+deltas. Validated ring/boundary descriptors regenerate duration with the source
+radius min(length*.46,height*.28). Long notes retain this fixed topology rather
+than gaining longitudinal segments. Native smooth normals differentiate that
+surface and its deformation. They are not claimed identical to Blender's
+area-weighted vertex normals.
+
+Placement preserves every X coordinate and settles at1.35seconds. Selected
+notes rise slightly. The native material uses uniform450nm air/film/air
+interference at three representative visible wavelengths, film IOR1.333,
+air interior and source roughness. It has no noise, texture, pigment rainbow,
+emission or bulk water refraction. This intentionally replaces the Blender
+noise-driven flowing thickness, so settled material does not keep flowing.
+This is an optical approximation, not Cycles pixel equivalence. Membranes join
+reflected/transmitted scene paths; their effect on direct-light shadows is
+currently omitted. Existing studio lights and AgX transform remain.
+
+Up to2048 notes are packed in unused frame rows after engraving's368 used rows;
+pitch groups accelerate native mesh queries. Existing immutable addresses stay
+unchanged. Whole offscreen notes are culled. Extremely long offscreen spans
+are windowed beyond the field plus two note heights for numerical conditioning;
+all visible onset/end coordinates and backend note timings remain unchanged.
+Subpixel/sub-float-resolution notes remain in the document/packet, without a
+promise that their optical detail can resolve. Settled notes permit idle-frame
+reuse. Active editing/placement redraws through a layer-five Audicle.
+
+Integration boundaries and verification
+
+The editor uses Agent Mida's Snapshot/PutClip APIs. It does not connect an
+instrument, audio audition, playback transport, project saving or MIDI devices.
+Those remain core-workstation integrations. Scale/microtonal menus, drawn
+velocity lanes and dedicated 3D ruler/snap menus are not part of this pass;
+velocity and viewport controls have the keyboard/wheel paths above. Native
+touch note editing has not been connected. iOS packaging includes the asset
+for subsequent device work; no phone build or upload is claimed.
+
+BuildSupport/Workstation/validate_bubble_notes.py generates and verifies the
+runtime asset, compiles shaders, runs workstation tests and builds the desktop
+executable. --native runs the explicit --check-bubble-notes BACKEND diagnostic
+on WebGPU,Vulkan,OpenGL and saves four-note captures. It opens no audio device.
+Successful capture submission is distinct from human visual review.
+The October 30 asset export retained all1474 vertices and2944 triangles, verified
+its parameter reconstruction, and left the Blender source unchanged. OpenGL,
+iOS GLSL and Vulkan SPIR-V compilation passed. Evidence is saved under
+output/checks/bubble-piano-roll-20261030-093303. Integrated validation under
+output/checks/bubble-piano-roll-20261030-100000 passed174 workstation tests with
+zero failures and one ignored test, the desktop build, and all three native
+backends. Intent inspection reported zero structural mismatches. Each backend
+captured four bubbles, completed four frames, and released all scene Entities.
+The Host tests cover accepted edits, external replacement/removal, undo ordering,
+close/reopen and consuming held activation input across arrangement focus.
+Visual review confirmed the open field and absent grid, but found the original
+36-row pitch framing too small at640x480. Follow-up job job-mvutt2aa-576b6fb6
+passed185 workstation tests with zero failures and one ignored test, the desktop
+build, and intent inspection with zero structural mismatches. This includes the
+closer opening view, manual pan/zoom preservation, wide-range visibility and
+initial keyboard-register regressions; stored note data remains unchanged.
+Refined native captures under output/checks/bubble-piano-roll-20261030-102901
+passed on WebGPU,Vulkan,OpenGL with the same verified executable. Each completed
+four frames, submitted four notes, reported no editor error and released all
+scene Entities. Visual review at640x480 confirms four distinct note lengths in
+the open field with no visible grid. Transparent film remains subtle against the
+gray studio background, especially on short notes; this is not an opaque note
+fill. The mesh occupies78% of each pitch row, and its corner radius does not
+reduce that full height. No live audio or phone check is claimed.
+Subsequent native input review found brief N/Enter taps could be lost by held-key
+polling. Shared follow-up job job-mvuup7ak-9a9ea58e passed194 workstation tests
+with zero failures and one ignored test, including the ordered-command callback,
+focus-loss, captured-modifier and Host opening regressions. The desktop build,
+intent inspection and packaged startup preflight also passed. Evidence is under
+output/checks/bubble-piano-roll-input-20261030-105152. The DAW agent subsequently
+observed quick N open the piano roll (window title changed) and quick Return
+place a visible note in the actual packaged native app. Earlier three-backend
+captures remain separate from this keyboard walkthrough. The same note then
+passed a separate core-workstation native export walkthrough: four8-second,
+48kHz IEEE float32 mono WAVs. Independent readback verified384000 frames each,
+11759 nonzero samples in Front Fill and exact silence in L/S/R, matching default
+routing. This is offline-export evidence, not live-playback audition. The shared
+export report and PCM verification are cross-referenced in the input report.
+
+Separate piano room, November 7, 2026
+
+The full-window piano room supersedes the original between-panels view and the
+selected-track tape-strip presentation. The four ruby panels, timeline lanes
+and world-camera passthrough belong only to the arrangement. Escape, Tab or
+< TIMELINE returns there. Double-click a MIDI clip to enter its note editor.
+The canvas stays plain: no global project BPM or audio tempo grid is added.
+The small ruler above the canvas addresses this clip's local quarter clock.
+
+Art/AudioWorkstation/PianoKeyboard/PianoKeyboard.blend is the editable model;
+PianoKeyboard.glb contains a tangible octave of ivory keys, raised ebony keys
+and walnut case. BuildSupport/Blender/make_piano_keyboard.py regenerates them.
+The native renderer instances the exact26 bevel halfspaces exported from the
+model's key template. Duration bubbles retain their original authored mesh and
+soap-film material. Key positions, bubble projection and pointer coordinates
+share logical pixels. This is native ray-traced geometry, not a keyboard image.
+
+The toolbar selects Draw, Paint, local snap, BPM, meter, EDO, scale and root.
+Click increments/cycles; Shift reverses. Wheel over BPM changes one BPM, or0.1
+with Alt. Meter changes numerator; Alt changes denominator. EDO click cycles
+Cardinal's5,7,12,17,19,22,24,31,53,72 presets; wheel permits1..4096.
+Scale choices use Cardinal's major, harmonic/melodic/Hungarian minor,
+Neapolitan major and double-harmonic intervals in12-EDO; other tunings leave
+physical tuning steps available. These scale choices do not add a canvas grid.
+Local snap remains independent of free placement and of the arrangement.
+
+Each physical key advances one selected tuning degree from C4/key60. The
+ordinary12-key white/black shape does not change with EDO. In microtone mode
+white keys show a degree rainbow; raised accidentals remain ebony. Notes store
+ordinary MIDI anchors plus tuning_cents, and each clip stores edo, scale/root,
+BPM and meter. Changing tuning retunes physical key positions; changing BPM
+preserves quarters. Unrelated clips and audio placement do not change.
+The built-in renderer, live preview, capture and frozen export use canonical
+pitch plus cents. VST3 receives native note tuning; CLAP uses its declared
+native/MPE dialect. Undeclared microtonal native-instrument support fails
+explicitly; AudioUnit tuning is not enabled by this change. Plugin-dependent
+sound still requires separate real-plugin validation.
+
+The previous blank between-panel presentation and workspace tape strip are
+retired by this user-requested design change. Prior capture evidence describes
+those historical interfaces, not the separate room. The EDO diagnostic override
+WORMWOOD_PIANO_CHECK_EDO is accepted only by the finite bubble/arrangement check;
+it never changes an ordinary user's document or tuning selection.
+
+
+Bubble visibility lighting, November 7, 2026
+
+The separate piano room now includes a broad warm studio reflection, a cooler
+fill and a soft sky reflection. The directly visible and transmitted backdrop
+remains plain gray. Curved membrane reflection rays see these light cards,
+revealing translucent note bodies and wider iridescent highlights. This is a
+lighting change: the authored mesh, uniform 450 nm film interference, Fresnel
+weights, straight-through transmission and placement animation are unchanged.
+No opaque note fill, emissive rim or painted rainbow is added. The timeline's
+environment is unchanged. Native before/after captures and shader validation
+are recorded under output/checks/bubble-visibility/.
+
+
+Physical key alignment and per-page cameras, November 7, 2026
+
+The displayed keyboard no longer stretches individual white fronts to fit
+uniform semitone rows. PianoKeyLayout.rs uses the Blender octave's proportions:
+seven equal white-key fronts per octave, narrower raised accidentals in groups
+of two and three. The key widths are 23/24 and 13/24 of a white-key spacing;
+black key length is 89/145 of the white key length. This is a schematic piano
+keyboard model, not a factory drawing of a complete piano action.
+
+Bubble centers, bubble heights, keyboard solids, audition picking and editor
+picking share this physical layout. White-key bubbles have the white front's
+height; black-key bubbles have the narrower black front's height. Different
+physical key heights are intentional; white-key fronts are equal. Musical
+pitch and clip-local quarter coordinates are unchanged. The former uniform
+semitone vertical projection and variable white-front sizing are retired.
+
+The fixed gray backing is removed. Plain mode uses the existing workstation
+plain backdrop. In game-camera mode, piano_roll and timeline have separate
+remembered session camera selections and pan: mountain and riverbank initially.
+C cycles the current page's camera and W/A/S/D pans while the computer MIDI
+keyboard does not own those keys. Standalone DAW mode retains its existing plain
+fallback because there is no active game scene. Transparent note composition
+over the camera uses thin-film transmittance and a bounded 16-interface walk;
+SDR source-over composition is an approximation, not a full spectral camera
+render. Toolbar/keyboard stay opaque and visible.
+
+Thirty-two focused layout/editor tests, the independent-camera state test,
+WGSL parse/validation and GL/GLES/Vulkan fragment validation pass. The optimized
+signed local app is updated. Native preview captures were interrupted and no
+window was reopened after the user closed the app; the new appearance and live
+camera composition still need fresh visual review. Evidence is under
+output/checks/piano-key-alignment/. That report also records a separate existing
+mobile hidden-piano/transport workflow failure; phone behavior is not verified.
+
+Retained pointer clicks in Play Mirror, November 7, 2026
+
+The piano room consumes the native pointer callback queue as well as the final
+held-button sample. A press and release between rendered frames now creates a
+note in both DAW-only and embedded Play Mirror mode. Multiple clicks retain
+their callback positions and each edit is acknowledged before the next edit.
+Wheel and keyboard actions are sampled once per frame. Blur, cancellation,
+malformed callback batches, opening the room and another UI owner cancel or
+consume gestures without creating an unintended note. Regression evidence is
+in output/checks/embedded-piano-input/.
+
+Pitch bends
+Option/Alt-drag a bubble vertically to change its ending bend, smoothly ramped
+from zero over its duration, within +/-2 semitones. Alt+Shift-click resets it.
+This is an undoable release-time edit using the existing note identity; move,
+resize, save and reopen retain bend_semitones. Curved hit testing follows the
+film. Baked production film is warped as an image, without live optics.
+Native plugin pitch bend is channel-wide; the latest held bent note controls
+channel 1 and older bends resume when it ends. No bent notes means centered
+wheel. Plugin wheel sensitivity must be +/-2 semitones. Native CLAP note tuning
+expressions carry the same offset. The built-in sine supports independent bends.

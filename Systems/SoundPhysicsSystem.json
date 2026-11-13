@@ -1,0 +1,40 @@
+{
+  "system": "SoundPhysicsSystem",
+  "layer": 2,
+  "functions": {
+    "Apply": {
+      "calls": []
+    },
+    "ApplyMicrophone": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "head_and_distance_response",
+        "description": "Apply original reference-distance falloff, head pan, near-source width and head/distance low-pass response once per frame.",
+        "retention": "experimental",
+        "selection": "Authorized Mirror restoration; shared integration and native validation pending.",
+        "implements": [
+          "Apply",
+          "ApplyMicrophone"
+        ],
+        "sources": [
+          "Audio/acoustic.rs",
+          "BaseSystem/LayerTwo/SoundPhysicsSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "restoration_review",
+            "kind": "behavior",
+            "expectation": "Apply original reference-distance falloff, head pan, near-source width and head/distance low-pass response once per frame.",
+            "procedure": "Rewrite owns validation: compare retained Cardinal formulas/scripts, run new unit checks, wire registered hooks into Mirror, verify native macOS and iOS output, source movement/removal, failure cleanup and callback underrun telemetry. Source presence and compilation alone are not audible verification."
+          }
+        ]
+      }
+    ]
+  }
+}

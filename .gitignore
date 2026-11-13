@@ -7,3 +7,35 @@
 
 __pycache__/
 *.pyc
+
+# Source-only GitHub backup: local art and generated asset payloads stay on disk.
+/Art/
+/USER/
+/Procedures/Assets/
+/Procedures/Fonts/
+*.blend
+*.blend1
+*.glb
+*.gltf
+*.rgba
+*.rgba8
+*.rgba32f
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.ico
+*.otf
+*.ttf
+*.wav
+*.mp3
+*.flac
+*.aiff
+*.bin
+
+# Local credentials and signing material.
+.env
+.env.*
+*.p12
+*.pfx
+*.mobileprovision

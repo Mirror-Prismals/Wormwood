@@ -1,0 +1,207 @@
+{
+  "system": "ShovelSystem",
+  "layer": 5,
+  "functions": {
+    "Step": {
+      "calls": [
+        "PlanetSurfaceSystem.Height",
+        "PlayerModelSystem.Load",
+        "EntitySystem.Create",
+        "EntitySystem.Update",
+        "EntitySystem.Remove",
+        "AudicleSystem.Create",
+        "AudicleSystem.Ready",
+        "AudicleSystem.Go",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "TerrainToolSystem.Advance",
+        "TerrainToolSystem.Release",
+        "TerrainToolSystem.Prepare",
+        "TerrainToolSystem.Aim",
+        "TerrainToolSystem.Frame"
+      ]
+    },
+    "Active": {
+      "calls": []
+    },
+    "Close": {
+      "calls": [
+        "EntitySystem.Remove",
+        "AudicleSystem.Finish",
+        "AudicleSystem.Cancel",
+        "TerrainToolSystem.Release"
+      ]
+    },
+    "Abort": {
+      "calls": [
+        "AudicleSystem.Cancel",
+        "EntitySystem.Remove",
+        "TerrainToolSystem.Release"
+      ]
+    },
+    "ConstrainMovement": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "embodied_shovel_trial",
+        "description": "Prepare the original Blender shovel and a separate soil/support Entity under a tracked experimental Audicle. Player input requests a physical contact stroke, with solver-owned tool pose and world hand targets for IK. The fixture has its own lifetime, and each requested stroke creates a child Audicle that finishes on return or cancels on a halt.",
+        "retention": "retired",
+        "selection": "Removed from gameplay at the author's request. The bounded pre-separated-clod implementation is retained in Physics/shovel.rs for research, not presented as ground digging.",
+        "implements": [
+          "Step",
+          "Active",
+          "Close",
+          "Abort"
+        ],
+        "sources": [
+          "Physics/shovel.rs",
+          "Systems/ShovelSoilSystem.json"
+        ],
+        "checks": [
+          {
+            "id": "trial_retirement",
+            "kind": "behavior",
+            "expectation": "The prepared clod/cradle trial is absent from gameplay and its native physics is not configured by world shovel pickup.",
+            "procedure": "Review the replacement ShovelSystem routes and starting scene. The old source is retained for research and the public hooks are reused by pickup; their continued existence does not reinstate the retired demo."
+          }
+        ]
+      },
+      {
+        "id": "world_shovel_pickup",
+        "description": "Pick up the regular straight spade from its actual mesh, hold and maneuver it with two world hand targets, and release it into physical gravity/contact. Input supplies a requested rigid pose, while TerrainToolSystem supplies the accepted pose used by both the spade and hand IK. Terrain/material changes follow physical contact response, not a gesture-triggered cut. The supporting hand slides only along the straight shaft interval and requested tool placement respects both displayed arm lengths; accepted physical pose remains authoritative. Equipped requests supply model-space grip points, the current world-space shoulder frame, anatomical reach bounds and the support-slide interval for physical grasp constraints; unequipped requests supply null grasp. Desktop manual rotation pivots about the current accepted upper/D grip, including bounded orientation interpolation; the resulting blade-origin request offsets persist when rotation ends. Vertical translation drag changes height only; horizontal drag changes lateral position, and explicit pinch/reach input changes reach.",
+        "retention": "supported",
+        "selection": "Retained implementation alternative. PlanetNavigationSystem now selects PhysicsSystem.GameStep for the user-approved integration of workshop materials and charge/release controls. This manual shovel-drag controller is no longer the selected game path. Tap/click the spade within reach, or G on desktop. Mobile camera drag always looks; held-tool work uses Hold to dig and Put down buttons. Desktop retains manual tool gestures. Reset respawns the tool and bounded work site.",
+        "implements": [
+          "Step",
+          "Active",
+          "Close",
+          "Abort"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "Platform/iOS/Touch.rs",
+          "Procedures/Assets/shovel.json",
+          "Art/Tools/make_shovel.py",
+          "Art/Tools/StraightSpade.obj",
+          "Procedures/player_body.json"
+        ],
+        "checks": [
+          {
+            "id": "pickup_manual",
+            "kind": "behavior",
+            "expectation": "Pickup requires an actual mesh hit within reach or the explicit nearby G action. Both world hand targets and the visible spade follow the accepted physical pose through blocked movement. Releasing clears both hand targets while the same tool and physical soil remain in the world.",
+            "procedure": "Review the native pickup, translation, levering, blocked accepted pose, two-hand grip errors, G/two-finger release, gravity/contact settling, repickup, pause/resume, reset and close paths. Exercise mouse/keyboard and actual phone touch delivery. Physical soil/root interaction evidence is separately owned by TerrainToolSystem. During rotation compare the upper grip before/after the requested rigid pose, check the blade sweeps about that hand, and check releasing rotate then translating does not reset the blade origin to the pre-rotation offsets."
+          }
+        ]
+      },
+      {
+        "id": "scripted_cut_stroke",
+        "description": "The previous automatic lowering/cutting/lifting/tipping stroke with gesture-selected cut depth is explicitly retired by the approved physical-spade assignment.",
+        "retention": "retired",
+        "selection": "Never selected. The old geometric cut remains retired; the new guided motion only requests physical poses through TerrainToolSystem.",
+        "implements": [
+          "Step",
+          "Active",
+          "Close",
+          "Abort"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "Systems/ShovelSystem.json"
+        ],
+        "checks": [
+          {
+            "id": "scripted_cut_removed",
+            "kind": "behavior",
+            "expectation": "ShovelSystem contains no TerrainToolSystem.Cut invocation or charged footprint generation. Guided movement does not directly remove soil.",
+            "procedure": "Review the replacement interaction and contract routes; verify terrain changes result from contact strain/root failure rather than a button timer."
+          }
+        ]
+      },
+      {
+        "id": "reachable_tool_work_posture",
+        "description": "Use a bounded waist bend selected with accepted-grip reach as the first constraint, then the manually requested spade pose. The feet remain supported by the existing gait/ground solve while a bounded 25 cm low stance permits pelvis descent; torso, head and camera move coherently, while both hands retain actual bind lengths and accepted-pose grip targets. Bend direction runs from the neutral shoulder midpoint toward the midpoint of both accepted grips, and target plus smoothed bend retain accepted-grip reach while physical contact holds the tool. No direct terrain cut is introduced. The low working stance is an explicit replacement for the earlier fixed-pelvis expectation; legs retain their lengths and camera/shoulders share the same lowering. Guided tool requests use the same grasp and posture constraints. After physics accepts a new pose, project any remaining grip-reach violation onto the closest feasible bounded bend, refining the angle and sliding support grip before reporting the final posture to same-frame IK; normal posture motion retains its existing response smoothing.",
+        "retention": "supported",
+        "selection": "Retained implementation alternative. PlanetNavigationSystem now selects PhysicsSystem.GameStep for the user-approved integration of workshop materials and charge/release controls. This manual shovel-drag controller is no longer the selected game path. The player holds/manipulates the spade; posture recovers continuously after release and remains inactive during ordinary untooled movement.",
+        "implements": [
+          "Step",
+          "Active",
+          "Close",
+          "Abort"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "BaseSystem/LayerTwo/InverseKinematicsSystem.rs",
+          "BaseSystem/LayerFour/RigRetarget.rs",
+          "BaseSystem/LayerFour/PlayerRigSystem.rs",
+          "Procedures/player_body.json"
+        ],
+        "checks": [
+          {
+            "id": "reachable_manual_penetration_and_lever",
+            "kind": "behavior",
+            "expectation": "Manual lowering, toward-body levering and lifting reach the physical soil while the visible torso bends and both hands remain reachable without arm stretching. Camera follows the same head/torso shift, tool rays use displayed camera position, and release recovers upright posture without a direct terrain cut. The low stance lowers shoulders and camera equally and preserves leg lengths; release recovers standing height.",
+            "procedure": "Run the production player-controls soil/root/lift/release fixture with actual IK/retarget feedback and check fixed bone lengths, hand errors, measured posture/camera offsets, and accepted tool pose on Mac and phone. Also check ordinary standing/gait, reset, pause/resume and no-HUD touch controls. Through every equipped frame, check accepted grip reach during requested lifting while soil contact still holds the spade; posture must not recover upright based only on the future requested pose. Include post-physics accepted-pose changes between coarse bend samples; verify final same-frame posture, support-grip interval, both anatomical reach limits and unchanged accepted tool pose."
+          }
+        ]
+      },
+      {
+        "id": "guided_physical_dig",
+        "description": "A ground ray marks reachable physical soil; a held work button locks that world target and requests positioning, insertion, levering and lifting through accepted rigid contact and anatomical hand constraints. Releasing work cancels. Levering requires fresh blade contact near the locked ground target; lift completion requires accepted motion. Missing feedback, no contact and sustained blockage stop the attempt. No timer creates or removes material. Contact detection uses the sum of blade vertex force magnitudes, because opposing contacts can cancel in net force. Net force retains its directional meaning. Completion additionally requires at least 50 grams of earth that was attached at the start of this stroke to be detached and currently lifted at least 5 cm from its own starting centroid. An empty stroke is reported explicitly; historical peak lift and old debris cannot satisfy success. The insertion phase now requires the accepted cutting edge to enter at least 10 cm below the locked surface before levering. Surface contact alone cannot advance it. Contact with insufficient insertion reports insertion_blocked, distinct from missing contact. Aim respects the actual supplied ray from the rendered camera. A refined child is compared with the initial position of the same material coordinate in its ancestor, so splitting alone cannot count as lift.",
+        "retention": "experimental",
+        "selection": "Retained implementation alternative. PlanetNavigationSystem now selects PhysicsSystem.GameStep for the user-approved integration of workshop materials and charge/release controls. This manual shovel-drag controller is no longer the selected game path. Mobile Hold to dig button; Put down releases the tool. Green ring means reachable physical soil; orange means unavailable. Right drag remains look. Desktop E requests one targeted attempt.",
+        "implements": [
+          "Step",
+          "Active",
+          "Close",
+          "Abort"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "Render/window.rs",
+          "Platform/iOS/Touch.rs",
+          "Physics/terrain_tool.rs",
+          "Platform/iOS/App.m",
+          "Physics/soil_volume.rs"
+        ],
+        "checks": [
+          {
+            "id": "guided_physical_dig_review",
+            "kind": "behavior",
+            "expectation": "A target is locked at the start of an attempt. Levering requires measured blade contact near the ground target. Release, failure and stalled motion stop requests. No mass is created by a button, and detached material remains physical. Completion requires newly detached material from this stroke lifted at least 5 cm; empty motion must report empty_stroke.",
+            "procedure": "Exercise an entire stroke, including obstruction, hand reach, cancellation and release, then review soil contact and lift on desktop and the requested mobile device. Compilation alone does not verify digging. Run mobile_work_button_lifts_the_same_soil_with_reachable_hands, using the runtime work channel and actual rig feedback. This is a retained readiness gate, including if it fails."
+          }
+        ]
+      },
+      {
+        "id": "held_tool_restricts_locomotion",
+        "description": "Before accepting locomotion, constrain shoulder translation to the workspace of the upper hand on the accepted physical spade. A stuck tool can restrict walking; releasing removes the constraint. This is a kinematic reach coupling, not a full mass-and-impulse player-body OGC solve.",
+        "retention": "experimental",
+        "selection": "Retained implementation alternative. PlanetNavigationSystem now selects PhysicsSystem.GameStep for the user-approved integration of workshop materials and charge/release controls. This manual shovel-drag controller is no longer the selected game path. Equipped spade during ordinary locomotion; noclip explicitly bypasses this movement constraint.",
+        "implements": [
+          "ConstrainMovement",
+          "Step"
+        ],
+        "sources": [
+          "BaseSystem/LayerFive/ShovelSystem.rs",
+          "BaseSystem/LayerFive/PlanetNavigationSystem.rs",
+          "BaseSystem/LayerFive/PlayerControls.rs"
+        ],
+        "checks": [
+          {
+            "id": "held_tool_walk_release",
+            "kind": "behavior",
+            "expectation": "A player cannot walk five metres away while continuing to hold the accepted shovel pose. Putting down the shovel restores free translation.",
+            "procedure": "Run the held-spade body-motion hook test and the actual rig/soil trajectories. Play grounded forward/back/strafe movement against a planted spade, release, jump and pause on phone; no mass-conserving body dynamics are claimed."
+          }
+        ]
+      }
+    ]
+  }
+}

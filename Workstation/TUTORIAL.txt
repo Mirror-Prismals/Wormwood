@@ -1,0 +1,53 @@
+BUILT-IN HANDS-ON LESSONS
+
+Click the ruby LEARN button on page two of the desktop DAW right panel. Choose Audio basics or MIDI
+basics. Hide Lesson collapses the card without losing progress. Choosing a
+lesson tab restarts only that lesson's progress, never the project. Practice
+tracks and edits remain ordinary project content. Progress is session state;
+no preferences file or separate tutorial project is written.
+
+Audio basics: create a new Audio Track from Components; import a WAV from the
+Audio browser onto that track; move its tape; change its gain in the bottom
+Mixer; play through the clip; explicitly confirm hearing it. The existing
+USER/USER_SAMPLES/sine_440Hz_10s_48k_mono.wav is suitable practice material.
+The local packaged app uses the checkout's USER library when available.
+
+MIDI basics: create a new Midi Track; select empty time on that lane and press
+Command-Shift-M; double-click that clip; draw a note in the separate piano room;
+move or resize an existing note; play through the clip; confirm hearing it.
+The default built-in instrument avoids a plugin-install prerequisite. The
+lesson does not require a global project BPM or an automatic arrangement grid.
+
+Next unlocks only after the current action is observed. It never performs that
+action for the learner. Track identity is captured from a new matching track
+after lesson start. Subsequent steps follow a clip on that track. Other tracks,
+local editing previews and a stationary playhead cannot satisfy those steps.
+Removing the practice clip/track asks the learner to restart the lesson. A
+missing target does not silently transfer progress to an unrelated track.
+
+Playback observes at least two progressing native transport positions inside
+the clip. This is not evidence of audibility: mute, gain, routing, silent source
+material, external plugins and device configuration can all affect sound. The
+final I heard it / finish button is a human report. The tutorial does not mark
+listening verified based on a meter or rendered PCM.
+
+The card uses the existing unlit UIOnly PluginSurface. Text, button faces and
+progress never enter the gem optical frame or request asset baking. Layer five
+owns input and observes authoritative document snapshots outside audio callbacks.
+Retained callback clicks and final held samples are consumed before other
+controllers; focus loss and foreign drags must not activate tutorial controls.
+No new public Host hook or cross-engine dependency is introduced.
+
+ADDING A LESSON
+
+Keep an action small enough to practice and verify independently. Bind its
+completion predicate to committed state on the lesson's selected identities.
+Use the production edit path in regression coverage, including rejected or
+irrelevant actions. Check the actual native input and presentation separately.
+If a taught feature fails, repair that feature and retain a regression before
+claiming the lesson works. Do not add text that teaches a proposed shortcut or
+unimplemented feature. Device listening always needs separate human evidence.
+
+Current scope is the macOS desktop workflow, both standalone and embedded.
+Phone lesson controls, progress persistence, recording, plugin setup, export,
+warping and automation lessons are future work.

@@ -1,0 +1,81 @@
+Construction foundations — inspected October 29, 2026
+
+The preserved venue
+
+Salamander137/BaseSystem/FrogSpawnCasinoSystem.cpp, generateCasino (around
+lines 406–462), now generates a proscenium theatre within the older casino
+footprint. Its outer radius is 76 m, roof is 18 m above the floor, and the
+inner auditorium is 68 m wide. The stage occupies x=-24..24, z=20..50 and is
+raised 3 m; the proscenium is at z=23 with a roughly 34 m opening. Audience
+platforms rise toward the rear, with aisles, wing stairs and a control booth.
+The generator clears space and places the room shell directly.
+
+Material assignments at lines 700–718 are StoneBlockTex for the walls/roof,
+PoolroomsWhiteCeramicTileTex for stage/trim, CasinoCrimsonCarpetTex for the
+floor and raked platforms, and CasinoWavePanelTex behind the stage. Foundations
+are configurable, defaulting to stone with three cells of embedment. Those are
+appearance/prototype choices. They do not define beams, reinforcement, mortar,
+fasteners or a load path. Copying their shapes would recreate a room, not a
+building the player could construct.
+
+Salamander137/BaseSystem/LineArraySystem.cpp and
+Salamander137/Procedures/theatre_line_array.json retain useful cabinet dimensions,
+splay/pivot relationships, placements and acoustic routing. The visible hanging
+rails currently extend to floor+17. That does not simulate their capacity or
+transfer their load into a roof truss. No preserved files were changed.
+
+A proposed material interpretation (not decided or implemented)
+
+Use ground/stone support below the foundation; wood joists, planks and decking
+for the stage and stepped seating platforms; framed or masonry wall panels;
+and a roof structure whose beams/trusses actually span between supports. Metal
+connectors and a suitable long-span roof system would be additional material
+work. Ceramic, fabric/carpet and acoustic finishes can be separate, thin
+attachments. The old ceramic-looking stage need not become solid ceramic.
+
+The material choice stays open. Brick and mortar can be a branch of this
+construction system, rather than a prerequisite for the first wooden shack.
+The first useful milestone is a two-plank joint, followed by a supported floor
+bay and a small shack. The full theatre should eventually be a plan assembled
+through those same operations; its authored generator should not bypass them.
+
+Necessary physical foundations
+
+1. Stock and cuts. A felled trunk must retain its material coordinates and grain
+   as it becomes beams/planks. Each piece needs mass, an occupied boundary,
+   internal stiffness and fracture history. Existing workshop wood has a finite
+   prepartition and rigid intact fibre bundles; it does not yet provide arbitrary
+   sawing, beam flexure or an inventory of real cut stock.
+2. Fasteners. A nail needs a head, shank, tip, metal response and a depth-dependent
+   contact/embedding relationship with wood. Hammer work drives penetration;
+   fibres yield and can split. Grip transfers shear and withdrawal forces, and
+   can pull out or tear the wood. It must not switch to an indestructible weld
+   on proximity. The OGC boundary gives contact forces; a separate material/joint
+   law must determine embedding, friction, yielding and failure.
+3. Structural response. Plank bending and joint compliance must transmit load
+   through the structure to ground supports. Calm assemblies can use a coarse
+   elastic representation; they still carry load and need failure checks. Local
+   refinement belongs at impacts, joints and growing cracks. An unloaded camera
+   region must not become an infinitely rigid or unbreakable support.
+4. Masonry, if chosen. Individual bricks/stone retain brittle geometry. Fresh
+   mortar is a distinct wet plastic material; curing changes its stiffness and
+   adhesion over time. Bed joints carry compression, shear and limited tension.
+   Contact, bonding and curing are separate phenomena. Demolition should use
+   the same relationships as construction.
+5. Manipulation. Supporting a plank, placing a nail and delivering hammer blows
+   need accessible desktop/mobile intent controls, constrained hands, and real
+   tool contact. The worker workshop is a place to make those actions legible
+   before adding more player gestures.
+6. Persistence and acoustics. Save stock identity, cut faces, plastic strain,
+   fastener depth, joint damage and temperatures. Accepted structural geometry
+   and its materials should supply the acoustic scene. A speaker rig's weight
+   should enter its brackets and truss rather than an invisible world anchor.
+
+Suggested next automatic construction demonstrations
+
+A hammer drives one nail through a plank into another; load pulls the joint in
+shear, then withdrawal; excessive impact splits along the grain. Repeat with
+several nail depths. Then load a small plank-and-joist floor, remove a support,
+and watch the load transfer and failure. These are proposed next steps, not
+features delivered by the current workshop change. Metal, fasteners, mortar,
+construction tools, structural assembly and theatre reconstruction remain work.

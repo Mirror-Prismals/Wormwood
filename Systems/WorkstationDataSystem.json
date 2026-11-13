@@ -1,0 +1,1036 @@
+{
+  "system": "WorkstationDataSystem",
+  "layer": 2,
+  "functions": {
+    "Snapshot": {
+      "calls": []
+    },
+    "PutTrack": {
+      "calls": []
+    },
+    "PutClip": {
+      "calls": []
+    },
+    "RemoveClip": {
+      "calls": []
+    },
+    "MoveClip": {
+      "calls": []
+    },
+    "SetMidiTempo": {
+      "calls": []
+    },
+    "SnapMidi": {
+      "calls": []
+    },
+    "PianoRoll": {
+      "calls": []
+    },
+    "AnalyzeMaster": {
+      "calls": []
+    },
+    "LocatePanel": {
+      "calls": []
+    },
+    "ProjectPanel": {
+      "calls": []
+    },
+    "BeginMasterAnalysis": {
+      "calls": []
+    },
+    "SetTrackMix": {
+      "calls": []
+    },
+    "SetCcTarget": {
+      "calls": []
+    },
+    "ReorderTracks": {
+      "calls": []
+    },
+    "ImportAudio": {
+      "calls": []
+    },
+    "PutSource": {
+      "calls": []
+    },
+    "SnapClip": {
+      "calls": []
+    },
+    "RenderRange": {
+      "calls": []
+    },
+    "ExportBegin": {
+      "calls": []
+    },
+    "ExportStep": {
+      "calls": []
+    },
+    "ExportCancel": {
+      "calls": []
+    },
+    "ExportStatus": {
+      "calls": []
+    },
+    "CreateRangeClips": {
+      "calls": []
+    },
+    "AddSpectralMask": {
+      "calls": []
+    },
+    "UndoSpectralMask": {
+      "calls": []
+    },
+    "ClearSpectralMasks": {
+      "calls": []
+    },
+    "ClipEditorPreview": {
+      "calls": []
+    },
+    "SetClipWarp": {
+      "calls": []
+    },
+    "SetWarpMap": {
+      "calls": []
+    },
+    "PumpWarp": {
+      "calls": []
+    },
+    "RebaseTimeline": {
+      "calls": []
+    },
+    "SetMusicalTime": {
+      "calls": []
+    },
+    "CaptureInput": {
+      "calls": []
+    },
+    "CaptureStatus": {
+      "calls": []
+    },
+    "CycleMidiTake": {
+      "calls": []
+    },
+    "AudioPlaylist": {
+      "calls": []
+    },
+    "BeginRetrospectiveAudio": {
+      "calls": []
+    },
+    "AppendRetrospectiveAudio": {
+      "calls": []
+    },
+    "CommitRetrospectiveAudio": {
+      "calls": []
+    },
+    "AbortRetrospectiveAudio": {
+      "calls": []
+    },
+    "InsertRetrospectiveMidi": {
+      "calls": []
+    },
+    "UndoRetrospective": {
+      "calls": []
+    },
+    "RedoRetrospective": {
+      "calls": []
+    },
+    "DrumRack": {
+      "calls": []
+    },
+    "TrimAudioClip": {
+      "calls": []
+    },
+    "SetClipGain": {
+      "calls": []
+    },
+    "SplitClip": {
+      "calls": []
+    },
+    "SetClipFades": {
+      "calls": []
+    },
+    "TrackFreezeBegin": {
+      "calls": []
+    },
+    "TrackFreezeStep": {
+      "calls": []
+    },
+    "TrackFreezeAccept": {
+      "calls": []
+    },
+    "TrackFreezeCancel": {
+      "calls": []
+    },
+    "TrackFreezeFlatten": {
+      "calls": []
+    },
+    "TrackFreezeStatus": {
+      "calls": []
+    },
+    "Undo": {
+      "calls": []
+    },
+    "Redo": {
+      "calls": []
+    },
+    "UndoStatus": {
+      "calls": []
+    },
+    "BeginUndoTransaction": {
+      "calls": []
+    },
+    "CommitUndoTransaction": {
+      "calls": []
+    },
+    "CancelUndoTransaction": {
+      "calls": []
+    },
+    "ClearUndo": {
+      "calls": []
+    },
+    "StageLighting": {
+      "calls": []
+    },
+    "PutBus": {
+      "calls": []
+    },
+    "SetBus": {
+      "calls": []
+    },
+    "RemoveBus": {
+      "calls": []
+    },
+    "RemoveTrack": {
+      "calls": []
+    },
+    "MixPreview": {
+      "calls": []
+    },
+    "SetClipRouting": {
+      "calls": []
+    }
+  },
+  "init_steps": [],
+  "entry_steps": [
+    "Snapshot",
+    "PutTrack",
+    "PutClip",
+    "RemoveClip",
+    "MoveClip",
+    "SetMidiTempo",
+    "SnapMidi",
+    "PianoRoll",
+    "AnalyzeMaster",
+    "LocatePanel",
+    "ProjectPanel",
+    "BeginMasterAnalysis",
+    "SetTrackMix",
+    "SetCcTarget",
+    "ReorderTracks",
+    "ImportAudio",
+    "PutSource",
+    "SnapClip",
+    "RenderRange",
+    "ExportBegin",
+    "ExportStep",
+    "ExportCancel",
+    "ExportStatus",
+    "AddSpectralMask",
+    "UndoSpectralMask",
+    "ClearSpectralMasks",
+    "ClipEditorPreview",
+    "SetClipWarp",
+    "SetWarpMap",
+    "PumpWarp",
+    "RebaseTimeline",
+    "SetMusicalTime",
+    "CaptureInput",
+    "CaptureStatus",
+    "CycleMidiTake",
+    "AudioPlaylist",
+    "BeginRetrospectiveAudio",
+    "AppendRetrospectiveAudio",
+    "CommitRetrospectiveAudio",
+    "AbortRetrospectiveAudio",
+    "InsertRetrospectiveMidi",
+    "UndoRetrospective",
+    "RedoRetrospective",
+    "DrumRack",
+    "SetClipFades",
+    "SetClipGain",
+    "SetClipRouting",
+    "SplitClip",
+    "TrimAudioClip",
+    "Undo",
+    "Redo",
+    "UndoStatus",
+    "BeginUndoTransaction",
+    "CommitUndoTransaction",
+    "CancelUndoTransaction",
+    "ClearUndo",
+    "TrackFreezeBegin",
+    "TrackFreezeStep",
+    "TrackFreezeAccept",
+    "TrackFreezeCancel",
+    "TrackFreezeFlatten",
+    "TrackFreezeStatus",
+    "StageLighting",
+    "PutBus",
+    "SetBus",
+    "RemoveBus",
+    "RemoveTrack",
+    "MixPreview"
+  ],
+  "intent": {
+    "schema_version": 1,
+    "behaviors": [
+      {
+        "id": "wav_file_import",
+        "description": "Import a bounded mono/stereo WAV into an existing audio lane as one source and one elapsed-time clip. The file must match the playback sample rate. Decode and all document validation precede a single revision publication.",
+        "retention": "experimental",
+        "selection": "Explicit revision-checked ImportAudio on the control thread; no callback filesystem access.",
+        "implements": [
+          "ImportAudio"
+        ],
+        "sources": [
+          "Workstation/Document.rs",
+          "Workstation/DrumSample.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "atomic_wav_drop",
+            "kind": "behavior",
+            "expectation": "A valid WAV retains channels, frame count and PCM and renders at the drop time through existing routing. Missing files, wrong lanes, rate mismatch, stale revisions and document bounds fail without partial sources or clips.",
+            "procedure": "Run workstation::document::audio_import_tests and workstation::drum_sample::drum_rack_sample_tests. Review native browser-to-playback separately."
+          }
+        ]
+      },
+      {
+        "id": "free_time_document",
+        "description": "Arrange source-backed audio, independent MIDI piano rolls and CC automation in elapsed seconds on an elapsed-time canvas. The separate Cardinal musical map supplies loop snapping and warp queries; publishing it never retimes existing clips. Preserve insertion order for mixed tracks and clips. Each piano roll owns its tempo, meter and note grid. Renaming a track preserves its mixing and routing state. Deleting a selected track removes its clips, comp lanes and drum row in one undoable revision; sources and inactive plugin chains remain for undo.",
+        "retention": "experimental",
+        "selection": "Explicit control-thread WorkstationDataSystem entries; no automatic application startup or audio processing.",
+        "implements": [
+          "Snapshot",
+          "PutTrack",
+          "PutClip",
+          "RemoveClip",
+          "MoveClip",
+          "SetMidiTempo",
+          "PianoRoll",
+          "ReorderTracks",
+          "CreateRangeClips",
+          "RemoveTrack"
+        ],
+        "sources": [
+          "Workstation/Document.rs",
+          "BaseSystem/LayerTwo/WorkstationDataSystem.rs",
+          "Workstation/BackendTests.rs",
+          "Host/Host.rs",
+          "BaseSystem/LayerFive/AudioWorkstationSystem.rs",
+          "Workstation/SpatialMix.rs"
+        ],
+        "checks": [
+          {
+            "id": "independent_clocks",
+            "kind": "behavior",
+            "expectation": "Changing one piano-roll BPM changes only its elapsed note times and duration. Clip start and other clip tempos are preserved. Invalid edits leave the document unchanged. Every successful edit changes the revision and invalidates master guides.",
+            "procedure": "Run workstation::backend_tests for fractional placement, independent tempos, malformed edits, revision conflicts, track order and rename preservation. Native editing remains a separate integration check."
+          },
+          {
+            "id": "immutable_snapshot_reuse",
+            "kind": "behavior",
+            "expectation": "The typed Snapshot adapter preserves registered permissions, invocation tracing and immutable old readers. Revision-owned tracks/clips/sources are shared by document revision; plugin status, master regions, capture epoch, analysis generation and published visualization are freshly returned alongside them on every call. Combining document and live fields equals public owned JSON Snapshot, which remains unchanged. Audio publication must not reconstruct unchanged notes.",
+            "procedure": "Differential shared/owned snapshot tests covering stable reuse, edits, rejection, nonrevision analysis/publication, owner separation and disabled routes; existing backend/controller/spatial tests and native comparison."
+          },
+          {
+            "id": "atomic_track_insertion",
+            "kind": "behavior",
+            "expectation": "PutTrack accepts an optional insert_index only for new tracks. Validate revision, kind, capacity and index before mutation. Invalid or existing-ID insertion changes neither data nor order; omitted index preserves append/rename semantics. One creation and insertion produces one revision.",
+            "procedure": "Run browser_insertion_is_atomic_ordered_and_revision_checked and existing backend mixed-order/rename tests."
+          },
+          {
+            "id": "cardinal_range_creation",
+            "kind": "behavior",
+            "expectation": "CreateRangeClips normalizes seconds and inclusive ordered track endpoints. Positive valid range only; preflight all compatible tracks and overlapping existing clips before committing each kind. MIDI then CC are independent all-or-none groups, touching allowed, notes/points empty, one revision per successful kind. Invalid/stale input changes nothing. Audio-only range is unsupported. Local MIDI clock remains120BPM4/4; duration is selected seconds, never a fixed fallback.",
+            "procedure": "Run range backend tests on in-memory documents: reverse bounds, later-track overlap, mixed partial success, capacity, identity, revisions and duration. Read Cardinal DawLaneShortcutSystem.cpp:471/556/838."
+          }
+        ]
+      },
+      {
+        "id": "note_to_note_snap",
+        "description": "Propose moving a MIDI clip so one of its note onsets aligns with a note onset in another MIDI clip. Preserve both piano-roll tempos and all note positions inside each piano roll.",
+        "retention": "experimental",
+        "selection": "SnapMidi is an explicit query using a zoom-derived time tolerance. MoveClip separately commits the returned start with the queried document revision.",
+        "implements": [
+          "SnapMidi"
+        ],
+        "sources": [
+          "Workstation/Document.rs"
+        ],
+        "checks": [
+          {
+            "id": "snap_alignment",
+            "kind": "behavior",
+            "expectation": "Snap targets are other clips actual note onsets, never the canvas origin, a global grid, the selected clip itself, or master rhythm guides. The nearest in-tolerance valid translation wins deterministically. A query never mutates the document.",
+            "procedure": "Pending: exercise distinct tempos, delayed first notes, equal-distance ties, empty notes, out-of-range movement and no-target cases; verify returned onset equality and unchanged BPM."
+          }
+        ]
+      },
+      {
+        "id": "master_rhythm_observation",
+        "description": "Observe rhythm only in submitted post-mix master bus PCM. Reveal bounded regions of locally regular attacks behind the canvas. These observations do not change audio, MIDI tempo or clip placement. The analysis never writes the separate Cardinal musical map. The selected future model listens to the stereo master after L/S/FF/R summing. Export always taps the four buses before that listening stage. The existing spectral-flux experiment is retained separately and is not the requested AI model.",
+        "retention": "experimental",
+        "selection": "Explicit control/worker-side operations. BeginMasterAnalysis selects a generation; AnalyzeMaster accumulates contiguous master PCM into bounded 8 kHz analysis windows. No live master tap is wired yet. Requests carry document_revision, capture_epoch, analysis_generation and observed_at_seconds. Deferred luxury feature: neither rendering nor snapping invokes the analyzer.",
+        "implements": [
+          "AnalyzeMaster",
+          "Snapshot",
+          "BeginMasterAnalysis"
+        ],
+        "sources": [
+          "Workstation/Document.rs",
+          "Workstation/Rhythm.rs",
+          "Workstation/Guides.rs"
+        ],
+        "checks": [
+          {
+            "id": "master_only",
+            "kind": "behavior",
+            "expectation": "Only master PCM creates guides. Stereo channels contribute spectral flux without PCM phase cancellation. Silence/irregular attacks yield no invented grid. Meter remains unknown; pulse regularity is not confidence in musical tempo. Stale document revisions cannot publish guides. Retired analysis generations and empty/discontinuous chunks are rejected. Insufficient buffered evidence preserves accepted guides; partial replacements preserve guide portions outside the analysis window. Previously recognized markers keep their reveal identity across overlapping windows. Compatible historical fragments consolidate so steady passages do not consume one region per pulse.",
+            "procedure": "Pending: evaluate real master mixes, silence, opposing-phase stereo, transient-dense and missing-onset material, tempo changes, sample rates, discontinuities and repeated/overlapping windows. Inspect native animation separately after live integration."
+          }
+        ]
+      },
+      {
+        "id": "panel_coordinates",
+        "description": "Map a flat model control surface between ray hits, normalized UV, elapsed document time and world positions using an explicit basis and safe rectangle.",
+        "retention": "experimental",
+        "selection": "LocatePanel and ProjectPanel are pure queries. The consuming presentation System supplies its actual asset transform and viewport.",
+        "implements": [
+          "LocatePanel",
+          "ProjectPanel"
+        ],
+        "sources": [
+          "Workstation/Panel.rs",
+          "Art/AudioWorkstation/GemPanels/README.txt"
+        ],
+        "checks": [
+          {
+            "id": "panel_inverse",
+            "kind": "behavior",
+            "expectation": "Front-face ray hits and projected document points use the same plane and bottom-left UV origin. Out-of-bounds and rear/parallel rays miss. Asset coordinate conventions do not alter document time.",
+            "procedure": "Pending: check basis validation and round trips for Blender and exported GLB transforms, safe-rectangle edges, moved/rotated panels and zoomed viewports."
+          }
+        ]
+      },
+      {
+        "id": "clip_to_note_snap",
+        "description": "Align the start of an audio, MIDI or CC clip, or actual note onsets of a piano roll, to actual MIDI note onsets on other tracks. Preserve source offsets, note positions, clip length and independent tempos. No implicit grid, rhythm-guide target or audio-transient detector is added. The existing SnapMidi query remains available with its original same-track eligibility.",
+        "retention": "experimental",
+        "selection": "Explicit SnapClip query with anchor start (default) or notes. Commit with MoveClip and the returned revision.",
+        "implements": [
+          "SnapClip",
+          "MoveClip"
+        ],
+        "sources": [
+          "Workstation/Document.rs",
+          "Workstation/BackendTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "cross_track_note_targets",
+            "kind": "behavior",
+            "expectation": "Audio clips align to delayed actual MIDI onsets on other tracks. Same-track clips, self, grid ticks and empty piano rolls are not targets. Queries do not mutate; invalid or stale edits preserve state.",
+            "procedure": "Run workstation::backend_tests, including fractional onset, no target, same-track exclusion, ties and stale commit after a target tempo edit."
+          }
+        ]
+      },
+      {
+        "id": "cc_curves_and_track_mix",
+        "description": "Retain Cardinal normalized linear CC curves with endpoint holds, empty value 0.5, clamped points and deterministic coincident-point ordering. Audio and MIDI tracks retain independent OFF/L/S/FF/R channel routes, FF/FF defaults, static linear gain and global mute/solo selection. This focused port connects a built-in track-gain target using Cardinal fader mapping; hosted plugin parameter adapters are not ported.",
+        "retention": "experimental",
+        "selection": "SetTrackMix changes audio/MIDI mixing state. SetCcTarget connects a CC track to an audio/MIDI track gain or disconnects it with null. RenderRange evaluates active half-open CC clips: first inserted active clip per CC track, last active CC track per target. Gaps use manual gain.",
+        "implements": [
+          "PutClip",
+          "SetTrackMix",
+          "SetCcTarget",
+          "RenderRange",
+          "ReorderTracks"
+        ],
+        "sources": [
+          "Workstation/Document.rs",
+          "Workstation/Automation.rs",
+          "Workstation/Routing.rs",
+          "Workstation/Playback.rs",
+          "Workstation/BackendTests.rs",
+          "Workstation/PlaybackTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "curve_mix_boundaries",
+            "kind": "behavior",
+            "expectation": "Mute-on clears solo and solo-on clears mute; a contradictory patch fails atomically. Audio and MIDI share solo detection; CC tracks cannot solo audio away. CC controls use Cardinal normalized fader law (-60 to +5 dB above a 0.02 dead zone). Sample-coincident points retain sorted value precedence. MIDI track gain envelopes are returned for the instrument adapter.",
+            "procedure": "Run workstation::automation::tests, workstation::routing::tests, workstation::backend_tests and workstation::playback_tests. Review half-open CC boundaries as the explicit consistent adaptation of legacy inclusive/exclusive consumers."
+          }
+        ]
+      },
+      {
+        "id": "sample_addressed_lsffr_render",
+        "description": "Render bounded requested audio-frame ranges from decoded mono/stereo sources. Preserve clip source offsets and later-clip precedence within each track. Schedule piano-roll notes using each clip BPM, with note-off before note-on at a shared frame. Route audio through L/S/FF/R with same-bus channel summation and no normalization. Export data is always four buses before the stereo master; Each Mix Bus starts with L+0.5*(S+FF), R+0.5*(S+FF), processes its own effects and gain, then adds to monitor output. Matrix buses feed the array before these monitor chains. Playback may supply a monotonic generation/sequence and wrapped loop range; sample addressing happens inside a bounded output block, preserving native effect/instrument history through natural wraps.",
+        "retention": "experimental",
+        "selection": "Explicit control/worker-side PutSource and revision-checked RenderRange. Without native plugins rendering remains pure unless publication is requested. User-authorized desktop plugin integration retires the disconnected-instrument-only expectation: native inserts retain DSP history between contiguous ranges and reset on seeks. The existing producer publishes observations from the same processing pass. No JSON, loading or editor work runs in the device callback. Plugin state is not silently omitted from export; native-plugin export currently rejects explicitly until separate export instances exist. The render operation itself never opens a device.",
+        "implements": [
+          "PutSource",
+          "RenderRange",
+          "Snapshot"
+        ],
+        "sources": [
+          "Workstation/Document.rs",
+          "Workstation/Playback.rs",
+          "Workstation/Routing.rs",
+          "Workstation/PlaybackTests.rs",
+          "Host/Host.rs",
+          "Workstation/PluginRender.rs",
+          "BaseSystem/LayerOne/PluginConnectionSystem.rs",
+          "Workstation/RenderClock.rs",
+          "Audio/Plugins/native/Bridge.mm",
+          "Workstation/SignalIntegrityTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "pre_master_pcm_and_events",
+            "kind": "behavior",
+            "expectation": "Splitting an interval across blocks preserves PCM and absolute event timing without boundary duplication. Sub-sample placement does not change audio source extent. Ranges may extend beyond the document limit to flush final MIDI note-offs; sample-clock overflow fails. Monitor gain cannot alter any export bus. Missing/short/mismatched-rate sources fail explicitly. Render queries and failed source replacements do not change document revision. Source ranges, capacities and numeric bounds are checked before rendering. Native-plugin and instrument flags reflect configured backends; these flags are not evidence of audible device validation. Hosted chains retain state between contiguous blocks, reset on discontinuity, and use each clip\u2019s local MIDI clock. Pure PCM expectations remain unchanged for documents without hosted plugins.",
+            "procedure": "Run workstation::playback_tests and host::runtime::tests::workstation_backend_registered_routes_render_pre_master_pcm. Inspect current intent after registration. Separate native/device/instrument validation is still required."
+          },
+          {
+            "id": "bounded_loops_and_native_tails",
+            "kind": "behavior",
+            "expectation": "One-sample loops produce full output blocks without thousands of full document requests. Explicit generation or sequence discontinuities reset DSP; wrapped project positions alone do not. True project timestamps still reach native backends.",
+            "procedure": "Run natural_loop_tests, render_clock::tests, one_sample_loop_pump and the supplemental native stock EQ continuity regression against plugin increment 2."
+          },
+          {
+            "id": "dry_stereo_signal_integrity",
+            "kind": "behavior",
+            "expectation": "At matching source and device sample rates, explicit L/R dry monitoring preserves stereo sample values, polarity, timing and finite headroom across render/callback block boundaries; stopped monitoring preserves opposing-phase input. Intentional shared-bus and cabinet processing remains separate.",
+            "procedure": "Run workstation::signal_integrity_tests at44.1,48 and96kHz. This exact-sample CPU/native-queue test does not establish third-party plugin fidelity, hardware performance, SRC support or subjective equivalence."
+          }
+        ]
+      },
+      {
+        "id": "source_stereo_observations",
+        "description": "Measure actual selected audio-track PCM before LSFFR routing: pre/post-gain RMS, channel RMS, energy balance, correlation-based stereo width, power spectral centroid, effective/manual gain and active automation. Preserve independent channel powers for opposing-phase audio. MIDI without a connected instrument explicitly has unavailable signal observations.",
+        "retention": "experimental",
+        "selection": "RenderRange performs source analysis only when analyze_visualization:true or publish_visualization:true is explicitly requested; calls without these flags allocate no source observation or FFT. Native playback explicitly requests publication in its normal producer render, without a second plugin pass. Analysis alone does not publish or change the document revision. Only explicit publish_visualization:true retains the small observation for Snapshot. Publication advances a sequence, preserves the document revision and stores no PCM. Edits invalidate the old observation. FFT and JSON execute only on the control/worker thread; the analyzer does not start a device or transport and does not add pan or frequency controls.",
+        "implements": [
+          "RenderRange",
+          "Snapshot",
+          "SetTrackMix"
+        ],
+        "sources": [
+          "Workstation/SourceAnalysis.rs",
+          "Workstation/SourceAnalysisTests.rs",
+          "Workstation/Playback.rs",
+          "Workstation/Document.rs"
+        ],
+        "checks": [
+          {
+            "id": "measured_stereo_and_publication",
+            "kind": "behavior",
+            "expectation": "RMS follows actual PCM amplitude and applied gain, including explicitly selected built-in MIDI synthesis. Mono and a single occupied channel are narrow, opposing phase is wide and does not erase frequency power. Routing and listening master gain do not change source observations. Mute/solo and comp selection determine contributing samples. Active CC replaces manual gain and is identified. Default renders are pure with null visualization and no analysis work; analyze_visualization enables pure measurement. Explicit successful publication exposes only small revision-tagged metrics. Invalid flags, failed renders and stale revisions cannot publish. Any document edit invalidates the observation. Missing MIDI synthesis is reported as unavailable.",
+            "procedure": "Run workstation::source_analysis_tests and existing playback tests. Tests cover known amplitude ratios, independent tones, mono/opposing-phase/decorrelated stereo, silence, short blocks, mute/solo, CC boundaries, unavailable MIDI and publication atomicity. Native presentation and real device playback need separate verification."
+          }
+        ]
+      },
+      {
+        "id": "four_bus_file_export",
+        "description": "Export an immutable revision of the document to four mono 32-bit IEEE-float WAV files, L/S/FF/R, always before stereo listening gain. Seconds map to nearest audio frames and the end is exclusive. Preserve Cardinal stem naming and raw headroom without normalization.",
+        "retention": "supported",
+        "selection": "Explicit revision-checked ExportBegin; bounded ExportStep advances at most 4096 frames and writes checked staged files. ExportCancel cleans owned partial files. A new destination folder prevents overwrite. No device, environment mix, or AI input is used. MIDI explicitly selects cardinal_sine, the same built-in as native transport; external plugins are not loaded.",
+        "implements": [
+          "ExportBegin",
+          "ExportStep",
+          "ExportCancel",
+          "ExportStatus"
+        ],
+        "sources": [
+          "Workstation/Export.rs",
+          "Workstation/ExportWave.rs",
+          "Workstation/ExportTests.rs",
+          "Workstation/Document.rs",
+          "Workstation/Playback.rs"
+        ],
+        "checks": [
+          {
+            "id": "four_wavs_and_lifetime",
+            "kind": "behavior",
+            "expectation": "Independent WAV parsing confirms format, rate, four channels as separate files, exact range and unnormalized PCM. Editing the live document/source during export cannot alter its frozen result. MIDI pitch, gate/release and routing match the selected native instrument across block boundaries. Stale jobs, invalid sources, colliding destinations and RIFF overflow fail explicitly. Cancellation and failures clean only owned files; success follows checked final writes.",
+            "procedure": "Run workstation::export_tests, workstation::export_wave tests and Host export workflow tests. Check the native export dialog separately."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_sine_midi_adapter",
+        "description": "Render an explicitly selected bounded MIDI instrument using Cardinal ChuckLaneSystem default sine and ADSR timbre.",
+        "retention": "experimental",
+        "selection": "RenderRange instrument:cardinal_sine; the shared native transport selects it. Default RenderRange still returns MIDI events without pretending that an external instrument is connected.",
+        "implements": [
+          "RenderRange"
+        ],
+        "sources": [
+          "Workstation/Playback.rs",
+          "BaseSystem/LayerFive/EnvironmentAudioSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "builtin_midi_sound",
+            "kind": "behavior",
+            "expectation": "MIDI pitch, velocity, local tempo and note gate drive the authored0.16-gain sine with5ms/40ms/0.35/120ms ADSR. Absolute sample phase keeps block splitting and seeking deterministic; at most128 overlapping voices. External VST/CLAP/AU hosting is not supplied by this adapter. Per-track default_sound_muted suppresses only the fallback sine for clip playback and live audition, preserving MIDI events, assigned instruments, other tracks and Undo.",
+            "procedure": "Run workstation::playback::instrument_tests and listen to piano-roll notes through standalone stereo and world cabinets. Verify release, mute/solo, four-bus routing and unsupported instrument rejection."
+          }
+        ]
+      },
+      {
+        "id": "source_bound_spectral_repair",
+        "description": "Apply ordered source-frame spectral attenuation masks nondestructively on the control thread. Playback, frozen export and spectral preview use the same derived PCM. Undo removes the last mask and Clear restores original source PCM. Original waveform remains visible on the waveform page. ClipEditorPreview accepts an optional normalized wave_view interval and 1..2048 columns; it returns exact visible-source mono and signed stereo min/max ranges plus the interval. Full-clip requests retain their default scope. Waveform analysis runs only on the serialized control side and does not mutate document revision.",
+        "retention": "experimental",
+        "selection": "Explicit WorkstationDataSystem clip editor operations. No callback FFT or file writes.",
+        "implements": [
+          "AddSpectralMask",
+          "UndoSpectralMask",
+          "ClearSpectralMasks",
+          "ClipEditorPreview"
+        ],
+        "sources": [
+          "Workstation/SpectralRepair.rs",
+          "Workstation/ClipTreatment.rs",
+          "Workstation/Document.rs",
+          "Workstation/Playback.rs"
+        ],
+        "checks": [
+          {
+            "id": "spectral_pcm_and_ownership",
+            "kind": "behavior",
+            "expectation": "Masks affect the selected frequency/time range in playback and frozen export. Original PCM and independent clips sharing that source remain unchanged. Stale/invalid edits do not mutate document state. Undo/Clear restore the appropriate source treatment. Preview analyzes the processed cache.",
+            "procedure": "Run the isolated bottom-panel backend harness and inspect actual exported WAV PCM. Then run normal integrated Host, export and intent checks plus native bottom-panel interaction validation. Isolated tests do not establish app readiness."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_general_warp_cache",
+        "description": "Render source-bound Cardinal general warp from the authoritative shared tempo map on one cancellable worker. Spectral repair precedes warp; matching prepared PCM feeds playback and frozen export. Identity schedules retain direct source playback.",
+        "retention": "experimental",
+        "selection": "Explicit warp edits with a supplied immutable project clock. Existing free-time playback remains unchanged without a clock.",
+        "implements": [
+          "SetClipWarp",
+          "SetWarpMap",
+          "PumpWarp"
+        ],
+        "sources": [
+          "Workstation/WarpMap.rs",
+          "Workstation/WarpDsp.rs",
+          "Workstation/WarpTreatment.rs",
+          "Workstation/Document.rs",
+          "Workstation/Playback.rs"
+        ],
+        "checks": [
+          {
+            "id": "clock_cache_and_export_ownership",
+            "kind": "behavior",
+            "expectation": "Clock changes and clip moves preserve source range; marker edits retain timeline duration. Cancellation/source edits never publish stale PCM. Nonidentity playback waits for matching audio and export rejects an unprepared cache. Frozen exports retain their immutable audio.",
+            "procedure": "Run focused backend tests and C++/Rust differential comparison, then integrated Host/native playback/export checks after installing the authoritative tempo-map adapter."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_track_io",
+        "description": "Preserve Cardinal page-zero audio and MIDI track controls, independently selected traffic-light monitor modes, crosswalk arming states, physical/virtual/stereo input selections and independent output channels. Monitoring is Off/Auto/In; Auto is enabled for every non-dormant arm mode, while recording eligibility remains modes 1/2 only. New MIDI tracks default to In and new audio tracks to Off.",
+        "retention": "experimental",
+        "selection": "SetTrackMix accepts revision-checked I/O fields and the original MIDI-only clear-contents action. RenderRange consumes optional connection-owned live_inputs on the worker path; it never opens a capture device. Without live_inputs, render/export behavior is unchanged. Physical capture, virtual-mic production, recording and retrospective Recall remain separate audio-connection responsibilities.",
+        "implements": [
+          "SetTrackMix",
+          "Snapshot",
+          "PutTrack",
+          "RenderRange"
+        ],
+        "sources": [
+          "Workstation/TrackIo.rs",
+          "Workstation/TrackInputBlock.rs",
+          "Workstation/Document.rs",
+          "Workstation/Playback.rs",
+          "Workstation/InputMonitor.rs",
+          "Workstation/TrackIoScene.rs",
+          "Workstation/Arrangement.rs"
+        ],
+        "checks": [
+          {
+            "id": "source_io_states",
+            "kind": "behavior",
+            "expectation": "Arming cycles 0->3->1->0 and legacy mode2 returns to0. Physical input cycling visits all physical mono channels, VM1, then IN1+2 when at least two channels exist. Outputs cycle OFF,L,S,FF,R. Selected monitoring suppresses audio clip playback only for supplied live blocks and passes through the same plugin/gain/bus path. Invalid state patches are atomic; MIDI clear affects only the selected track.",
+            "procedure": "Run workstation::track_io, workstation::track_input_block, track_io_document_states_clear_and_live_audio_follow_cardinal and source_hit_mode_selects_individual_lamps_at_compact_and_large_scales. Run workstation_io_ registered Step regressions: complete callback clicks between frames activate exactly once after the managed delay; cycling all three states during consumed native-transport visualization preserves playback and publishes the matching graphics-packet palette without reusing pre-edit measurements. Native capture and final visual checks remain integration obligations."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_timeline_map_and_rebase",
+        "description": "Retain the original explicit tempo, signatures, rubato interpolation and 15 loop grid choices. Existing clip-local MIDI clocks stay independent. Atomically rebase all clip starts and timeline origin without changing source offsets, notes or CC-relative positions.",
+        "retention": "experimental",
+        "selection": "Revision-checked SetMusicalTime and RebaseTimeline; defaults preserve the existing elapsed-seconds document in free/multi-clock mode.",
+        "implements": [
+          "SetMusicalTime",
+          "RebaseTimeline",
+          "Snapshot"
+        ],
+        "sources": [
+          "Workstation/MusicalTime.rs",
+          "Workstation/Document.rs",
+          "Workstation/TimelineBars.rs",
+          "Workstation/Arrangement.rs"
+        ],
+        "checks": [
+          {
+            "id": "original_map_oracle",
+            "kind": "behavior",
+            "expectation": "Map conversions and all 15 snap choices match the original C++ headers. Map publication does not retime independent clips. Failed rebases do not partially change document or audio state.",
+            "procedure": "Run musical_time::tests, document::timing_rebase_tests and the real Host timeline rebase contract test. Original oracle source is supplied in the isolated artifact."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_armed_audio_capture",
+        "description": "Capture the selected physical mono, IN1+2 or VM1 input on the worker side. Record latches arm modes 1/2, mode3 tracks without recording, disarm stops capture, and stopped transport commits the complete take atomically. Recording replaces active-lane overlaps; loop passes punch into the same lane without adding a take stack.",
+        "retention": "experimental",
+        "selection": "Explicit revision-checked CaptureInput accepts at most4096 timestamped planar frames and a zero-frame transport transition. CaptureStatus and Snapshot.recording expose transient recording metadata. Input PCM, clip commits and JSON remain outside the native callback. The native capture owner is responsible for draining old-generation blocks before a transition. CaptureInput validates and forwards MIDI event metadata but does not claim MIDI take-stack recording.",
+        "implements": [
+          "CaptureInput",
+          "CaptureStatus",
+          "Snapshot",
+          "SetTrackMix"
+        ],
+        "sources": [
+          "Workstation/Recording.rs",
+          "Workstation/Document.rs"
+        ],
+        "checks": [
+          {
+            "id": "source_record_latch_and_punch",
+            "kind": "behavior",
+            "expectation": "The original startRecording arm latch, selected-source capture, DawAudioPlaylists Trim replacement and DawClipSystem loop segment insertion are preserved. Missing input is reported and does not create a fabricated silent take. Capture clock discontinuity, invalid samples and memory/source/clip overflow reject before publishing any partial recorder or document state.",
+            "procedure": "Run workstation::recording::tests in the isolated full crate. Standalone Recording.rs harness checks seven deterministic cases; native hardware, capture preamp hosting, MIDI take recording and playlist selection remain integration obligations."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_midi_capture_adapter",
+        "description": "Timestamped keyboard/preview events feed worker-side live monitoring and armed MIDI recording. Off/Auto/In gates keyboard voices; preview remains independent. Original sample-based loop segments become retained MIDI takes and the final loop take becomes active. Overwritten note regions are retained as takes; stopped commits and take cycling publish atomically.",
+        "retention": "experimental",
+        "selection": "CaptureInput receives ordered midi_events with capture_frame,track,pitch,velocity, optional source keyboard/preview and finite tuning_cents. A native or computer-keyboard sender remains required. RenderRange with capture_start_frame matching the accepted block consumes live voices; offline calls omit it. Native plugin held-note spans merge clip/live velocity by maximum; canonical tuning travels through live voices and recorded notes; native plugin processing uses per-note tuning where supported and fails explicitly otherwise.",
+        "implements": [
+          "CaptureInput",
+          "CaptureStatus",
+          "CycleMidiTake",
+          "RenderRange",
+          "Snapshot",
+          "SetTrackMix"
+        ],
+        "sources": [
+          "Workstation/MidiCapture.rs",
+          "Workstation/MidiCaptureIntegrationTests.rs",
+          "Workstation/Recording.rs",
+          "Workstation/Playback.rs",
+          "Workstation/PluginRender.rs",
+          "Workstation/Document.rs",
+          "Workstation/PianoTuning.rs",
+          "BaseSystem/LayerOne/PluginConnectionSystem.rs"
+        ],
+        "checks": [
+          {
+            "id": "midi_capture_and_live_monitor",
+            "kind": "behavior",
+            "expectation": "Sample gates and block boundaries survive stopped monitoring, Off/Auto/In, preview bypass, record arm latching, loop takes, disarm and stop. Capture rejection is atomic and archives remain bounded. No native MIDI sender or microtonal support is claimed.",
+            "procedure": "Run workstation::midi_capture tests and workstation::midi_capture_integration_tests in the isolated full crate; manually verify actual keyboard/native sender and plugin compatibility after wiring."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_audio_playlists_preamp",
+        "description": "Attached audio comp lanes store silent takes for manual slicing and movement into the audible main arrangement. Recording starts at the first comp lane, advances per loop pass and stays on the final lane, punching subsequent passes over it. With no comp lanes, recording targets main. Preamp capture DSP remains independent of playback.",
+        "retention": "experimental",
+        "selection": "AudioPlaylist is revision checked. New appends an attached take lane. Explicit legacy record_target selection is retained as a research API but no longer determines production capture routing. CaptureInput latches the first comp lane at recording start. No automatic comp assembly or lane growth.",
+        "implements": [
+          "AudioPlaylist",
+          "CaptureInput",
+          "Snapshot"
+        ],
+        "sources": [
+          "Workstation/AudioPlaylists.rs",
+          "Workstation/Recording.rs",
+          "Workstation/Document.rs",
+          "BaseSystem/LayerOne/PluginConnectionSystem.rs",
+          "Audio/Plugins/native/Bridge.mm"
+        ],
+        "checks": [
+          {
+            "id": "audio_playlist_and_capture_chain",
+            "kind": "behavior",
+            "expectation": "New and duplicate append silent take lanes. Deletion preserves main. Busy lanes reject content changes. Successive loop passes visit each comp lane, then punch the final lane with exact source offsets. Manual slice and lane transfer publish atomically and preserve source PCM. Preamp clocks remain separate from playback.",
+            "procedure": "Run comp_lane, recording and audio_playlists tests plus arrangement/browser/timeline regressions. Validate component drops, ivory artwork, attached reordering, individual resize, hide/show and manual clip transfer in native UI; device recording remains separately required."
+          }
+        ]
+      },
+      {
+        "id": "atomic_retrospective_insert",
+        "description": "Stage bounded audio chunks without exposing partial sources, then atomically insert captured audio with original overlap trimming or timestamped MIDI. A revision-guarded retrospective undo/redo journal restores content snapshots.",
+        "retention": "experimental",
+        "selection": "Explicit recall or loopback copy from original bottom controls; recording blocks recall.",
+        "implements": [
+          "BeginRetrospectiveAudio",
+          "AppendRetrospectiveAudio",
+          "CommitRetrospectiveAudio",
+          "AbortRetrospectiveAudio",
+          "InsertRetrospectiveMidi",
+          "UndoRetrospective",
+          "RedoRetrospective"
+        ],
+        "sources": [
+          "Workstation/RetrospectiveInsert.rs",
+          "Workstation/RetrospectiveBuffer.rs",
+          "Workstation/RetrospectiveRuntime.rs"
+        ],
+        "checks": [
+          {
+            "id": "bounded_recall_commit",
+            "kind": "behavior",
+            "expectation": "Large audio becomes visible only after complete valid Commit; stale, capacity and tuning failures leave content unchanged. Overlap trimming retains source-relative offsets and undo restores before/after clips.",
+            "procedure": "Run capture-evidence/harness tests. Then integrate original native capture/Host contracts and validate real hardware, native UI and global undo ownership."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_drum_rack",
+        "description": "Own up to four sample-backed MIDI channels, each with sixteen sixteenth steps at MIDI 48 and half-step gates. Synchronize linked pattern instances on rack edits, retain elapsed placement, honor per-channel volume/mute and normal track gain, solo and LSFFR routes. Retrigger one one-shot voice per channel; preserve stereo and resample on the producer. Freeze samples and disable rack preview for offline export. Reject stale or invalid edits atomically. WAV loading and all preparation remain outside real-time callbacks.",
+        "retention": "experimental",
+        "selection": "The full-screen drum workspace reached by Tab or explicit DrumRack entry; no rack channels or preview are created automatically.",
+        "implements": [
+          "DrumRack",
+          "Snapshot",
+          "RenderRange"
+        ],
+        "sources": [
+          "Workstation/DrumRack.rs",
+          "Workstation/DrumSample.rs",
+          "Workstation/Document.rs",
+          "Workstation/Playback.rs"
+        ],
+        "checks": [
+          {
+            "id": "port_behavior",
+            "kind": "behavior",
+            "expectation": "Rack patterns, samples, routing, preview, revision rejection and pointer ownership follow the described behavior without importing Cardinal engine scheduling or its renderer.",
+            "procedure": "Run cargo test --offline --locked drum_rack and registered Host/geometry checks. Inspect intent. Separately verify native gem appearance, sample chooser, drag painting, drop placement and device listening; compilation and declarations do not establish those results."
+          }
+        ]
+      },
+      {
+        "id": "clip_linear_fades",
+        "description": "Audio clips own nondestructive linear amplitude fade-in and fade-out durations, defaulting to zero. Both playback paths and frozen export apply their product in the clip sample clock before track effects and routing.",
+        "retention": "experimental",
+        "selection": "Revision-checked SetClipFades; bounded fade-only undo/redo is invalidated by unrelated document edits. Snapshot and PutClip retain durations; no project file persistence is implied.",
+        "implements": [
+          "SetClipFades"
+        ],
+        "sources": [
+          "Workstation/ClipFades.rs",
+          "Workstation/Document.rs",
+          "Workstation/Playback.rs",
+          "Workstation/Arrangement.rs",
+          "Render/WorkstationControls.m"
+        ],
+        "checks": [
+          {
+            "id": "clip_fade_audio_and_gestures",
+            "kind": "behavior",
+            "expectation": "Zero fades preserve existing audio. Fades reach silence at clip endpoints, follow clip moves and source offsets, agree across block boundaries, and appear in frozen WAV export. Gestures preview without moving clips, commit once, and cancel on Escape, pointer loss or resize. Rejected edits preserve state.",
+            "procedure": "Run workstation::clip_fades, workstation::arrangement::fade_tests, clip_fades_are_frozen_and_written_to_export_wavs and workstation_clip_fades_route_through_host_and_audio_workstation_contract. Review native handles and curves separately; tests do not establish device listening or embedded native interaction."
+          }
+        ]
+      },
+      {
+        "id": "audio_clip_gain_split_trim",
+        "retention": "experimental",
+        "description": "Audio clips retain independent linear gain, shared source PCM and revision-checked split/trim edits. Gain is applied with fades before track effects and routing in playback and frozen export.",
+        "selection": "SetClipGain accepts gain 0..16 (unity default); SplitClip accepts an interior absolute time; TrimAudioClip accepts a nonempty normalized source selection. Main clip splits retain spectral treatments, reject enabled warp and splits inside fade ramps. Trimming rejects enabled warp.",
+        "implements": [
+          "SetClipGain",
+          "SplitClip",
+          "TrimAudioClip"
+        ],
+        "sources": [
+          "Workstation/Document.rs",
+          "Workstation/Playback.rs",
+          "Workstation/ClipFades.rs",
+          "Workstation/ExportTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "clip_edit_pcm_and_atomicity",
+            "kind": "behavior",
+            "expectation": "Gain scales actual PCM without modifying the source, remains frozen in exports and survives splits. Split advances the right source offset. Trimming keeps the selected source interval at its existing timeline position. Invalid/stale edits do not publish.",
+            "procedure": "Run audio_clip_editing, clip_gain_editing, clip_gain_is_frozen_in_export_pcm and registered Host integration tests. Native audio listening remains separately required."
+          }
+        ]
+      },
+      {
+        "id": "cardinal_content_undo",
+        "description": "Cardinal shared bounded content journal adapted to serialized workstation checkpoints with immutable shared PCM. Timeline Undo/Redo now follows accepted document edits across edit kinds.",
+        "retention": "experimental",
+        "selection": "256 entries; explicit merge_key identifies a gesture; nested transactions group edits. Cancel discards transaction bookkeeping and forms a history barrier without reverting edits. Editor-local undo remains an explicit alternative. Style checkpoints require a future editable style document; current baked artwork has no style owner.",
+        "implements": [
+          "Undo",
+          "Redo",
+          "UndoStatus",
+          "BeginUndoTransaction",
+          "CommitUndoTransaction",
+          "CancelUndoTransaction",
+          "ClearUndo"
+        ],
+        "sources": [
+          "Workstation/Undo.rs",
+          "Workstation/Document.rs",
+          "Workstation/Arrangement.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "journal_order_and_atomicity",
+            "kind": "behavior",
+            "expectation": "Undo and redo restore accepted content in order, preserve shared PCM and monotonic revisions, reject stale requests, group nested transactions, merge explicit gestures and clear redo after new edits. Recording/freeze locks prevent unsafe restores. Unsupported document mutations form a history barrier.",
+            "procedure": "Run workstation::undo tests and workstation tests; inspect intent; separately review native timeline keyboard interaction and device audio."
+          }
+        ]
+      },
+      {
+        "id": "fixed_stage_cc_lighting",
+        "description": "WORKSPACE CC lanes target six fixed theatre fixtures, exposing independent normalized intensity/red/green/blue controls.",
+        "retention": "supported",
+        "selection": "Fixed theatre lighting rehearsal requested by the author. All evaluation and visual preparation stay outside audio callbacks.",
+        "implements": [
+          "StageLighting",
+          "SetTrackMix",
+          "Snapshot"
+        ],
+        "sources": [
+          "Workstation/StageLighting.rs",
+          "Workstation/CcAutomation.rs",
+          "Workstation/Document.rs",
+          "Theatre/Lighting.rs",
+          "Procedures/theatre_lighting.json",
+          "Workstation/Arrangement.rs",
+          "Host/Host.rs"
+        ],
+        "checks": [
+          {
+            "id": "fixed_stage_cc_lighting_review",
+            "kind": "behavior",
+            "expectation": "Evaluate the audible position with linear curves, first active clip per CC lane and last active lane per parameter. Half-open clip ranges return authored fixture defaults in gaps. Seeking, looping and stopping do not accumulate state. Static targets work without native plugins. Lighting does not alter PCM or export. Native CC overlays accept the existing 2048-point document limit plus endpoint holds; audio fade overlays retain their narrower limits.",
+            "procedure": "Run workstation::stage_lighting tests; use the ordinary CC selectors and point editor during the real embedded theatre-camera session. Check RGB independence, blackout, loop/seek and unbound lanes."
+          }
+        ]
+      },
+      {
+        "id": "output_bus_components",
+        "description": "Matrix buses route stem sums to physical array feeds. Parallel mix buses process independent monitor FX chains and sum without normalization. Neither creates timeline lanes.",
+        "retention": "supported",
+        "selection": "Four matrix buses L/S/FF/R and one clean mix bus exist by default; timeline starts empty. Stem export remains pre-mix. Deleting a bus retains dormant insert ownership for content Undo; IDs owning retained inserts cannot be reused.",
+        "implements": [
+          "Snapshot",
+          "PutBus",
+          "SetBus",
+          "RemoveBus",
+          "RenderRange"
+        ],
+        "sources": [
+          "Workstation/Buses.rs",
+          "Workstation/Playback.rs",
+          "Workstation/Undo.rs",
+          "Audio/Transport.rs"
+        ],
+        "checks": [
+          {
+            "id": "bus_signal_isolation",
+            "kind": "behavior",
+            "expectation": "Mix FX and mix deletion cannot alter LSFFR stems or physical matrix feeds. Multiple unity mixes double monitor PCM.",
+            "procedure": "Run workstation::buses::tests and native workstation review including bus drag creation, meter selection/Delete, I/O cycling, mix FX, array playback and stem WAV export."
+          }
+        ]
+      },
+      {
+        "id": "isolated_master_preview",
+        "description": "Incrementally render the complete master monitor mix with separate plugin instances, existing clip DSP and bus processing. Cache 128 stereo peak columns and a bounded 8192-point stereo-power spectrum on the serialized preparation side. Revision or plugin-state changes replace pending/completed results; no audio callback analysis, document edits or undo entries. Rendering pauses while both display consumers are hidden and resumes from the retained valid cache. Native editor parameter observations remain on the control thread. Optional kind audio/midi/both and track identity select only the isolated analysis copy. A track source uses its post-fader stereo output before master buses; mix source retains bus processing. Unspecified selection preserves complete master analysis.",
+        "retention": "supported",
+        "selection": "Explicit MixPreview polls from AudioWorkstationSystem.Step.",
+        "implements": [
+          "MixPreview"
+        ],
+        "sources": [
+          "Workstation/MixPreview.rs",
+          "Workstation/Document.rs",
+          "Workstation/Playback.rs",
+          "Workstation/Buses.rs",
+          "BaseSystem/LayerOne/PluginConnectionSystem.rs",
+          "Audio/Plugins/native/Bridge.mm"
+        ],
+        "checks": [
+          {
+            "id": "master_preview_pcm",
+            "kind": "behavior",
+            "expectation": "Actual mix mute, gains, source changes and Undo affect the preview; a 440Hz source aligns with A4. Completed polls reuse the generation. Empty documents clear results and stale jobs cannot publish. Audio-only excludes MIDI instruments; MIDI-only and Both include them unless their independent default_sound_muted track setting is true. Selection changes invalidate cached jobs. Track selection never changes live solo/mute/routing.",
+            "procedure": "Run workstation::mix_preview::tests and existing bus/playback tests; review native rendering and plugin audio separately."
+          }
+        ]
+      },
+      {
+        "id": "trackless_audio_and_channel_buses",
+        "description": "Audio clips may occupy continuous free timeline positions without tracks. They route directly to an available matrix by identity or through a stereo Channel Bus. Channels have effects and channel strips but no timeline lanes. Track and channel outputs form an acyclic stereo graph.",
+        "retention": "supported",
+        "selection": "PutClip/ImportAudio with no track; MoveClip may attach/detach audio. SetClipRouting is available only for trackless audio. PutBus kind channel creates a stereo component; SetBus and SetTrackMix select outputs. OFF disconnects. Empty track output uses its existing L/S/FF/R route. The legacy lane field stores a fractional vertical coordinate in 96-point units; integral saved values remain valid. Free clip drags never attach implicitly to real tracks.",
+        "implements": [
+          "PutClip",
+          "ImportAudio",
+          "MoveClip",
+          "SetClipRouting",
+          "PutBus",
+          "SetBus",
+          "SetTrackMix",
+          "RenderRange",
+          "Snapshot"
+        ],
+        "sources": [
+          "Workstation/Channels.rs",
+          "Workstation/Document.rs",
+          "Workstation/Buses.rs",
+          "Workstation/Playback.rs",
+          "Workstation/Undo.rs",
+          "Workstation/Arrangement.rs",
+          "Workstation/BottomPanel.rs",
+          "Workstation/BottomPanelAdapter.rs",
+          "Workstation/BottomPanelScene.rs",
+          "Workstation/Browser.rs",
+          "Workstation/TrackIo.rs",
+          "Workstation/PluginInserts.rs",
+          "Audio/Plugins/native/Bridge.mm",
+          "Host/WorkstationBusTests.rs"
+        ],
+        "checks": [
+          {
+            "id": "trackless_channel_signal_and_controls",
+            "kind": "behavior",
+            "expectation": "Overlapping free audio sums. Clip routing preserves samples, gain, fades and edits without owning effects. Channels sum incoming stereo before their FX and fader, and can feed tracks/channels/matrices. Feedback and stale edits reject atomically. Direct matrix feeds are isolated by identity. Undo restores routes and components. Only waveform editing of unassigned audio exposes the colored routing gem. Free clips have continuous vertical placement, no synthetic track rows or input-monitor/channel-strip controls. Horizontal and vertical zoom/pan change only the view.",
+            "procedure": "Run workstation::channels, workstation::arrangement::free_audio_tests, workstation::bottom_panel::trackless_routing_tests and the registered workstation_trackless_clip_channel_routing test. Review native drag/drop, routing colors, channel strips and audio-device playback separately. Run free_canvas_tests for fractional motion, overlapping real tracks and anchored vertical navigation."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,303 @@
+Water source integration boundary, October 26, 2026
+
+{
+  "root_module": "#[path=\"Water/mod.rs\"] pub(crate) mod water;",
+  "host_field": "pub(crate) water:crate::water::State",
+  "host_default": "water:Default::default()",
+  "validator": "WaterData => crate::water::valid_data(v)",
+  "hooks": [
+    {
+      "name": "TideSystem.Configure",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TideSystem.Step",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TideSystem.Sample",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TideSystem.Close",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "OceanWaveSystem.Configure",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "OceanWaveSystem.Step",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "OceanWaveSystem.Sample",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "OceanWaveSystem.Snapshot",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "OceanWaveSystem.Close",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterFlowSystem.Configure",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterFlowSystem.Step",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterFlowSystem.Sample",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterFlowSystem.Close",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSlideSystem.Configure",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSlideSystem.Edit",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSlideSystem.Course",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSlideSystem.CollisionMesh",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSlideSystem.Snapshot",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSlideSystem.Close",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "FloodGateSystem.Configure",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "FloodGateSystem.Step",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "FloodGateSystem.Close",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "SoftBodyWaterSystem.Configure",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "SoftBodyWaterSystem.Step",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "SoftBodyWaterSystem.Gates",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "SoftBodyWaterSystem.Sample",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "SoftBodyWaterSystem.Disturb",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "SoftBodyWaterSystem.Snapshot",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "SoftBodyWaterSystem.Close",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TerrainSurfaceHydrologySystem.Configure",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TerrainSurfaceHydrologySystem.Update",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TerrainSurfaceHydrologySystem.Raycast",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TerrainSurfaceHydrologySystem.Sample",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TerrainSurfaceHydrologySystem.SurfaceMesh",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TerrainSurfaceHydrologySystem.Revision",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TerrainSurfaceHydrologySystem.Snapshot",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "TerrainSurfaceHydrologySystem.Close",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterRenderSystem.Prepare",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterRenderSystem.Update",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterRenderSystem.Frame",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterRenderSystem.Close",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSystem.Configure",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSystem.Step",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSystem.Frame",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSystem.Sample",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSystem.Disturb",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSystem.Edit",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSystem.Pause",
+      "input": "WaterData",
+      "output": "WaterData"
+    },
+    {
+      "name": "WaterSystem.Close",
+      "input": "WaterData",
+      "output": "WaterData"
+    }
+  ],
+  "base_entity_shader": "water_surface",
+  "base_entity_packet_validator": "crate::render::water::data::valid_packet(procedural)",
+  "render_module": "#[path=\"Water/mod.rs\"] pub(crate) mod water;",
+  "native_gl": "Client::new(root, resolve); encode_batch(frames,GlAttachments); sampled scene_depth unit2, private matching depth copy, reversed depth test. Release while context is alive.",
+  "vertex_stride": 96,
+  "uniform_bytes": 1296,
+  "camera_depth": "Camera.reversed_z required; false=near0/far1, true=near1/far0. micro_phase.w packs +1/-1 respectively; uniform size remains1296.",
+  "native_vk": "Client::new(root,device,memory_properties,resolve,ShaderBinaries); encode_batch(command,frames,VkAttachments,frame_slot<8). Parent fences each reused slot, handles input barriers/layouts, output transitions, scene/reflection draws and submission. ShaderBinaries: surface_vertex/fragment and composite_vertex/fragment SPIR-V. Binding0 UBO,1 opaqueColor,2 reflectionColor,3 opaqueDepth. Private RGBA8+D32 water pass; output must differ from opaqueColor.",
+  "native_wgpu": "Client::new(root,device,queue,resolve); encode_batch(encoder,frames,BorrowedAttachments,color_format,depth_format). Parent supplies sampled single-sample scene views/output, encodes scene/reflection, submits; encode one batch per helper per submission because queue writes update shared draw buffers. Binding0 UBO,1 sampler,2 opaqueColor,3 reflectionColor,4 opaqueDepth.",
+  "status": "Owned drafts reconciled into October source. Native compile/shader/runtime evidence absent; shared wiring not implemented by Pepper.",
+  "floodgate_source": "Optional floodgate.course_start is a positive authored tie ID. Unset means no source course/emission; no natural world locations selected. Explicit nonexistent or cyclic courses report unavailable. A Course query without start retains deterministic first-chain inspection."
+}
+
+Validation: formatting only; no compilation, tests, shaders, native rendering,
+performance, device, or TestFlight readiness established by this lane.
+All nine continuous-water behavioral tests and vegetation tests remain unrun.
+Live terrain snapshots must cover accepted terrain and soil triangle geometry;
+unknown coverage pauses parcels and requests coverage rather than fabricating a floor.
+Natural river/source/course positions remain unresolved.
+
+Resumed source correction: floodgate recycling now shares the bounded80slot
+source selection with new emission, including accepted finite coverage, actual
+triangle penetration and other-parcel clearance. No safe source retains the
+existing parcel unchanged; missing coverage is requested, material is not
+deleted/recreated. Added recycling_preserves_existing_material_when_source_is_blocked_or_unknown;
+execution is pending shared serial validation.
+
+Code-only continuation: WaterSystem.Edit accepts {operation:"source",start:tie}
+or start:null to explicitly choose/clear an existing authored open course.
+Uses existing FloodGateSystem.Configure targeted select_course operation,
+validating through WaterSlideSystem.Course and preserving all other settings.
+Clear-all also clears source. Graph and selection save atomically on normal
+Close to output water-editor.json, restored at Configure; malformed saves
+are preserved/reported. Procedural graph is fallback when no save exists;
+unchanged graph causes no save write. Parcel and natural river positions are
+not fabricated or included in this editor save. No builds/tests were run.
+
+Source editing does not require exposing internalIDs: operation:source without
+start reuses the accepted editor ray to select a nearby existing tie (within2m),
+then validates that its outgoing authored course is open. Explicit start:null
+still clears. WaterSlideSystem.Edit operation:select supports tie_id or bounded
+continuous anchor, changes selection only, and never creates a tie. Shared input
+binding remains parent-owned; no new gesture/HUD was invented here.
+
+Desktop source binding is now wired: F emits the source action under current
+editor ray, Shift-F clears source. PlanetNavigation validator accepts source
+and select edits. Existing edge handling prevents repeated held-key actions.
+No HUD added. Mobile water editing gestures and physical tree/root simulation
+are not supplied by this desktop binding. No builds/tests run.
